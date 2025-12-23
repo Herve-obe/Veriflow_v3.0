@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Veriflow.UI.ViewModels"
+        xmlns:views="using:Veriflow.UI.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
@@ -102,34 +103,29 @@
             </Border>
             
             <!-- Content Area -->
-            <Grid Grid.Column="1" Background="{DynamicResource Brush.Background.Primary}">
-                <StackPanel HorizontalAlignment="Center" 
-                           VerticalAlignment="Center"
-                           Spacing="{StaticResource Spacing.Large}">
-                    <TextBlock Text="Veriflow 3.0" 
-                              FontSize="{StaticResource FontSize.Display}"
-                              FontWeight="{StaticResource FontWeight.Bold}"
-                              Foreground="{DynamicResource Brush.Text.Primary}"
-                              HorizontalAlignment="Center" />
-                    
-                    <TextBlock Text="Professional Cross-Platform DIT Tool" 
-                              FontSize="{StaticResource FontSize.H2}"
-                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                              HorizontalAlignment="Center" />
-                    
-                    <StackPanel Orientation="Horizontal" 
-                               Spacing="{StaticResource Spacing.Medium}"
-                               HorizontalAlignment="Center"
-                               Margin="0,32,0,0">
-                        <Button Content="New Session" 
-                               Classes="Primary"
-                               Command="{Binding NewSessionCommand}" />
-                        <Button Content="Open Session" 
-                               Classes="Secondary"
-                               Command="{Binding OpenSessionCommand}" />
-                    </StackPanel>
-                </StackPanel>
-            </Grid>
+            <ContentControl Grid.Column="1" 
+                           Content="{Binding CurrentPageViewModel}">
+                <ContentControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type vm:OffloadViewModel}">
+                        <views:OffloadView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:MediaViewModel}">
+                        <views:MediaView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:PlayerViewModel}">
+                        <views:PlayerView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:SyncViewModel}">
+                        <views:SyncView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:TranscodeViewModel}">
+                        <views:TranscodeView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+                        <views:ReportsView />
+                    </DataTemplate>
+                </ContentControl.DataTemplates>
+            </ContentControl>
         </Grid>
         
         <!-- Status Bar -->

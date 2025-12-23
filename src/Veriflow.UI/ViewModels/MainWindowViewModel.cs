@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
 
@@ -12,6 +14,7 @@ namespace Veriflow.UI.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ISessionService _sessionService;
+    private readonly IServiceProvider _serviceProvider;
     
     [ObservableProperty]
     private ProfileMode _currentProfile = ProfileMode.Video;
@@ -22,10 +25,17 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _windowTitle = "Veriflow 3.0";
     
-    public MainWindowViewModel(ISessionService sessionService)
+    [ObservableProperty]
+    private ViewModelBase? _currentPageViewModel;
+    
+    public MainWindowViewModel(ISessionService sessionService, IServiceProvider serviceProvider)
     {
         _sessionService = sessionService;
+        _serviceProvider = serviceProvider;
         UpdateWindowTitle();
+        
+        // Load initial page (OFFLOAD)
+        NavigateToPage("OFFLOAD");
     }
     
     [RelayCommand]
@@ -37,11 +47,27 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private void NavigateToPage(string pageName)
+    private void NavigateToPage(string? pageName)
     {
+        if (string.IsNullOrEmpty(pageName)) return;
+        
         CurrentPage = pageName;
         _sessionService.CurrentSession.CurrentPage = pageName;
         _sessionService.MarkAsModified();
+        
+        // Create appropriate ViewModel based on page name
+        CurrentPageViewModel = pageName switch
+        {
+            "OFFLOAD" => _serviceProvider.GetRequiredService<OffloadViewModel>(),
+            "MEDIA" => _serviceProvider.GetRequiredService<MediaViewModel>(),
+            "PLAYER" => _serviceProvider.GetRequiredService<PlayerViewModel>(),
+            "SYNC" => _serviceProvider.GetRequiredService<SyncViewModel>(),
+            "TRANSCODE" => _serviceProvider.GetRequiredService<TranscodeViewModel>(),
+            "REPORTS" => _serviceProvider.GetRequiredService<ReportsViewModel>(),
+            _ => null
+        };
+        
+        StatusMessage = $"Navigated to {pageName}";
     }
     
     [RelayCommand]

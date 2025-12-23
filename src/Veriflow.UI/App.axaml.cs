@@ -22,7 +22,7 @@ public partial class App : Application
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainViewModel = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+            var mainViewModel = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_serviceProvider, _serviceProvider);
             
             desktop.MainWindow = new MainWindow
             {
