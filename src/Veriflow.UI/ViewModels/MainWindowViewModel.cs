@@ -84,6 +84,7 @@ public partial class MainWindowViewModel : ViewModelBase
         // TODO: Show file picker dialog
         // await _sessionService.LoadSessionAsync(filePath);
         UpdateWindowTitle();
+        await Task.CompletedTask;
     }
     
     [RelayCommand]

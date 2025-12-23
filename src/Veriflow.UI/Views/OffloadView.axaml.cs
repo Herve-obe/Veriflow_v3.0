@@ -19,7 +19,7 @@ public partial class OffloadView : UserControl
     private void DragOver(object? sender, DragEventArgs e)
     {
         // Only allow folders
-        if (e.Data.Contains(DataFormats.Files))
+        if (e.DataTransfer.Contains(Avalonia.Input.DataFormats.Files))
         {
             e.DragEffects = DragDropEffects.Copy;
         }
@@ -31,9 +31,9 @@ public partial class OffloadView : UserControl
     
     private void Drop(object? sender, DragEventArgs e)
     {
-        if (e.Data.Contains(DataFormats.Files))
+        if (e.DataTransfer.Contains(Avalonia.Input.DataFormats.Files))
         {
-            var files = e.Data.GetFiles()?.ToArray();
+            var files = e.DataTransfer.GetFiles()?.ToArray();
             if (files != null && files.Length > 0)
             {
                 var path = files[0].Path.LocalPath;
