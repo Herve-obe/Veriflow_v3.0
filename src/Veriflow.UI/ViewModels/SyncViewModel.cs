@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
+using Veriflow.Core.Services;
 
 namespace Veriflow.UI.ViewModels;
 
@@ -228,37 +229,67 @@ public partial class SyncViewModel : ViewModelBase
         
         try
         {
-            var totalPairs = VideoPool.Count * AudioPool.Count;
-            var currentPair = 0;
+            // REDUNDANCY PROTECTION: Filter out already-synced videos (v1 feature)
+            var unsyncedVideos = VideoPool
+                .Where(v => !SyncPairs.Any(p => p.VideoItem?.FilePath == v.FilePath))
+                .ToList();
             
-            foreach (var video in VideoPool)
+            if (unsyncedVideos.Count == 0)
             {
-                foreach (var audio in AudioPool)
+                StatusMessage = "All videos are already synchronized";
+                SyncStatus = "No unmatched videos to sync";
+                IsBusy = false;
+                return;
+            }
+            
+            var totalPairs = unsyncedVideos.Count * AudioPool.Count;
+            var currentPair = 0;
+            var syncedPairs = new System.Collections.Concurrent.ConcurrentBag<SyncPair>();
+            
+            // Create pairs only for unsynced videos
+            var pairs = unsyncedVideos.SelectMany(v => AudioPool.Select(a => (Video: v, Audio: a))).ToList();
+            
+            StatusMessage = $"Syncing {unsyncedVideos.Count} unmatched videos (skipping {VideoPool.Count - unsyncedVideos.Count} already synced)";
+            SyncStatus = $"Processing {unsyncedVideos.Count} unmatched videos...";
+            
+            // Parallel sync processing with max concurrency
+            var options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 4,
+                CancellationToken = _cancellationTokenSource.Token
+            };
+            
+            await Parallel.ForEachAsync(pairs, options, async (pair, ct) =>
+            {
+                var pairIndex = Interlocked.Increment(ref currentPair);
+                SyncProgress = (pairIndex * 100.0) / totalPairs;
+                SyncStatus = $"Syncing {pair.Video.FileName} with {pair.Audio.FileName}...";
+                
+                var result = await _syncEngine.SynchronizeAsync(
+                    pair.Video.FilePath,
+                    pair.Audio.FilePath,
+                    ct
+                );
+                
+                if (result.Success && result.Confidence > 70)
                 {
-                    currentPair++;
-                    SyncProgress = (currentPair * 100.0) / totalPairs;
-                    SyncStatus = $"Syncing {video.FileName} with {audio.FileName}...";
-                    
-                    var result = await _syncEngine.SynchronizeAsync(
-                        video.FilePath,
-                        audio.FilePath,
-                        _cancellationTokenSource.Token
-                    );
-                    
-                    if (result.Success && result.Confidence > 70)
+                    var syncPair = new SyncPair
                     {
-                        var pair = new SyncPair
-                        {
-                            VideoItem = video,
-                            AudioItem = audio,
-                            Offset = result.Offset,
-                            Confidence = result.Confidence,
-                            IsVerified = result.Confidence > 80
-                        };
-                        
-                        SyncPairs.Add(pair);
-                    }
+                        VideoItem = pair.Video,
+                        AudioItem = pair.Audio,
+                        Offset = result.Offset,
+                        Confidence = result.Confidence,
+                        IsVerified = result.Confidence > 80
+                    };
+                    
+                    syncedPairs.Add(syncPair);
                 }
+            });
+            
+            // Add results to UI collection on main thread
+            foreach (var pair in syncedPairs)
+            {
+                SyncPairs.Add(pair);
             }
             
             SyncStatus = $"Auto-sync complete: {SyncPairs.Count} pairs found";
@@ -268,6 +299,7 @@ public partial class SyncViewModel : ViewModelBase
         {
             SyncStatus = $"Error: {ex.Message}";
             StatusMessage = "Auto-sync error";
+            CrashLogger.LogException(ex, "AutoSyncAllAsync");
         }
         finally
         {

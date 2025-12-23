@@ -569,43 +569,89 @@ public class FFmpegTranscodeEngine : ITranscodeEngine
     
     private string FindFFmpegExecutable()
     {
-        // Try common locations
-        var possiblePaths = new[]
-        {
-            "ffmpeg",
-            "ffmpeg.exe",
-            @"C:\ffmpeg\bin\ffmpeg.exe",
-            @"C:\Program Files\ffmpeg\bin\ffmpeg.exe",
-            "/usr/bin/ffmpeg",
-            "/usr/local/bin/ffmpeg"
-        };
+        var executableName = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
         
-        foreach (var path in possiblePaths)
+        // 1. Check PATH environment variable first
+        if (TryFindInPath(executableName, out var pathExe))
+        {
+            return pathExe;
+        }
+        
+        // 2. Check platform-specific common locations
+        var platformPaths = GetPlatformSpecificPaths(executableName);
+        
+        foreach (var path in platformPaths)
+        {
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+        
+        // 3. Fallback to just the executable name (will use PATH)
+        return executableName;
+    }
+    
+    private bool TryFindInPath(string fileName, out string fullPath)
+    {
+        var pathVariable = Environment.GetEnvironmentVariable("PATH");
+        if (string.IsNullOrEmpty(pathVariable))
+        {
+            fullPath = string.Empty;
+            return false;
+        }
+        
+        var paths = pathVariable.Split(Path.PathSeparator);
+        foreach (var path in paths)
         {
             try
             {
-                var process = Process.Start(new ProcessStartInfo
+                var fullFilePath = Path.Combine(path, fileName);
+                if (File.Exists(fullFilePath))
                 {
-                    FileName = path,
-                    Arguments = "-version",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                });
-                
-                if (process != null)
-                {
-                    process.WaitForExit();
-                    if (process.ExitCode == 0)
-                        return path;
+                    fullPath = fullFilePath;
+                    return true;
                 }
             }
             catch
             {
+                // Skip invalid paths
                 continue;
             }
         }
         
-        return "ffmpeg"; // Fallback to PATH
+        fullPath = string.Empty;
+        return false;
+    }
+    
+    private string[] GetPlatformSpecificPaths(string executableName)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return new[]
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ffmpeg", "bin", executableName),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "ffmpeg", "bin", executableName),
+                @"C:\ffmpeg\bin\ffmpeg.exe"
+            };
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            return new[]
+            {
+                "/usr/local/bin/ffmpeg",
+                "/opt/homebrew/bin/ffmpeg", // Apple Silicon Homebrew
+                "/usr/bin/ffmpeg"
+            };
+        }
+        else // Linux and other Unix-like systems
+        {
+            return new[]
+            {
+                "/usr/bin/ffmpeg",
+                "/usr/local/bin/ffmpeg",
+                "/snap/bin/ffmpeg" // Snap package
+            };
+        }
     }
 }

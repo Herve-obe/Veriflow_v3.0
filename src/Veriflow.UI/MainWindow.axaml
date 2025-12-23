@@ -19,6 +19,20 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
     
+    <!-- Keyboard Shortcuts -->
+    <Window.KeyBindings>
+        <!-- Navigation Shortcuts (F1-F6) -->
+        <KeyBinding Gesture="F1" Command="{Binding NavigateToPageCommand}" CommandParameter="OFFLOAD" />
+        <KeyBinding Gesture="F2" Command="{Binding NavigateToPageCommand}" CommandParameter="MEDIA" />
+        <KeyBinding Gesture="F3" Command="{Binding NavigateToPageCommand}" CommandParameter="PLAYER" />
+        <KeyBinding Gesture="F4" Command="{Binding NavigateToPageCommand}" CommandParameter="SYNC" />
+        <KeyBinding Gesture="F5" Command="{Binding NavigateToPageCommand}" CommandParameter="TRANSCODE" />
+        <KeyBinding Gesture="F6" Command="{Binding NavigateToPageCommand}" CommandParameter="REPORTS" />
+        
+        <!-- Standard Application Shortcuts -->
+        <KeyBinding Gesture="Ctrl+Q" Command="{Binding ExitCommand}" />
+    </Window.KeyBindings>
+    
     <Grid RowDefinitions="Auto,*,Auto">
         <!-- Menu Bar -->
         <Menu Grid.Row="0" 
@@ -35,11 +49,59 @@
                          Command="{Binding SaveSessionCommand}" 
                          InputGesture="Ctrl+S" />
                 <Separator />
-                <MenuItem Header="Exit" />
+                <MenuItem Header="Exit" 
+                         Command="{Binding ExitCommand}" 
+                         InputGesture="Ctrl+Q" />
             </MenuItem>
-            <MenuItem Header="Edit" />
-            <MenuItem Header="View" />
-            <MenuItem Header="Help" />
+            
+            <MenuItem Header="Edit">
+                <MenuItem Header="Cut" InputGesture="Ctrl+X" IsEnabled="False" />
+                <MenuItem Header="Copy" InputGesture="Ctrl+C" IsEnabled="False" />
+                <MenuItem Header="Paste" InputGesture="Ctrl+V" IsEnabled="False" />
+                <Separator />
+                <MenuItem Header="Undo" InputGesture="Ctrl+Z" IsEnabled="False" />
+                <MenuItem Header="Redo" InputGesture="Ctrl+Y" IsEnabled="False" />
+            </MenuItem>
+            
+            <MenuItem Header="View">
+                <MenuItem Header="OFFLOAD" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="OFFLOAD" 
+                         InputGesture="F1" />
+                <MenuItem Header="MEDIA" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="MEDIA" 
+                         InputGesture="F2" />
+                <MenuItem Header="PLAYER" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="PLAYER" 
+                         InputGesture="F3" />
+                <MenuItem Header="SYNC" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="SYNC" 
+                         InputGesture="F4" />
+                <MenuItem Header="TRANSCODE" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="TRANSCODE" 
+                         InputGesture="F5" />
+                <MenuItem Header="REPORTS" 
+                         Command="{Binding NavigateToPageCommand}" 
+                         CommandParameter="REPORTS" 
+                         InputGesture="F6" />
+                <Separator />
+                <MenuItem Header="Toggle Profile" 
+                         Command="{Binding ToggleProfileCommand}" 
+                         InputGesture="Ctrl+Tab" />
+            </MenuItem>
+            
+            <MenuItem Header="Help">
+                <MenuItem Header="About Veriflow" 
+                         Command="{Binding ShowAboutCommand}" 
+                         InputGesture="F1" />
+                <Separator />
+                <MenuItem Header="Open Log Folder" 
+                         Command="{Binding OpenLogFolderCommand}" />
+            </MenuItem>
         </Menu>
         
         <!-- Main Content -->
@@ -49,9 +111,9 @@
                     Background="{DynamicResource Brush.Background.Secondary}"
                     BorderBrush="{DynamicResource Brush.Border.Default}"
                     BorderThickness="0,0,1,0">
-                <StackPanel Spacing="{StaticResource Spacing.Small}" Margin="{StaticResource Spacing.Small}">
+                <StackPanel Spacing="8" Margin="8">
                     <!-- Profile Toggle Buttons -->
-                    <StackPanel Spacing="{StaticResource Spacing.Micro}">
+                    <StackPanel Spacing="4">
                         <Button Content="VIDEO" 
                                 Width="64" Height="26"
                                 FontSize="{StaticResource FontSize.Caption}"
@@ -124,7 +186,7 @@
                 Background="{DynamicResource Brush.Background.Secondary}"
                 BorderBrush="{DynamicResource Brush.Border.Default}"
                 BorderThickness="0,1,0,0"
-                Padding="{StaticResource Spacing.Small}">
+                Padding="8">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" 
                           Text="{Binding StatusMessage}"

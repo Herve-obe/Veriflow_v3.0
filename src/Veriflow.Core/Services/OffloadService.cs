@@ -5,10 +5,12 @@ using System.IO;
 using System.IO.Hashing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Veriflow.Core.Interfaces;
+using Veriflow.Core.Models;
 
 namespace Veriflow.Core.Services;
 
@@ -18,6 +20,12 @@ namespace Veriflow.Core.Services;
 public class OffloadService : IOffloadService
 {
     private const int BufferSize = 1024 * 1024; // 1MB buffer for file copying
+    private const int MaxConcurrentCopies = 4; // Limit concurrent file operations
+    private static readonly string HistoryFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "Veriflow",
+        "copy_history.json"
+    );
     
     public async Task<OffloadResult> OffloadAsync(
         string sourcePath,
@@ -42,45 +50,57 @@ public class OffloadService : IOffloadService
             var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
             var totalBytes = files.Sum(f => new FileInfo(f).Length);
             long bytesCopied = 0;
+            int filesProcessed = 0;
             
             result.TotalFiles = files.Length;
             
-            // Copy files to both destinations
-            for (int i = 0; i < files.Length; i++)
+            // Parallel file copying with semaphore throttling
+            var semaphore = new SemaphoreSlim(MaxConcurrentCopies);
+            var copyTasks = files.Select(async (sourceFile, index) =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                
-                var sourceFile = files[i];
-                var relativePath = Path.GetRelativePath(sourcePath, sourceFile);
-                var destFileA = Path.Combine(destinationA, relativePath);
-                var destFileB = Path.Combine(destinationB, relativePath);
-                
-                // Report progress
-                progress?.Report(new OffloadProgress
+                await semaphore.WaitAsync(cancellationToken);
+                try
                 {
-                    CurrentFile = relativePath,
-                    BytesCopied = bytesCopied,
-                    TotalBytes = totalBytes,
-                    FilesProcessed = i,
-                    TotalFiles = files.Length,
-                    Status = $"Copying {relativePath}..."
-                });
-                
-                // Create destination directories
-                Directory.CreateDirectory(Path.GetDirectoryName(destFileA)!);
-                Directory.CreateDirectory(Path.GetDirectoryName(destFileB)!);
-                
-                // Copy to destination A
-                await CopyFileWithHashAsync(sourceFile, destFileA, cancellationToken);
-                
-                // Copy to destination B
-                await CopyFileWithHashAsync(sourceFile, destFileB, cancellationToken);
-                
-                bytesCopied += new FileInfo(sourceFile).Length;
-                result.FilesProcessed++;
-            }
+                    var relativePath = Path.GetRelativePath(sourcePath, sourceFile);
+                    var destFileA = Path.Combine(destinationA, relativePath);
+                    var destFileB = Path.Combine(destinationB, relativePath);
+                    
+                    // Create destination directories
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFileA)!);
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFileB)!);
+                    
+                    // Copy to both destinations in parallel
+                    await Task.WhenAll(
+                        CopyFileWithHashAsync(sourceFile, destFileA, cancellationToken),
+                        CopyFileWithHashAsync(sourceFile, destFileB, cancellationToken)
+                    );
+                    
+                    // Thread-safe progress update
+                    var fileSize = new FileInfo(sourceFile).Length;
+                    var currentBytesCopied = Interlocked.Add(ref bytesCopied, fileSize);
+                    var currentFilesProcessed = Interlocked.Increment(ref filesProcessed);
+                    
+                    // Report progress
+                    progress?.Report(new OffloadProgress
+                    {
+                        CurrentFile = relativePath,
+                        BytesCopied = currentBytesCopied,
+                        TotalBytes = totalBytes,
+                        FilesProcessed = currentFilesProcessed,
+                        TotalFiles = files.Length,
+                        Status = $"Copying {relativePath}... ({currentFilesProcessed}/{files.Length})"
+                    });
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+            
+            await Task.WhenAll(copyTasks);
             
             result.BytesCopied = bytesCopied;
+            result.FilesProcessed = filesProcessed;
             
             // Generate MHL files
             progress?.Report(new OffloadProgress
@@ -113,15 +133,30 @@ public class OffloadService : IOffloadService
                 Status = "Offload complete!"
             });
         }
-        catch (Exception ex)
-        {
-            result.Success = false;
-            result.ErrorMessage = ex.Message;
-        }
         finally
         {
             stopwatch.Stop();
             result.Duration = stopwatch.Elapsed;
+        }
+        
+        // Add to history if successful
+        if (result.Success)
+        {
+            var historyEntry = new CopyHistoryEntry
+            {
+                Timestamp = DateTime.Now,
+                SourcePath = sourcePath,
+                DestinationAPath = destinationA,
+                DestinationBPath = destinationB,
+                FilesCount = result.FilesProcessed,
+                TotalBytes = result.BytesCopied,
+                Duration = result.Duration,
+                MhlPathA = result.MhlPathA ?? string.Empty,
+                MhlPathB = result.MhlPathB ?? string.Empty,
+                Success = true
+            };
+            
+            await AddHistoryEntryAsync(historyEntry);
         }
         
         return result;
@@ -316,5 +351,63 @@ public class OffloadService : IOffloadService
         }
         
         return hashes;
+    }
+    
+    public async Task<List<CopyHistoryEntry>> GetHistoryAsync()
+    {
+        try
+        {
+            if (!File.Exists(HistoryFilePath))
+                return new List<CopyHistoryEntry>();
+            
+            var json = await File.ReadAllTextAsync(HistoryFilePath);
+            var history = JsonSerializer.Deserialize<List<CopyHistoryEntry>>(json);
+            return history ?? new List<CopyHistoryEntry>();
+        }
+        catch
+        {
+            return new List<CopyHistoryEntry>();
+        }
+    }
+    
+    public async Task AddHistoryEntryAsync(CopyHistoryEntry entry)
+    {
+        try
+        {
+            // Ensure directory exists
+            var directory = Path.GetDirectoryName(HistoryFilePath);
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+            
+            var history = await GetHistoryAsync();
+            history.Insert(0, entry); // Add to beginning (most recent first)
+            
+            // Keep only last 100 entries
+            if (history.Count > 100)
+                history = history.Take(100).ToList();
+            
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var json = JsonSerializer.Serialize(history, options);
+            await File.WriteAllTextAsync(HistoryFilePath, json);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex, "AddHistoryEntryAsync");
+        }
+    }
+    
+    public async Task ClearHistoryAsync()
+    {
+        try
+        {
+            if (File.Exists(HistoryFilePath))
+                File.Delete(HistoryFilePath);
+            
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex, "ClearHistoryAsync");
+        }
     }
 }

@@ -143,12 +143,57 @@ public partial class MediaViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private void EditMetadata()
+    private async Task EditMetadataAsync()
     {
         if (SelectedMedia == null) return;
         
-        StatusMessage = "Edit metadata";
-        // TODO: Implement metadata editor
+        // Only support WAV files for now
+        if (!SelectedMedia.FilePath.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+        {
+            StatusMessage = "Metadata editing only supported for WAV files";
+            return;
+        }
+        
+        IsBusy = true;
+        _cancellationTokenSource = new CancellationTokenSource();
+        
+        try
+        {
+            StatusMessage = "Reading WAV metadata...";
+            
+            // Read current BWF metadata
+            var bwfMetadata = await _mediaService.ReadWavBwfMetadataAsync(SelectedMedia.FilePath, _cancellationTokenSource.Token);
+            var ixmlMetadata = await _mediaService.ReadWavIxmlMetadataAsync(SelectedMedia.FilePath, _cancellationTokenSource.Token);
+            
+            // For now, show a simple dialog with the metadata
+            // In a full implementation, this would open a dialog window
+            bwfMetadata.TryGetValue("Description", out var description);
+            bwfMetadata.TryGetValue("Originator", out var originator);
+            ixmlMetadata.TryGetValue("Scene", out var scene);
+            ixmlMetadata.TryGetValue("Take", out var take);
+            
+            StatusMessage = $"Metadata: Scene={scene ?? ""}, Take={take ?? ""}, Originator={originator ?? ""}";
+            
+            // TODO: Open dialog for editing
+            // For now, just demonstrate reading capability
+            await _dialogService.ShowMessageBoxAsync(
+                "WAV Metadata",
+                $"File: {SelectedMedia.FileName}\n" +
+                $"Description: {description}\n" +
+                $"Originator: {originator}\n" +
+                $"Scene: {scene}\n" +
+                $"Take: {take}\n\n" +
+                $"Full metadata editing dialog coming soon!"
+            );
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error reading metadata: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
     
     [RelayCommand]

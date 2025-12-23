@@ -33,6 +33,24 @@ public interface IReportEngine
         ReportData reportData,
         ReportType type,
         CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Generate EDL (Edit Decision List) file - CMX 3600 format
+    /// </summary>
+    Task<string> GenerateEdlAsync(
+        List<ReportClip> clips,
+        string outputPath,
+        string title = "VERIFLOW EXPORT",
+        double frameRate = 25.0,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Generate ALE (Avid Log Exchange) file
+    /// </summary>
+    Task<string> GenerateAleAsync(
+        List<ReportClip> clips,
+        string outputPath,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>

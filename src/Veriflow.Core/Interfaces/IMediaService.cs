@@ -31,4 +31,19 @@ public interface IMediaService
     /// Verify file hash
     /// </summary>
     Task<bool> VerifyHashAsync(string filePath, string expectedHash, string algorithm = "xxHash64", CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Read BWF metadata from WAV file
+    /// </summary>
+    Task<Dictionary<string, string>> ReadWavBwfMetadataAsync(string filePath, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Read iXML metadata from WAV file
+    /// </summary>
+    Task<Dictionary<string, string>> ReadWavIxmlMetadataAsync(string filePath, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Write BWF metadata to WAV file
+    /// </summary>
+    Task WriteWavBwfMetadataAsync(string filePath, Dictionary<string, string> metadata, CancellationToken cancellationToken = default);
 }

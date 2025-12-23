@@ -1,9 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Veriflow.Core.Interfaces;
+using Veriflow.Core.Models;
 
 namespace Veriflow.UI.ViewModels;
 
@@ -37,6 +39,12 @@ public partial class OffloadViewModel : ViewModelBase
     
     [ObservableProperty]
     private string _logText = "Ready to offload...\n";
+    
+    [ObservableProperty]
+    private ObservableCollection<CopyHistoryEntry> _history = new();
+    
+    [ObservableProperty]
+    private bool _isHistoryVisible;
     
     public OffloadViewModel(IDialogService dialogService, IOffloadService offloadService)
     {
@@ -181,6 +189,12 @@ public partial class OffloadViewModel : ViewModelBase
             IsBusy = false;
             Progress = 0;
             CurrentFile = string.Empty;
+            
+            // Refresh history after offload
+            if (IsOffloadMode)
+            {
+                await LoadHistoryAsync();
+            }
         }
     }
     
@@ -220,5 +234,37 @@ public partial class OffloadViewModel : ViewModelBase
             len /= 1024;
         }
         return $"{len:0.##} {sizes[order]}";
+    }
+    
+    [RelayCommand]
+    private async Task LoadHistoryAsync()
+    {
+        var history = await _offloadService.GetHistoryAsync();
+        History.Clear();
+        foreach (var entry in history)
+        {
+            History.Add(entry);
+        }
+    }
+    
+    [RelayCommand]
+    private void ToggleHistory()
+    {
+        IsHistoryVisible = !IsHistoryVisible;
+    }
+    
+    [RelayCommand]
+    private async Task ClearHistoryAsync()
+    {
+        var confirmed = await _dialogService.ShowConfirmationAsync(
+            "Clear History",
+            "Are you sure you want to clear all copy history?");
+        
+        if (confirmed)
+        {
+            await _offloadService.ClearHistoryAsync();
+            History.Clear();
+            AppendLog("History cleared");
+        }
     }
 }

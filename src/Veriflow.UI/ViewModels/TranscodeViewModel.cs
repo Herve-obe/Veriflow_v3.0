@@ -105,19 +105,32 @@ public partial class TranscodeViewModel : ViewModelBase
         {
             var queuedJobs = Queue.Where(j => j.Status == TranscodeStatus.Queued).ToList();
             
-            foreach (var job in queuedJobs)
+            // Process 2 jobs concurrently for better CPU utilization
+            var semaphore = new SemaphoreSlim(2);
+            var processTasks = queuedJobs.Select(async job =>
             {
                 if (_cancellationTokenSource.Token.IsCancellationRequested)
-                    break;
+                    return;
                 
-                await ProcessJobAsync(job, _cancellationTokenSource.Token);
-            }
+                await semaphore.WaitAsync(_cancellationTokenSource.Token);
+                try
+                {
+                    await ProcessJobAsync(job, _cancellationTokenSource.Token);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+            
+            await Task.WhenAll(processTasks);
             
             StatusMessage = "Queue processing complete";
         }
         catch (Exception ex)
         {
             StatusMessage = $"Error: {ex.Message}";
+            Veriflow.Core.Services.CrashLogger.LogException(ex, "StartQueueAsync");
         }
         finally
         {

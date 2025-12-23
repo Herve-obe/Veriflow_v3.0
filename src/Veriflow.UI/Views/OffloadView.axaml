@@ -48,6 +48,8 @@
                         Classes="Modern"
                         Text="{Binding SourceFolder}"
                         IsReadOnly="True"
+                        DragDrop.AllowDrop="True"
+                        Watermark="Drag folder here or click Browse..."
                         Margin="0,0,8,0" />
                 <Button Grid.Row="0" Grid.Column="2" 
                        Content="Browse..."
@@ -64,6 +66,8 @@
                         Classes="Modern"
                         Text="{Binding DestinationA}"
                         IsReadOnly="True"
+                        DragDrop.AllowDrop="True"
+                        Watermark="Drag folder here or click Browse..."
                         Margin="0,16,8,0" />
                 <Button Grid.Row="1" Grid.Column="2" 
                        Content="Browse..."
@@ -81,6 +85,8 @@
                         Classes="Modern"
                         Text="{Binding DestinationB}"
                         IsReadOnly="True"
+                        DragDrop.AllowDrop="True"
+                        Watermark="Drag folder here or click Browse..."
                         Margin="0,16,8,0" />
                 <Button Grid.Row="2" Grid.Column="2" 
                        Content="Browse..."
@@ -135,7 +141,70 @@
                    IsEnabled="{Binding !IsBusy}" />
             <Button Content="Cancel" 
                    Classes="Secondary"
+                   Command="{Binding CancelOffloadCommand}"
                    IsEnabled="{Binding IsBusy}" />
+            <Button Content="View History" 
+                   Classes="Secondary"
+                   Command="{Binding ToggleHistoryCommand}" />
+            <Button Content="Clear History" 
+                   Classes="Secondary"
+                   Command="{Binding ClearHistoryCommand}"
+                   IsEnabled="{Binding History.Count}" />
         </StackPanel>
+        
+        <!-- Copy History Panel -->
+        <Border Grid.Row="2" 
+               IsVisible="{Binding IsHistoryVisible}"
+               Background="{DynamicResource Brush.Background.Secondary}"
+               BorderBrush="{DynamicResource Brush.Border.Default}"
+               BorderThickness="1"
+               CornerRadius="{StaticResource CornerRadius.Medium}"
+               Padding="16"
+               Margin="0,80,0,0">
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0" 
+                          Text="COPY HISTORY"
+                          FontSize="{StaticResource FontSize.H3}"
+                          FontWeight="{StaticResource FontWeight.Bold}"
+                          Foreground="{DynamicResource Brush.Text.Primary}"
+                          Margin="0,0,0,16" />
+                
+                <DataGrid Grid.Row="1"
+                         ItemsSource="{Binding History}"
+                         AutoGenerateColumns="False"
+                         IsReadOnly="True"
+                         GridLinesVisibility="Horizontal"
+                         HeadersVisibility="Column"
+                         Background="Transparent"
+                         MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date/Time" 
+                                          Binding="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}"
+                                          Width="150" />
+                        <DataGridTextColumn Header="Source" 
+                                          Binding="{Binding SourcePath}"
+                                          Width="200" />
+                        <DataGridTextColumn Header="Dest A" 
+                                          Binding="{Binding DestinationAPath}"
+                                          Width="150" />
+                        <DataGridTextColumn Header="Dest B" 
+                                          Binding="{Binding DestinationBPath}"
+                                          Width="150" />
+                        <DataGridTextColumn Header="Files" 
+                                          Binding="{Binding FilesCount}"
+                                          Width="80" />
+                        <DataGridTextColumn Header="Size" 
+                                          Binding="{Binding FormattedSize}"
+                                          Width="100" />
+                        <DataGridTextColumn Header="Duration" 
+                                          Binding="{Binding FormattedDuration}"
+                                          Width="100" />
+                        <DataGridTextColumn Header="Status" 
+                                          Binding="{Binding Success}"
+                                          Width="80" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

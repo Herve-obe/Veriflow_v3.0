@@ -18,38 +18,56 @@ public partial class OffloadView : UserControl
     
     private void DragOver(object? sender, DragEventArgs e)
     {
-        // Only allow folders
-        e.DragEffects = DragDropEffects.Copy;
+        // Only allow copy for folders (using new DataTransfer API)
+        if (e.DataTransfer.Contains(DataFormat.File))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
     }
     
     private void Drop(object? sender, DragEventArgs e)
     {
-#pragma warning disable CS0618 // Type or member is obsolete
-        var files = e.Data.GetFiles()?.ToArray();
-#pragma warning restore CS0618
-        if (files != null && files.Length > 0)
+        if (!e.DataTransfer.Contains(DataFormat.File)) return;
+        
+        var files = e.DataTransfer.TryGetFiles();
+        
+        if (files != null && files.Length > 0 && DataContext is ViewModels.OffloadViewModel vm)
         {
             var path = files[0].Path.LocalPath;
             
-            // Determine which border was dropped on
-            if (sender is Border border && DataContext is ViewModels.OffloadViewModel vm)
+            // Check if it's a directory
+            if (System.IO.Directory.Exists(path))
             {
-                // Check if it's a directory
-                if (System.IO.Directory.Exists(path))
+                // Determine which TextBox was dropped on by checking the Grid row
+                if (sender is TextBox textBox && textBox.Parent is Grid grid)
                 {
-                    // Find which border by checking the row
-                    var parent = border.Parent as Grid;
-                    var row = Grid.GetRow(border);
+                    var row = Grid.GetRow(textBox);
                     
-                    if (row == 0)
-                        vm.SourceFolder = path;
-                    else if (row == 1)
-                        vm.DestinationA = path;
-                    else if (row == 2)
-                        vm.DestinationB = path;
-                        
-                    vm.AppendLog($"Dropped: {path}");
+                    switch (row)
+                    {
+                        case 0:
+                            vm.SourceFolder = path;
+                            vm.AppendLog($"Source: {path}");
+                            break;
+                        case 1:
+                            vm.DestinationA = path;
+                            vm.AppendLog($"Destination A: {path}");
+                            break;
+                        case 2:
+                            vm.DestinationB = path;
+                            vm.AppendLog($"Destination B: {path}");
+                            break;
+                    }
                 }
+            }
+            else
+            {
+                // It's a file, not a folder
+                vm.AppendLog("⚠️ Please drop a folder, not a file");
             }
         }
     }

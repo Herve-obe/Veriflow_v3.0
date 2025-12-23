@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -85,10 +86,17 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenSessionAsync()
     {
-        // TODO: Show file picker dialog
-        // await _sessionService.LoadSessionAsync(filePath);
-        UpdateWindowTitle();
-        await Task.CompletedTask;
+        var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
+        var filters = new[] { "Veriflow Session|*.vfsession", "All Files|*.*" };
+        
+        var files = await dialogService.ShowFilePickerAsync("Open Session", false, filters);
+        if (files != null && files.Length > 0)
+        {
+            var filePath = files[0];
+            await _sessionService.LoadSessionAsync(filePath);
+            UpdateWindowTitle();
+            StatusMessage = $"Session loaded: {Path.GetFileName(filePath)}";
+        }
     }
     
     [RelayCommand]
@@ -105,6 +113,44 @@ public partial class MainWindowViewModel : ViewModelBase
 #pragma warning disable CS8625
         aboutWindow.ShowDialog(null);
 #pragma warning restore CS8625
+    }
+    
+    [RelayCommand]
+    private void Exit()
+    {
+        if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime lifetime)
+        {
+            lifetime.Shutdown();
+        }
+    }
+    
+    [RelayCommand]
+    private void OpenLogFolder()
+    {
+        var logPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Veriflow",
+            "Logs"
+        );
+        
+        // Create directory if it doesn't exist
+        Directory.CreateDirectory(logPath);
+        
+        // Open in Windows Explorer
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = logPath,
+                UseShellExecute = true,
+                Verb = "open"
+            });
+            StatusMessage = "Log folder opened";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to open log folder: {ex.Message}";
+        }
     }
     
     private void UpdateWindowTitle()

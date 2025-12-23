@@ -207,4 +207,94 @@ public partial class ReportsViewModel : ViewModelBase
         StatusMessage = "Import clips from session";
         await Task.CompletedTask;
     }
+    
+    [RelayCommand]
+    private async Task ExportEdlAsync()
+    {
+        if (Clips.Count == 0)
+        {
+            StatusMessage = "No clips to export";
+            return;
+        }
+        
+        var outputPath = await _dialogService.ShowSaveFileDialogAsync(
+            "Export EDL",
+            $"Session_{DateTime.Now:yyyyMMdd}.edl",
+            new[] { "EDL Files|*.edl" }
+        );
+        
+        if (string.IsNullOrEmpty(outputPath)) return;
+        
+        IsGenerating = true;
+        IsBusy = true;
+        
+        try
+        {
+            StatusMessage = "Generating EDL...";
+            
+            var edlService = new Veriflow.Core.Services.EdlAleService();
+            var result = await edlService.GenerateEdlAsync(
+                Clips.ToList(),
+                outputPath,
+                ReportData.ProjectName ?? "VERIFLOW EXPORT",
+                25.0,
+                CancellationToken.None
+            );
+            
+            StatusMessage = $"EDL exported: {System.IO.Path.GetFileName(result)}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            IsGenerating = false;
+            IsBusy = false;
+        }
+    }
+    
+    [RelayCommand]
+    private async Task ExportAleAsync()
+    {
+        if (Clips.Count == 0)
+        {
+            StatusMessage = "No clips to export";
+            return;
+        }
+        
+        var outputPath = await _dialogService.ShowSaveFileDialogAsync(
+            "Export ALE",
+            $"Session_{DateTime.Now:yyyyMMdd}.ale",
+            new[] { "ALE Files|*.ale" }
+        );
+        
+        if (string.IsNullOrEmpty(outputPath)) return;
+        
+        IsGenerating = true;
+        IsBusy = true;
+        
+        try
+        {
+            StatusMessage = "Generating ALE...";
+            
+            var edlService = new Veriflow.Core.Services.EdlAleService();
+            var result = await edlService.GenerateAleAsync(
+                Clips.ToList(),
+                outputPath,
+                CancellationToken.None
+            );
+            
+            StatusMessage = $"ALE exported: {System.IO.Path.GetFileName(result)}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            IsGenerating = false;
+            IsBusy = false;
+        }
+    }
 }

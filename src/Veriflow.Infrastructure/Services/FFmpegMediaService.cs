@@ -247,9 +247,28 @@ public class FFmpegMediaService : IMediaService
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
     }
     
+    
     public async Task<bool> VerifyHashAsync(string filePath, string expectedHash, string algorithm = "xxHash64", CancellationToken cancellationToken = default)
     {
         var actualHash = await CalculateHashAsync(filePath, algorithm, null, cancellationToken);
         return string.Equals(actualHash, expectedHash, StringComparison.OrdinalIgnoreCase);
+    }
+    
+    public async Task<Dictionary<string, string>> ReadWavBwfMetadataAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        var editor = new WavMetadataEditor();
+        return await editor.ReadBwfMetadataAsync(filePath, cancellationToken);
+    }
+    
+    public async Task<Dictionary<string, string>> ReadWavIxmlMetadataAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        var editor = new WavMetadataEditor();
+        return await editor.ReadIxmlMetadataAsync(filePath, cancellationToken);
+    }
+    
+    public async Task WriteWavBwfMetadataAsync(string filePath, Dictionary<string, string> metadata, CancellationToken cancellationToken = default)
+    {
+        var editor = new WavMetadataEditor();
+        await editor.WriteBwfMetadataAsync(filePath, metadata, cancellationToken);
     }
 }

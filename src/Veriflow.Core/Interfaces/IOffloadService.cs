@@ -36,6 +36,21 @@ public interface IOffloadService
     /// Generate MHL 1.1 hash file
     /// </summary>
     Task GenerateMhlAsync(string directoryPath, string outputPath);
+    
+    /// <summary>
+    /// Get copy history entries
+    /// </summary>
+    Task<List<CopyHistoryEntry>> GetHistoryAsync();
+    
+    /// <summary>
+    /// Add entry to copy history
+    /// </summary>
+    Task AddHistoryEntryAsync(CopyHistoryEntry entry);
+    
+    /// <summary>
+    /// Clear all copy history
+    /// </summary>
+    Task ClearHistoryAsync();
 }
 
 /// <summary>

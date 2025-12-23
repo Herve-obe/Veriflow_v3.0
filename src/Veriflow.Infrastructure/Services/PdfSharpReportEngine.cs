@@ -69,6 +69,26 @@ public class PdfSharpReportEngine : IReportEngine
         }, cancellationToken);
     }
     
+    public async Task<string> GenerateEdlAsync(
+        List<ReportClip> clips,
+        string outputPath,
+        string title = "VERIFLOW EXPORT",
+        double frameRate = 25.0,
+        CancellationToken cancellationToken = default)
+    {
+        var edlService = new Veriflow.Core.Services.EdlAleService();
+        return await edlService.GenerateEdlAsync(clips, outputPath, title, frameRate, cancellationToken);
+    }
+    
+    public async Task<string> GenerateAleAsync(
+        List<ReportClip> clips,
+        string outputPath,
+        CancellationToken cancellationToken = default)
+    {
+        var edlService = new Veriflow.Core.Services.EdlAleService();
+        return await edlService.GenerateAleAsync(clips, outputPath, cancellationToken);
+    }
+    
     private Document CreateCameraReportDocument(ReportData data)
     {
         var document = new Document();

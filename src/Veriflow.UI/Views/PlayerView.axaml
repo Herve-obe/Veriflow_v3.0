@@ -11,6 +11,21 @@
         <vm:PlayerViewModel />
     </Design.DataContext>
     
+    <!-- Keyboard Shortcuts -->
+    <UserControl.KeyBindings>
+        <!-- Playback Controls -->
+        <KeyBinding Gesture="Space" Command="{Binding PlayPauseToggleCommand}" />
+        <KeyBinding Gesture="K" Command="{Binding PauseCommand}" />
+        
+        <!-- Shuttle Controls -->
+        <KeyBinding Gesture="J" Command="{Binding ShuttleBackwardCommand}" />
+        <KeyBinding Gesture="L" Command="{Binding ShuttleForwardCommand}" />
+        
+        <!-- Frame Stepping -->
+        <KeyBinding Gesture="Left" Command="{Binding StepBackwardCommand}" />
+        <KeyBinding Gesture="Right" Command="{Binding StepForwardCommand}" />
+    </UserControl.KeyBindings>
+    
     <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24">
         <!-- Header -->
         <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
@@ -229,6 +244,79 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
+        <!-- Logged Clips Panel -->
+        <Border Grid.Row="2" 
+               Background="{DynamicResource Brush.Background.Secondary}"
+               BorderBrush="{DynamicResource Brush.Border.Default}"
+               BorderThickness="1"
+               CornerRadius="{StaticResource CornerRadius.Medium}"
+               Padding="16"
+               Margin="0,16,0,0"
+               MaxHeight="200">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <TextBlock Grid.Row="0" 
+                          Text="LOGGED CLIPS"
+                          FontSize="{StaticResource FontSize.H3}"
+                          FontWeight="{StaticResource FontWeight.Bold}"
+                          Foreground="{DynamicResource Brush.Text.Primary}"
+                          Margin="0,0,0,8" />
+                
+                <ListBox Grid.Row="1"
+                        ItemsSource="{Binding LoggedClips}"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="200,100,100,*,Auto">
+                                <TextBlock Grid.Column="0" 
+                                          Text="{Binding FileName}"
+                                          FontFamily="{StaticResource Font.Monospace}"
+                                          FontSize="{StaticResource FontSize.Small}" />
+                                <TextBlock Grid.Column="1" 
+                                          Text="{Binding TimecodeIn}"
+                                          FontFamily="{StaticResource Font.Monospace}"
+                                          FontSize="{StaticResource FontSize.Small}"
+                                          Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Column="2" 
+                                          Text="{Binding Duration}"
+                                          FontFamily="{StaticResource Font.Monospace}"
+                                          FontSize="{StaticResource FontSize.Small}"
+                                          Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Column="3" 
+                                          Text="{Binding LoggedAt, StringFormat='{}{0:HH:mm:ss}'}"
+                                          FontSize="{StaticResource FontSize.Small}"
+                                          Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <Button Grid.Column="4"
+                                       Content="✕"
+                                       Classes="Ghost"
+                                       Width="24" Height="24"
+                                       Command="{Binding $parent[UserControl].((vm:PlayerViewModel)DataContext).RemoveLoggedClipCommand}"
+                                       CommandParameter="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                
+                <StackPanel Grid.Row="2" 
+                           Orientation="Horizontal" 
+                           Spacing="8" 
+                           Margin="0,8,0,0">
+                    <Button Content="Log Current Clip"
+                           Classes="Primary"
+                           Command="{Binding LogCurrentClipCommand}" />
+                    <Button Content="Clear All"
+                           Classes="Secondary"
+                           Command="{Binding ClearLoggedClipsCommand}"
+                           IsEnabled="{Binding LoggedClips.Count}" />
+                    <TextBlock Text="{Binding LoggedClips.Count, StringFormat='{}{0} clips logged'}"
+                              VerticalAlignment="Center"
+                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                              FontSize="{StaticResource FontSize.Small}"
+                              Margin="8,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
         
         <!-- Status Bar -->
         <Border Grid.Row="3" 
