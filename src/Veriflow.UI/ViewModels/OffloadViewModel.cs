@@ -38,6 +38,15 @@ public partial class OffloadViewModel : ViewModelBase
     [ObservableProperty]
     private string _logText = "Ready to offload...\n";
     
+    [ObservableProperty]
+    private string _sourceFolder = string.Empty;
+    
+    [ObservableProperty]
+    private string _destinationA = string.Empty;
+    
+    [ObservableProperty]
+    private string _destinationB = string.Empty;
+    
     public OffloadViewModel(IDialogService dialogService, IOffloadService offloadService)
     {
         _dialogService = dialogService;
@@ -198,9 +207,15 @@ public partial class OffloadViewModel : ViewModelBase
         AppendLog($"\nMode: {(IsOffloadMode ? "OFFLOAD" : "VERIFY")}");
     }
     
-    private void AppendLog(string message)
+    public void AppendLog(string message)
     {
         LogText += message + "\n";
+    }
+    
+    [RelayCommand]
+    private void ClearLog()
+    {
+        LogText = "Log cleared.\n";
     }
     
     private static string FormatBytes(long bytes)
