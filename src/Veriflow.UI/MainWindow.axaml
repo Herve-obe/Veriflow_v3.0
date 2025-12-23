@@ -9,19 +9,30 @@
         Title="{Binding WindowTitle}"
         Width="1600" Height="900"
         MinWidth="1280" MinHeight="720"
-        Background="#0D0D0D">
+        Background="{DynamicResource Brush.Background.Primary}"
+        Foreground="{DynamicResource Brush.Text.Primary}"
+        FontFamily="{StaticResource Font.Primary}"
+        FontSize="{StaticResource FontSize.Body}">
     
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
         <!-- Menu Bar -->
-        <Menu Grid.Row="0" Background="#0D0D0D" Foreground="White">
+        <Menu Grid.Row="0" 
+              Background="{DynamicResource Brush.Background.Primary}" 
+              Foreground="{DynamicResource Brush.Text.Primary}">
             <MenuItem Header="File">
-                <MenuItem Header="New Session" Command="{Binding NewSessionCommand}" InputGesture="Ctrl+N" />
-                <MenuItem Header="Open Session..." Command="{Binding OpenSessionCommand}" InputGesture="Ctrl+O" />
-                <MenuItem Header="Save Session" Command="{Binding SaveSessionCommand}" InputGesture="Ctrl+S" />
+                <MenuItem Header="New Session" 
+                         Command="{Binding NewSessionCommand}" 
+                         InputGesture="Ctrl+N" />
+                <MenuItem Header="Open Session..." 
+                         Command="{Binding OpenSessionCommand}" 
+                         InputGesture="Ctrl+O" />
+                <MenuItem Header="Save Session" 
+                         Command="{Binding SaveSessionCommand}" 
+                         InputGesture="Ctrl+S" />
                 <Separator />
                 <MenuItem Header="Exit" />
             </MenuItem>
@@ -31,20 +42,113 @@
         </Menu>
         
         <!-- Main Content -->
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
-            <!-- Left Navigation -->
-            <StackPanel Grid.Column="0" Background="#1A1A1A" Width="80">
-                <TextBlock Text="NAV" Foreground="White" Margin="10" />
-            </StackPanel>
+        <Grid Grid.Row="1" ColumnDefinitions="80,*">
+            <!-- Left Navigation Bar -->
+            <Border Grid.Column="0" 
+                    Background="{DynamicResource Brush.Background.Secondary}"
+                    BorderBrush="{DynamicResource Brush.Border.Default}"
+                    BorderThickness="0,0,1,0">
+                <StackPanel Spacing="{StaticResource Spacing.Small}" Margin="{StaticResource Spacing.Small}">
+                    <!-- Profile Toggle Buttons -->
+                    <StackPanel Spacing="{StaticResource Spacing.Micro}">
+                        <Button Content="VIDEO" 
+                                Classes="Primary"
+                                Width="64" Height="26"
+                                FontSize="{StaticResource FontSize.Caption}"
+                                FontWeight="{StaticResource FontWeight.SemiBold}"
+                                Command="{Binding ToggleProfileCommand}" />
+                        <Button Content="AUDIO" 
+                                Classes="Secondary"
+                                Width="64" Height="26"
+                                FontSize="{StaticResource FontSize.Caption}"
+                                FontWeight="{StaticResource FontWeight.SemiBold}"
+                                Command="{Binding ToggleProfileCommand}" />
+                    </StackPanel>
+                    
+                    <Separator Margin="0,16,0,0" />
+                    
+                    <!-- Navigation Buttons -->
+                    <Button Content="F1" 
+                            Classes="Ghost"
+                            ToolTip.Tip="OFFLOAD"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="OFFLOAD" />
+                    <Button Content="F2" 
+                            Classes="Ghost"
+                            ToolTip.Tip="MEDIA"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="MEDIA" />
+                    <Button Content="F3" 
+                            Classes="Ghost"
+                            ToolTip.Tip="PLAYER"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="PLAYER" />
+                    <Button Content="F4" 
+                            Classes="Ghost"
+                            ToolTip.Tip="SYNC"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="SYNC" />
+                    <Button Content="F5" 
+                            Classes="Ghost"
+                            ToolTip.Tip="TRANSCODE"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="TRANSCODE" />
+                    <Button Content="F6" 
+                            Classes="Ghost"
+                            ToolTip.Tip="REPORTS"
+                            Command="{Binding NavigateToPageCommand}"
+                            CommandParameter="REPORTS" />
+                </StackPanel>
+            </Border>
             
             <!-- Content Area -->
-            <Grid Grid.Column="1">
-                <TextBlock Text="Veriflow 3.0 - Ready" 
-                          Foreground="White" 
-                          FontSize="24"
-                          HorizontalAlignment="Center" 
-                          VerticalAlignment="Center" />
+            <Grid Grid.Column="1" Background="{DynamicResource Brush.Background.Primary}">
+                <StackPanel HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"
+                           Spacing="{StaticResource Spacing.Large}">
+                    <TextBlock Text="Veriflow 3.0" 
+                              FontSize="{StaticResource FontSize.Display}"
+                              FontWeight="{StaticResource FontWeight.Bold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              HorizontalAlignment="Center" />
+                    
+                    <TextBlock Text="Professional Cross-Platform DIT Tool" 
+                              FontSize="{StaticResource FontSize.H2}"
+                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                              HorizontalAlignment="Center" />
+                    
+                    <StackPanel Orientation="Horizontal" 
+                               Spacing="{StaticResource Spacing.Medium}"
+                               HorizontalAlignment="Center"
+                               Margin="0,32,0,0">
+                        <Button Content="New Session" 
+                               Classes="Primary"
+                               Command="{Binding NewSessionCommand}" />
+                        <Button Content="Open Session" 
+                               Classes="Secondary"
+                               Command="{Binding OpenSessionCommand}" />
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </Grid>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="2" 
+                Background="{DynamicResource Brush.Background.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border.Default}"
+                BorderThickness="0,1,0,0"
+                Padding="{StaticResource Spacing.Small}">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                          Text="{Binding StatusMessage}"
+                          Foreground="{DynamicResource Brush.Text.Secondary}"
+                          FontSize="{StaticResource FontSize.Small}" />
+                <TextBlock Grid.Column="1" 
+                          Text="{Binding CurrentProfile}"
+                          Foreground="{DynamicResource Brush.Accent.Primary}"
+                          FontSize="{StaticResource FontSize.Small}"
+                          FontWeight="{StaticResource FontWeight.SemiBold}" />
+            </Grid>
+        </Border>
     </Grid>
 </Window>
