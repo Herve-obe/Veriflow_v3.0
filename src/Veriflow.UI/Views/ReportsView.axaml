@@ -1,0 +1,134 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Veriflow.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
+             x:Class="Veriflow.UI.Views.ReportsView"
+             x:DataType="vm:ReportsViewModel">
+    
+    <Design.DataContext>
+        <vm:ReportsViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="REPORTS" 
+                      FontSize="{StaticResource FontSize.H1}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Text.Primary}" />
+            <TextBlock Text="Quality control reports and EDL generation" 
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,350">
+            <!-- File List -->
+            <Border Grid.Column="0"
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Margin="0,0,16,0">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" 
+                         Background="{DynamicResource Brush.Background.Tertiary}"
+                         Margin="16,12">
+                        <TextBlock Grid.Column="0" 
+                                  Text="FILES FOR REPORT"
+                                  FontSize="{StaticResource FontSize.H3}"
+                                  FontWeight="{StaticResource FontWeight.SemiBold}"
+                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                        <TextBlock Grid.Column="1" 
+                                  Text="{Binding ReportFiles.Count, StringFormat='{}{0} files'}"
+                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                  VerticalAlignment="Center" />
+                    </Grid>
+                    
+                    <ListBox Grid.Row="1"
+                            ItemsSource="{Binding ReportFiles}"
+                            Background="Transparent"
+                            Margin="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                              Text="📄"
+                                              FontSize="20"
+                                              Margin="0,0,12,0" />
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="{Binding FileName}"
+                                                  FontSize="{StaticResource FontSize.Body}"
+                                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                                        <TextBlock Text="{Binding Duration, StringFormat='Duration: {0}'}"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+            
+            <!-- Report Configuration -->
+            <Border Grid.Column="1"
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Padding="16">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="REPORT CONFIGURATION" 
+                              FontSize="{StaticResource FontSize.H3}"
+                              FontWeight="{StaticResource FontWeight.SemiBold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}" />
+                    
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Report Type:"
+                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                  FontSize="{StaticResource FontSize.Small}" />
+                        <TextBlock Text="{Binding ReportType}"
+                                  FontSize="{StaticResource FontSize.Body}"
+                                  FontWeight="{StaticResource FontWeight.Medium}"
+                                  Foreground="{DynamicResource Brush.Accent.Primary}" />
+                    </StackPanel>
+                    
+                    <Separator />
+                    
+                    <StackPanel Spacing="8">
+                        <Button Content="Add Files" 
+                               Classes="Secondary"
+                               Command="{Binding AddFilesCommand}" />
+                        <Button Content="Clear Files" 
+                               Classes="Ghost"
+                               Command="{Binding ClearFilesCommand}" />
+                    </StackPanel>
+                    
+                    <Separator />
+                    
+                    <StackPanel Spacing="8">
+                        <Button Content="Generate PDF Report" 
+                               Classes="Primary"
+                               Command="{Binding GeneratePdfReportCommand}"
+                               IsEnabled="{Binding ReportFiles.Count}" />
+                        <Button Content="Export EDL/ALE" 
+                               Classes="Secondary"
+                               Command="{Binding ExportEdlCommand}"
+                               IsEnabled="{Binding IsVideoMode}"
+                               IsVisible="{Binding IsVideoMode}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+        
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,24,0,0">
+            <TextBlock Text="Ready to generate report"
+                      Foreground="{DynamicResource Brush.Text.Secondary}"
+                      VerticalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</UserControl>

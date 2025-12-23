@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Veriflow.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
+             x:Class="Veriflow.UI.Views.TranscodeView"
+             x:DataType="vm:TranscodeViewModel">
+    
+    <Design.DataContext>
+        <vm:TranscodeViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="TRANSCODE" 
+                      FontSize="{StaticResource FontSize.H1}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Text.Primary}" />
+            <TextBlock Text="Format conversion and encoding" 
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Preset Selection -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
+            <TextBlock Grid.Column="0" 
+                      Text="Preset:"
+                      VerticalAlignment="Center"
+                      Foreground="{DynamicResource Brush.Text.Primary}"
+                      Margin="0,0,16,0" />
+            <ComboBox Grid.Column="1"
+                     ItemsSource="{Binding Presets}"
+                     SelectedItem="{Binding SelectedPreset}"
+                     HorizontalAlignment="Stretch" />
+        </Grid>
+        
+        <!-- Queue -->
+        <Border Grid.Row="2"
+               Background="{DynamicResource Brush.Background.Secondary}"
+               BorderBrush="{DynamicResource Brush.Border.Default}"
+               BorderThickness="1"
+               CornerRadius="{StaticResource CornerRadius.Medium}"
+               Margin="0,0,0,16">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" 
+                     Background="{DynamicResource Brush.Background.Tertiary}"
+                     Margin="16,12">
+                    <TextBlock Grid.Column="0" 
+                              Text="TRANSCODE QUEUE"
+                              FontSize="{StaticResource FontSize.H3}"
+                              FontWeight="{StaticResource FontWeight.SemiBold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}" />
+                    <TextBlock Grid.Column="1" 
+                              Text="{Binding TranscodeQueue.Count, StringFormat='{}{0} items'}"
+                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                              VerticalAlignment="Center" />
+                </Grid>
+                
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding TranscodeQueue}" Margin="16">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource Brush.Background.Primary}"
+                                       BorderBrush="{DynamicResource Brush.Border.Default}"
+                                       BorderThickness="1"
+                                       CornerRadius="{StaticResource CornerRadius.Small}"
+                                       Padding="12"
+                                       Margin="0,0,0,8">
+                                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                                  Text="{Binding SourceFile}"
+                                                  FontFamily="{StaticResource Font.Monospace}"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                                  Text="{Binding Status}"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                  Margin="16,0,0,0" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                  Text="{Binding Preset}"
+                                                  FontSize="{StaticResource FontSize.Caption}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                  Margin="0,4,0,8" />
+                                        <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                    Classes="Modern"
+                                                    Value="{Binding Progress}"
+                                                    Maximum="100" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        
+        <!-- Actions -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="16">
+            <Button Content="Add Files" 
+                   Classes="Primary"
+                   Command="{Binding AddFilesCommand}" />
+            <Button Content="Start Transcode" 
+                   Classes="Primary"
+                   Command="{Binding StartTranscodeCommand}"
+                   IsEnabled="{Binding !IsTranscoding}" />
+            <Button Content="Cancel" 
+                   Classes="Secondary"
+                   Command="{Binding CancelTranscodeCommand}"
+                   IsEnabled="{Binding IsTranscoding}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

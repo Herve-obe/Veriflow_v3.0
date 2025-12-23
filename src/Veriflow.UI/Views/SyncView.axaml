@@ -1,0 +1,144 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Veriflow.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
+             x:Class="Veriflow.UI.Views.SyncView"
+             x:DataType="vm:SyncViewModel">
+    
+    <Design.DataContext>
+        <vm:SyncViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="SYNC" 
+                      FontSize="{StaticResource FontSize.H1}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Text.Primary}" />
+            <TextBlock Text="Multi-camera and multi-track synchronization" 
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*">
+            <!-- Video Files -->
+            <Border Grid.Column="0" 
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Margin="0,0,8,0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" 
+                              Text="VIDEO FILES"
+                              FontSize="{StaticResource FontSize.H3}"
+                              FontWeight="{StaticResource FontWeight.SemiBold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              Margin="16,16,16,8" />
+                    <ListBox Grid.Row="1"
+                            ItemsSource="{Binding VideoFiles}"
+                            Background="Transparent"
+                            Margin="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FileName}"
+                                          FontSize="{StaticResource FontSize.Small}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Grid.Row="2" 
+                           Content="Import Videos"
+                           Classes="Secondary"
+                           Command="{Binding ImportVideoFilesCommand}"
+                           Margin="16" />
+                </Grid>
+            </Border>
+            
+            <!-- Audio Files -->
+            <Border Grid.Column="1" 
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Margin="8,0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" 
+                              Text="AUDIO FILES"
+                              FontSize="{StaticResource FontSize.H3}"
+                              FontWeight="{StaticResource FontWeight.SemiBold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              Margin="16,16,16,8" />
+                    <ListBox Grid.Row="1"
+                            ItemsSource="{Binding AudioFiles}"
+                            Background="Transparent"
+                            Margin="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FileName}"
+                                          FontSize="{StaticResource FontSize.Small}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Grid.Row="2" 
+                           Content="Import Audio"
+                           Classes="Secondary"
+                           Command="{Binding ImportAudioFilesCommand}"
+                           Margin="16" />
+                </Grid>
+            </Border>
+            
+            <!-- Synced Pairs -->
+            <Border Grid.Column="2" 
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Margin="8,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" 
+                              Text="SYNCED PAIRS"
+                              FontSize="{StaticResource FontSize.H3}"
+                              FontWeight="{StaticResource FontWeight.SemiBold}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              Margin="16,16,16,8" />
+                    <ListBox Grid.Row="1"
+                            ItemsSource="{Binding SyncedPairs}"
+                            Background="Transparent"
+                            Margin="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding Video.FileName}"
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Accent.Video.Primary}" />
+                                    <TextBlock Text="{Binding Audio.FileName}"
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Accent.Audio.Primary}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+        
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,24,0,0">
+            <Button Content="Sync by Timecode" 
+                   Classes="Primary"
+                   Command="{Binding SyncByTimecodeCommand}"
+                   IsEnabled="{Binding !IsBusy}" />
+            <Button Content="Sync by Waveform (FFT)" 
+                   Classes="Primary"
+                   Command="{Binding SyncByWaveformCommand}"
+                   IsEnabled="{Binding !IsBusy}" />
+            <Button Content="Export Synced Files" 
+                   Classes="Secondary"
+                   Command="{Binding ExportSyncedFilesCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
