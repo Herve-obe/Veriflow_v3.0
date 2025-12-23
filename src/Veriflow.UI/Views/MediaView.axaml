@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Veriflow.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
+             x:Class="Veriflow.UI.Views.MediaView"
+             x:DataType="vm:MediaViewModel">
+    
+    <Design.DataContext>
+        <vm:MediaViewModel />
+    </Design.DataContext>
+    
+    <Grid ColumnDefinitions="*,350" Margin="24">
+        <!-- File Browser -->
+        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*" Margin="0,0,16,0">
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+                <TextBlock Text="MEDIA" 
+                          FontSize="{StaticResource FontSize.H1}"
+                          FontWeight="{StaticResource FontWeight.Bold}"
+                          Foreground="{DynamicResource Brush.Text.Primary}" />
+                <TextBlock Text="File browser and media library management" 
+                          FontSize="{StaticResource FontSize.Body}"
+                          Foreground="{DynamicResource Brush.Text.Secondary}" />
+            </StackPanel>
+            
+            <!-- Path and Search -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                <TextBox Grid.Column="0" 
+                        Classes="Modern"
+                        Text="{Binding CurrentPath}"
+                        Watermark="Enter path or search..."
+                        Margin="0,0,8,0" />
+                <Button Grid.Column="1" 
+                       Content="Browse..."
+                       Classes="Secondary"
+                       Command="{Binding LoadMediaFilesCommand}" />
+            </Grid>
+            
+            <!-- File Grid -->
+            <Border Grid.Row="2"
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding MediaFiles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="160" Height="120" 
+                                       Margin="8"
+                                       Background="{DynamicResource Brush.Background.Tertiary}"
+                                       CornerRadius="{StaticResource CornerRadius.Small}">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="📁" FontSize="32" HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding FileName}" 
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Primary}"
+                                                  TextTrimming="CharacterEllipsis"
+                                                  Margin="8,4" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+        
+        <!-- Metadata Panel -->
+        <Border Grid.Column="1"
+               Background="{DynamicResource Brush.Background.Secondary}"
+               BorderBrush="{DynamicResource Brush.Border.Default}"
+               BorderThickness="1"
+               CornerRadius="{StaticResource CornerRadius.Medium}"
+               Padding="16">
+            <StackPanel Spacing="16">
+                <TextBlock Text="METADATA" 
+                          FontSize="{StaticResource FontSize.H3}"
+                          FontWeight="{StaticResource FontWeight.SemiBold}"
+                          Foreground="{DynamicResource Brush.Text.Primary}" />
+                
+                <TextBlock Text="Select a file to view metadata"
+                          Foreground="{DynamicResource Brush.Text.Secondary}"
+                          FontSize="{StaticResource FontSize.Small}"
+                          TextWrapping="Wrap" />
+                
+                <StackPanel Spacing="8" Margin="0,16,0,0">
+                    <Button Content="Preview" 
+                           Classes="Primary"
+                           Command="{Binding PreviewMediaCommand}"
+                           IsEnabled="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <Button Content="Edit Metadata" 
+                           Classes="Secondary"
+                           Command="{Binding EditMetadataCommand}"
+                           IsEnabled="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

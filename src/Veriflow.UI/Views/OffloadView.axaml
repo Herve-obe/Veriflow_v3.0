@@ -1,0 +1,141 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Veriflow.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
+             x:Class="Veriflow.UI.Views.OffloadView"
+             x:DataType="vm:OffloadViewModel">
+    
+    <Design.DataContext>
+        <vm:OffloadViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="OFFLOAD" 
+                      FontSize="{StaticResource FontSize.H1}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Text.Primary}" />
+            <TextBlock Text="Secure dual-destination file copying with MHL 1.1 verification" 
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*">
+            <!-- Mode Toggle -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="0,0,0,24">
+                <Button Content="OFFLOAD MODE" 
+                       Classes="Primary"
+                       IsEnabled="{Binding IsOffloadMode}"
+                       Command="{Binding ToggleModeCommand}" />
+                <Button Content="VERIFY MODE" 
+                       Classes="Secondary"
+                       IsEnabled="{Binding !IsOffloadMode}"
+                       Command="{Binding ToggleModeCommand}" />
+            </StackPanel>
+            
+            <!-- Folder Selection -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="200,*,Auto" Margin="0,0,0,24">
+                <!-- Source -->
+                <TextBlock Grid.Row="0" Grid.Column="0" 
+                          Text="Source Folder:"
+                          VerticalAlignment="Center"
+                          Foreground="{DynamicResource Brush.Text.Primary}" />
+                <TextBox Grid.Row="0" Grid.Column="1" 
+                        Classes="Modern"
+                        Text="{Binding SourceFolder}"
+                        IsReadOnly="True"
+                        Margin="0,0,8,0" />
+                <Button Grid.Row="0" Grid.Column="2" 
+                       Content="Browse..."
+                       Classes="Secondary"
+                       Command="{Binding SelectSourceFolderCommand}" />
+                
+                <!-- Destination A -->
+                <TextBlock Grid.Row="1" Grid.Column="0" 
+                          Text="Destination A:"
+                          VerticalAlignment="Center"
+                          Foreground="{DynamicResource Brush.Text.Primary}"
+                          Margin="0,16,0,0" />
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                        Classes="Modern"
+                        Text="{Binding DestinationA}"
+                        IsReadOnly="True"
+                        Margin="0,16,8,0" />
+                <Button Grid.Row="1" Grid.Column="2" 
+                       Content="Browse..."
+                       Classes="Secondary"
+                       Command="{Binding SelectDestinationACommand}"
+                       Margin="0,16,0,0" />
+                
+                <!-- Destination B -->
+                <TextBlock Grid.Row="2" Grid.Column="0" 
+                          Text="Destination B:"
+                          VerticalAlignment="Center"
+                          Foreground="{DynamicResource Brush.Text.Primary}"
+                          Margin="0,16,0,0" />
+                <TextBox Grid.Row="2" Grid.Column="1" 
+                        Classes="Modern"
+                        Text="{Binding DestinationB}"
+                        IsReadOnly="True"
+                        Margin="0,16,8,0" />
+                <Button Grid.Row="2" Grid.Column="2" 
+                       Content="Browse..."
+                       Classes="Secondary"
+                       Command="{Binding SelectDestinationBCommand}"
+                       Margin="0,16,0,0" />
+            </Grid>
+            
+            <!-- Progress -->
+            <Border Grid.Row="2" 
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Padding="16"
+                   Margin="0,0,0,24">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="{Binding CurrentFile}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              FontFamily="{StaticResource Font.Monospace}"
+                              FontSize="{StaticResource FontSize.Small}" />
+                    <ProgressBar Classes="Prominent"
+                                Value="{Binding Progress}"
+                                Maximum="100" />
+                    <TextBlock Text="{Binding Progress, StringFormat='{}{0:F1}% complete'}"
+                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                              FontSize="{StaticResource FontSize.Small}" />
+                </StackPanel>
+            </Border>
+            
+            <!-- Log Area -->
+            <Border Grid.Row="3"
+                   Background="{DynamicResource Brush.Background.Secondary}"
+                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                   BorderThickness="1"
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Padding="16">
+                <ScrollViewer>
+                    <TextBlock Text="Ready to offload..."
+                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                              FontFamily="{StaticResource Font.Monospace}"
+                              FontSize="{StaticResource FontSize.Small}" />
+                </ScrollViewer>
+            </Border>
+        </Grid>
+        
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,24,0,0">
+            <Button Content="Start Offload" 
+                   Classes="Primary"
+                   Command="{Binding StartOffloadCommand}"
+                   IsEnabled="{Binding !IsBusy}" />
+            <Button Content="Cancel" 
+                   Classes="Secondary"
+                   IsEnabled="{Binding IsBusy}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
