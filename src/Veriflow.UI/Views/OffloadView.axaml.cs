@@ -24,7 +24,9 @@ public partial class OffloadView : UserControl
     
     private void Drop(object? sender, DragEventArgs e)
     {
+#pragma warning disable CS0618 // Type or member is obsolete
         var files = e.Data.GetFiles()?.ToArray();
+#pragma warning restore CS0618
         if (files != null && files.Length > 0)
         {
             var path = files[0].Path.LocalPath;

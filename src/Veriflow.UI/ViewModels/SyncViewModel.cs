@@ -142,6 +142,18 @@ public partial class SyncViewModel : ViewModelBase
     }
     
     [RelayCommand]
+    private async Task AutoSyncAsync()
+    {
+        await SynchronizeSelectedAsync();
+    }
+    
+    [RelayCommand]
+    private async Task SyncByWaveformAsync()
+    {
+        await SynchronizeSelectedAsync();
+    }
+    
+    [RelayCommand]
     private async Task SynchronizeSelectedAsync()
     {
         if (SelectedVideo == null || SelectedAudio == null)

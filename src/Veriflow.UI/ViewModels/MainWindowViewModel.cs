@@ -98,7 +98,10 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ShowAbout()
     {
         var aboutWindow = new AboutWindow();
-        aboutWindow.ShowDialog(null);
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            aboutWindow.ShowDialog(desktop.MainWindow!);
+        }
     }
     
     private void UpdateWindowTitle()
