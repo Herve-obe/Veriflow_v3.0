@@ -37,7 +37,7 @@ public class LibVLCVideoEngine : IVideoEngine, IDisposable
     {
         try
         {
-            Core.Initialize();
+            LibVLCSharp.Shared.Core.Initialize();
             
             _libVLC = new LibVLC(enableDebugLogs: false);
             _mediaPlayer = new MediaPlayer(_libVLC);
@@ -68,6 +68,9 @@ public class LibVLCVideoEngine : IVideoEngine, IDisposable
                 _currentMedia?.Dispose();
                 
                 // Create new media
+                if (_libVLC == null)
+                    throw new InvalidOperationException("LibVLC not initialized");
+                
                 _currentMedia = new Media(_libVLC, filePath, FromType.FromPath);
                 
                 // Parse media to get metadata
@@ -192,14 +195,19 @@ public class LibVLCVideoEngine : IVideoEngine, IDisposable
     
     public double GetFrameRate()
     {
-        if (_mediaPlayer?.Media == null) return 0;
+        if (_mediaPlayer?.Media == null) return 25.0;
         
         // Try to get frame rate from media tracks
         foreach (var track in _mediaPlayer.Media.Tracks)
         {
             if (track.TrackType == TrackType.Video && track is MediaTrack videoTrack)
             {
-                return videoTrack.Data.Video.FrameRate;
+                // LibVLCSharp API: FrameRateNum / FrameRateDen
+                var frameRateNum = videoTrack.Data.Video.FrameRateNum;
+                var frameRateDen = videoTrack.Data.Video.FrameRateDen;
+                
+                if (frameRateDen > 0)
+                    return (double)frameRateNum / frameRateDen;
             }
         }
         
