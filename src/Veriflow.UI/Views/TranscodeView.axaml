@@ -104,7 +104,7 @@
                    Command="{Binding AddFilesToQueueCommand}" />
             <Button Content="Start Transcode" 
                    Classes="Primary"
-                   Command="{Binding StartProcessingCommand}"
+                   Command="{Binding StartQueueCommand}"
                    IsEnabled="{Binding !IsProcessing}" />
             <Button Content="Cancel" 
                    Classes="Secondary"

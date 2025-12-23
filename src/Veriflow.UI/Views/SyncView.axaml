@@ -130,7 +130,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,24,0,0">
             <Button Content="Sync by Timecode" 
                    Classes="Primary"
-                   Command="{Binding SyncByTimecodeCommand}"
+                   Command="{Binding AutoSyncCommand}"
                    IsEnabled="{Binding !IsBusy}" />
             <Button Content="Sync by Waveform (FFT)" 
                    Classes="Primary"
@@ -138,7 +138,7 @@
                    IsEnabled="{Binding !IsBusy}" />
             <Button Content="Export Synced Files" 
                    Classes="Secondary"
-                   Command="{Binding ExportCommand}" />
+                   Command="{Binding ClearAllCommand}" />
         </StackPanel>
     </Grid>
 </UserControl>
