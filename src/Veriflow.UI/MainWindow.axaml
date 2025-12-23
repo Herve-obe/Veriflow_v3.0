@@ -53,17 +53,29 @@
                     <!-- Profile Toggle Buttons -->
                     <StackPanel Spacing="{StaticResource Spacing.Micro}">
                         <Button Content="VIDEO" 
-                                Classes="Primary"
                                 Width="64" Height="26"
                                 FontSize="{StaticResource FontSize.Caption}"
                                 FontWeight="{StaticResource FontWeight.SemiBold}"
-                                Command="{Binding ToggleProfileCommand}" />
+                                Command="{Binding ToggleProfileCommand}">
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </Button.Styles>
+                        </Button>
                         <Button Content="AUDIO" 
-                                Classes="Secondary"
                                 Width="64" Height="26"
                                 FontSize="{StaticResource FontSize.Caption}"
                                 FontWeight="{StaticResource FontWeight.SemiBold}"
-                                Command="{Binding ToggleProfileCommand}" />
+                                Command="{Binding ToggleProfileCommand}">
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Audio.Primary}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </Button.Styles>
+                        </Button>
                     </StackPanel>
                     
                     <Separator Margin="0,16,0,0" />
