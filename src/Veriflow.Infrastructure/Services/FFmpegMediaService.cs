@@ -65,7 +65,10 @@ public class FFmpegMediaService : IMediaService
                         mediaFile.Duration = TimeSpan.FromSeconds(duration.GetDouble());
                     
                     if (format.TryGetProperty("bit_rate", out var bitrate))
-                        long.TryParse(bitrate.GetString(), out var br) ? mediaFile.Bitrate = br : 0;
+                    {
+                        if (long.TryParse(bitrate.GetString(), out var br))
+                            mediaFile.Bitrate = br;
+                    }
                 }
                 
                 // Extract streams info
@@ -103,7 +106,10 @@ public class FFmpegMediaService : IMediaService
                                 mediaFile.AudioCodec = codec.GetString() ?? string.Empty;
                             
                             if (stream.TryGetProperty("sample_rate", out var sampleRate))
-                                int.TryParse(sampleRate.GetString(), out var sr) ? mediaFile.SampleRate = sr : 0;
+                            {
+                                if (int.TryParse(sampleRate.GetString(), out var sr))
+                                    mediaFile.SampleRate = sr;
+                            }
                             
                             if (stream.TryGetProperty("channels", out var channels))
                                 mediaFile.Channels = channels.GetInt32();
