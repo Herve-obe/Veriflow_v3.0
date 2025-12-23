@@ -1,31 +1,24 @@
-using Veriflow.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Veriflow.Core.Interfaces;
 
 /// <summary>
-/// Interface for audio engine operations
+/// Audio engine interface for multi-track playback
 /// </summary>
 public interface IAudioEngine
 {
     /// <summary>
-    /// Initialize the audio engine
+    /// Load an audio file into a track
     /// </summary>
-    void Initialize(int sampleRate = 48000, int channels = 2);
+    Task LoadTrackAsync(int trackIndex, string filePath, CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Load an audio track
+    /// Unload a track
     /// </summary>
-    Task<AudioTrack> LoadTrackAsync(string filePath, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Add a track to the playback mixer
-    /// </summary>
-    void AddTrack(AudioTrack track);
-    
-    /// <summary>
-    /// Remove a track from the playback mixer
-    /// </summary>
-    void RemoveTrack(Guid trackId);
+    void UnloadTrack(int trackIndex);
     
     /// <summary>
     /// Start playback
@@ -43,24 +36,64 @@ public interface IAudioEngine
     void Stop();
     
     /// <summary>
-    /// Seek to a specific sample position
+    /// Seek to position in seconds
     /// </summary>
-    void Seek(long samplePosition);
+    void Seek(double positionSeconds);
     
     /// <summary>
-    /// Get current playback position in samples
+    /// Set track volume (0.0 to 1.0)
     /// </summary>
-    long GetPosition();
+    void SetTrackVolume(int trackIndex, float volume);
     
     /// <summary>
-    /// Get peak level for a specific track
+    /// Set track pan (-1.0 to 1.0)
     /// </summary>
-    float GetPeakLevel(Guid trackId);
+    void SetTrackPan(int trackIndex, float pan);
     
     /// <summary>
-    /// Get RMS level for a specific track
+    /// Mute/unmute track
     /// </summary>
-    float GetRMSLevel(Guid trackId);
+    void SetTrackMute(int trackIndex, bool muted);
+    
+    /// <summary>
+    /// Solo track
+    /// </summary>
+    void SetTrackSolo(int trackIndex, bool solo);
+    
+    /// <summary>
+    /// Get current playback position in seconds
+    /// </summary>
+    double GetPosition();
+    
+    /// <summary>
+    /// Get total duration in seconds
+    /// </summary>
+    double GetDuration();
+    
+    /// <summary>
+    /// Get current peak levels for a track (L/R)
+    /// </summary>
+    (float left, float right) GetTrackPeaks(int trackIndex);
+    
+    /// <summary>
+    /// Get master output peaks (L/R)
+    /// </summary>
+    (float left, float right) GetMasterPeaks();
+    
+    /// <summary>
+    /// Is currently playing
+    /// </summary>
+    bool IsPlaying { get; }
+    
+    /// <summary>
+    /// Maximum number of tracks
+    /// </summary>
+    int MaxTracks { get; }
+    
+    /// <summary>
+    /// Sample rate
+    /// </summary>
+    int SampleRate { get; }
     
     /// <summary>
     /// Dispose resources
