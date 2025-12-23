@@ -1,102 +1,299 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
 
 namespace Veriflow.UI.ViewModels;
 
 /// <summary>
 /// ViewModel for SYNC page (F4)
-/// Multi-camera and multi-track synchronization
+/// Audio/video synchronization with waveform correlation
 /// </summary>
 public partial class SyncViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private ObservableCollection<MediaFile> _videoFiles = new();
+    private readonly ISyncEngine _syncEngine;
+    private readonly IMediaService _mediaService;
+    private readonly IDialogService _dialogService;
+    private CancellationTokenSource? _cancellationTokenSource;
     
     [ObservableProperty]
-    private ObservableCollection<MediaFile> _audioFiles = new();
+    private ObservableCollection<SyncPoolItem> _videoPool = new();
     
     [ObservableProperty]
-    private ObservableCollection<SyncPair> _syncedPairs = new();
+    private ObservableCollection<SyncPoolItem> _audioPool = new();
+    
+    [ObservableProperty]
+    private ObservableCollection<SyncPair> _syncPairs = new();
+    
+    [ObservableProperty]
+    private SyncPoolItem? _selectedVideo;
+    
+    [ObservableProperty]
+    private SyncPoolItem? _selectedAudio;
+    
+    [ObservableProperty]
+    private SyncPair? _selectedPair;
     
     [ObservableProperty]
     private double _syncProgress;
     
     [ObservableProperty]
-    private string _syncMethod = "Timecode"; // Timecode or Waveform
+    private string _syncStatus = "Ready";
     
-    public SyncViewModel()
+    public SyncViewModel(ISyncEngine syncEngine, IMediaService mediaService, IDialogService dialogService)
     {
-        StatusMessage = "Import video and audio files to sync";
+        _syncEngine = syncEngine;
+        _mediaService = mediaService;
+        _dialogService = dialogService;
+        
+        StatusMessage = "Add video and audio files to sync";
     }
     
     [RelayCommand]
-    private void ImportVideoFiles()
+    private async Task AddVideoFilesAsync()
     {
-        // TODO: Implement file picker for videos
-        StatusMessage = "Import video files";
-    }
-    
-    [RelayCommand]
-    private void ImportAudioFiles()
-    {
-        // TODO: Implement file picker for audio
-        StatusMessage = "Import audio files";
-    }
-    
-    [RelayCommand]
-    private async Task SyncByTimecodeAsync()
-    {
+        var files = await _dialogService.ShowFilePickerAsync("Select Video Files", true);
+        if (files == null || files.Length == 0) return;
+        
         IsBusy = true;
-        SyncMethod = "Timecode";
-        StatusMessage = "Syncing by timecode...";
+        _cancellationTokenSource = new CancellationTokenSource();
         
         try
         {
-            // TODO: Implement timecode sync
-            await Task.Delay(100); // Placeholder
+            foreach (var file in files)
+            {
+                StatusMessage = $"Loading {System.IO.Path.GetFileName(file)}...";
+                
+                var mediaInfo = await _mediaService.GetMediaInfoAsync(file, _cancellationTokenSource.Token);
+                
+                var poolItem = new SyncPoolItem
+                {
+                    FilePath = file,
+                    FileName = System.IO.Path.GetFileName(file),
+                    Type = MediaType.Video,
+                    Duration = mediaInfo.Duration,
+                    FrameRate = mediaInfo.FrameRate ?? 25.0,
+                    Width = mediaInfo.Width,
+                    Height = mediaInfo.Height,
+                    Timecode = mediaInfo.Timecode
+                };
+                
+                VideoPool.Add(poolItem);
+            }
+            
+            StatusMessage = $"Added {files.Length} video file(s)";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
         }
         finally
         {
             IsBusy = false;
-            StatusMessage = $"Synced {SyncedPairs.Count} pairs by timecode";
         }
     }
     
     [RelayCommand]
-    private async Task SyncByWaveformAsync()
+    private async Task AddAudioFilesAsync()
     {
+        var files = await _dialogService.ShowFilePickerAsync("Select Audio Files", true);
+        if (files == null || files.Length == 0) return;
+        
         IsBusy = true;
-        SyncMethod = "Waveform";
-        StatusMessage = "Syncing by waveform (FFT)...";
+        _cancellationTokenSource = new CancellationTokenSource();
         
         try
         {
-            // TODO: Implement waveform sync with MathNet.Numerics
-            await Task.Delay(100); // Placeholder
+            foreach (var file in files)
+            {
+                StatusMessage = $"Loading {System.IO.Path.GetFileName(file)}...";
+                
+                var mediaInfo = await _mediaService.GetMediaInfoAsync(file, _cancellationTokenSource.Token);
+                
+                var poolItem = new SyncPoolItem
+                {
+                    FilePath = file,
+                    FileName = System.IO.Path.GetFileName(file),
+                    Type = MediaType.Audio,
+                    Duration = mediaInfo.Duration,
+                    SampleRate = mediaInfo.SampleRate,
+                    Channels = mediaInfo.Channels,
+                    Timecode = mediaInfo.Timecode
+                };
+                
+                AudioPool.Add(poolItem);
+            }
+            
+            StatusMessage = $"Added {files.Length} audio file(s)";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
         }
         finally
         {
             IsBusy = false;
-            StatusMessage = $"Synced {SyncedPairs.Count} pairs by waveform";
         }
     }
     
     [RelayCommand]
-    private async Task ExportSyncedFilesAsync()
+    private async Task SynchronizeSelectedAsync()
     {
-        // TODO: Implement export
-        StatusMessage = "Exporting synced files...";
-        await Task.CompletedTask;
+        if (SelectedVideo == null || SelectedAudio == null)
+        {
+            StatusMessage = "Select both video and audio files";
+            return;
+        }
+        
+        IsBusy = true;
+        _cancellationTokenSource = new CancellationTokenSource();
+        SyncProgress = 0;
+        
+        try
+        {
+            SyncStatus = "Analyzing waveforms...";
+            SyncProgress = 25;
+            
+            var result = await _syncEngine.SynchronizeAsync(
+                SelectedVideo.FilePath,
+                SelectedAudio.FilePath,
+                _cancellationTokenSource.Token
+            );
+            
+            SyncProgress = 75;
+            
+            if (result.Success)
+            {
+                var pair = new SyncPair
+                {
+                    VideoItem = SelectedVideo,
+                    AudioItem = SelectedAudio,
+                    Offset = result.Offset,
+                    Confidence = result.Confidence,
+                    IsVerified = result.Confidence > 80
+                };
+                
+                SyncPairs.Add(pair);
+                
+                SyncProgress = 100;
+                SyncStatus = $"Synchronized! Offset: {result.Offset.TotalSeconds:F3}s, Confidence: {result.Confidence:F1}%";
+                StatusMessage = $"Sync complete: {result.FrameOffset} frames @ {result.FrameRate:F2}fps";
+            }
+            else
+            {
+                SyncStatus = $"Sync failed: {result.ErrorMessage}";
+                StatusMessage = "Synchronization failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            SyncStatus = $"Error: {ex.Message}";
+            StatusMessage = "Synchronization error";
+        }
+        finally
+        {
+            IsBusy = false;
+            SyncProgress = 0;
+        }
     }
-}
-
-public class SyncPair
-{
-    public MediaFile Video { get; set; } = new();
-    public MediaFile Audio { get; set; } = new();
-    public long OffsetSamples { get; set; }
-    public string SyncMethod { get; set; } = string.Empty;
+    
+    [RelayCommand]
+    private async Task AutoSyncAllAsync()
+    {
+        if (VideoPool.Count == 0 || AudioPool.Count == 0)
+        {
+            StatusMessage = "Add video and audio files first";
+            return;
+        }
+        
+        IsBusy = true;
+        _cancellationTokenSource = new CancellationTokenSource();
+        
+        try
+        {
+            var totalPairs = VideoPool.Count * AudioPool.Count;
+            var currentPair = 0;
+            
+            foreach (var video in VideoPool)
+            {
+                foreach (var audio in AudioPool)
+                {
+                    currentPair++;
+                    SyncProgress = (currentPair * 100.0) / totalPairs;
+                    SyncStatus = $"Syncing {video.FileName} with {audio.FileName}...";
+                    
+                    var result = await _syncEngine.SynchronizeAsync(
+                        video.FilePath,
+                        audio.FilePath,
+                        _cancellationTokenSource.Token
+                    );
+                    
+                    if (result.Success && result.Confidence > 70)
+                    {
+                        var pair = new SyncPair
+                        {
+                            VideoItem = video,
+                            AudioItem = audio,
+                            Offset = result.Offset,
+                            Confidence = result.Confidence,
+                            IsVerified = result.Confidence > 80
+                        };
+                        
+                        SyncPairs.Add(pair);
+                    }
+                }
+            }
+            
+            SyncStatus = $"Auto-sync complete: {SyncPairs.Count} pairs found";
+            StatusMessage = $"Found {SyncPairs.Count} synchronized pairs";
+        }
+        catch (Exception ex)
+        {
+            SyncStatus = $"Error: {ex.Message}";
+            StatusMessage = "Auto-sync error";
+        }
+        finally
+        {
+            IsBusy = false;
+            SyncProgress = 0;
+        }
+    }
+    
+    [RelayCommand]
+    private void RemoveVideo(SyncPoolItem? item)
+    {
+        if (item != null)
+            VideoPool.Remove(item);
+    }
+    
+    [RelayCommand]
+    private void RemoveAudio(SyncPoolItem? item)
+    {
+        if (item != null)
+            AudioPool.Remove(item);
+    }
+    
+    [RelayCommand]
+    private void RemovePair(SyncPair? pair)
+    {
+        if (pair != null)
+            SyncPairs.Remove(pair);
+    }
+    
+    [RelayCommand]
+    private void ClearAll()
+    {
+        VideoPool.Clear();
+        AudioPool.Clear();
+        SyncPairs.Clear();
+        SelectedVideo = null;
+        SelectedAudio = null;
+        SelectedPair = null;
+        StatusMessage = "Pools cleared";
+    }
 }
