@@ -161,7 +161,31 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### Third-Party Licenses
+
+Veriflow 3.0 uses several third-party libraries. See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for complete attribution.
+
+**Key Dependencies**:
+- **Avalonia UI** (MIT) - Cross-platform UI framework
+- **NAudio** (MIT) - Audio processing
+- **LibVLCSharp** (LGPL v2.1) - Video playback
+- **FFmpeg** (LGPL v2.1) - Media processing
+- **QuestPDF** (Community/Professional) - PDF generation
+- **MathNet.Numerics** (MIT) - FFT calculations
+
+⚠️ **Commercial Use Notice**: QuestPDF requires a Professional License for commercial distribution. See [License Compliance](docs/LICENSE_COMPLIANCE.md) for details.
+
+### LGPL Compliance
+
+Veriflow complies with LGPL requirements for LibVLC and FFmpeg:
+- ✅ Dynamic linking (not static)
+- ✅ No modifications to LGPL code
+- ✅ Users can replace LGPL libraries
+- ✅ Source code publicly available
+
+See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for replacement instructions.
 
 ## 👥 Team
 
