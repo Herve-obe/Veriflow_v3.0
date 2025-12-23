@@ -38,15 +38,6 @@ public partial class OffloadViewModel : ViewModelBase
     [ObservableProperty]
     private string _logText = "Ready to offload...\n";
     
-    [ObservableProperty]
-    private string _sourceFolder = string.Empty;
-    
-    [ObservableProperty]
-    private string _destinationA = string.Empty;
-    
-    [ObservableProperty]
-    private string _destinationB = string.Empty;
-    
     public OffloadViewModel(IDialogService dialogService, IOffloadService offloadService)
     {
         _dialogService = dialogService;
