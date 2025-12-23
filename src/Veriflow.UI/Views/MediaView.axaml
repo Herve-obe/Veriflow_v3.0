@@ -11,97 +11,260 @@
         <vm:MediaViewModel />
     </Design.DataContext>
     
-    <Grid ColumnDefinitions="*,350" Margin="24">
-        <!-- File Browser -->
-        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*" Margin="0,0,16,0">
-            <!-- Header -->
-            <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
-                <TextBlock Text="MEDIA" 
-                          FontSize="{StaticResource FontSize.H1}"
-                          FontWeight="{StaticResource FontWeight.Bold}"
-                          Foreground="{DynamicResource Brush.Text.Primary}" />
-                <TextBlock Text="File browser and media library management" 
-                          FontSize="{StaticResource FontSize.Body}"
-                          Foreground="{DynamicResource Brush.Text.Secondary}" />
-            </StackPanel>
-            
-            <!-- Path and Search -->
-            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
-                <TextBox Grid.Column="0" 
-                        Classes="Modern"
-                        Text="{Binding CurrentPath}"
-                        Watermark="Enter path or search..."
-                        Margin="0,0,8,0" />
-                <Button Grid.Column="1" 
-                       Content="Browse..."
-                       Classes="Secondary"
-                       Command="{Binding LoadMediaFilesCommand}" />
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="MEDIA" 
+                      FontSize="{StaticResource FontSize.H1}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Text.Primary}" />
+            <TextBlock Text="Browse and manage media files" 
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,320">
+            <!-- Left: File Browser -->
+            <Grid Grid.Column="0" RowDefinitions="Auto,*" Margin="0,0,16,0">
+                <!-- Toolbar -->
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,16">
+                    <!-- Browse Button -->
+                    <Button Grid.Column="0" 
+                           Content="Browse Folder..."
+                           Classes="Primary"
+                           Command="{Binding BrowseFolderCommand}"
+                           ToolTip.Tip="Select media folder" />
+                    
+                    <!-- Search Box -->
+                    <TextBox Grid.Column="1" 
+                            Text="{Binding SearchQuery}"
+                            Watermark="Search files..."
+                            Margin="16,0,16,0">
+                        <TextBox.InnerRightContent>
+                            <Button Classes="Ghost"
+                                   Command="{Binding SearchCommand}"
+                                   ToolTip.Tip="Search">
+                                <PathIcon Data="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                         Width="16" Height="16" />
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+                    
+                    <!-- View Toggle -->
+                    <ToggleButton Grid.Column="2" 
+                                 IsChecked="{Binding IsGridView}"
+                                 Command="{Binding ToggleViewCommand}"
+                                 ToolTip.Tip="Toggle Grid/List View"
+                                 Margin="0,0,8,0">
+                        <PathIcon Data="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"
+                                 Width="20" Height="20" />
+                    </ToggleButton>
+                    
+                    <!-- Refresh Button -->
+                    <Button Grid.Column="3" 
+                           Classes="Secondary"
+                           Command="{Binding LoadMediaFilesCommand}"
+                           ToolTip.Tip="Refresh">
+                        <PathIcon Data="M17.65 6.35a7.95 7.95 0 0 0-6.48-2.31c-3.67.37-6.69 3.35-7.1 7.02C3.52 15.91 7.27 20 12 20a7.98 7.98 0 0 0 7.21-4.56c.32-.67-.16-1.44-.9-1.44-.37 0-.72.2-.88.53a5.994 5.994 0 0 1-6.8 3.31c-2.22-.49-4.01-2.3-4.48-4.52A6.002 6.002 0 0 1 12 6c1.66 0 3.14.69 4.22 1.78l-1.51 1.51c-.63.63-.19 1.71.7 1.71H19c.55 0 1-.45 1-1V6.41c0-.89-1.08-1.34-1.71-.71l-.64.65z"
+                                 Width="20" Height="20" />
+                    </Button>
+                </Grid>
+                
+                <!-- File List/Grid -->
+                <Border Grid.Row="1"
+                       Background="{DynamicResource Brush.Background.Secondary}"
+                       BorderBrush="{DynamicResource Brush.Border.Default}"
+                       BorderThickness="1"
+                       CornerRadius="{StaticResource CornerRadius.Medium}">
+                    
+                    <!-- Grid View -->
+                    <ScrollViewer IsVisible="{Binding IsGridView}"
+                                 VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding MediaFiles}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Classes="Ghost"
+                                           Width="180"
+                                           Height="160"
+                                           Margin="8"
+                                           Command="{Binding $parent[UserControl].((vm:MediaViewModel)DataContext).SelectMediaCommand}"
+                                           CommandParameter="{Binding}">
+                                        <StackPanel Spacing="8">
+                                            <!-- Thumbnail -->
+                                            <Border Width="160" Height="120"
+                                                   Background="{DynamicResource Brush.Background.Tertiary}"
+                                                   CornerRadius="{StaticResource CornerRadius.Small}">
+                                                <TextBlock Text="📁"
+                                                          FontSize="48"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                            </Border>
+                                            
+                                            <!-- File Name -->
+                                            <TextBlock Text="{Binding FileName}"
+                                                      FontSize="{StaticResource FontSize.Small}"
+                                                      Foreground="{DynamicResource Brush.Text.Primary}"
+                                                      TextTrimming="CharacterEllipsis"
+                                                      TextAlignment="Center"
+                                                      MaxWidth="160" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    
+                    <!-- List View -->
+                    <ListBox IsVisible="{Binding !IsGridView}"
+                            ItemsSource="{Binding MediaFiles}"
+                            SelectedItem="{Binding SelectedMedia}"
+                            Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="8">
+                                    <!-- Icon -->
+                                    <TextBlock Grid.Column="0" 
+                                              Text="{Binding Type, Converter={StaticResource MediaTypeIconConverter}}"
+                                              FontSize="24"
+                                              Margin="0,0,12,0"
+                                              VerticalAlignment="Center" />
+                                    
+                                    <!-- File Name -->
+                                    <TextBlock Grid.Column="1" 
+                                              Text="{Binding FileName}"
+                                              FontSize="{StaticResource FontSize.Body}"
+                                              Foreground="{DynamicResource Brush.Text.Primary}"
+                                              VerticalAlignment="Center" />
+                                    
+                                    <!-- Duration -->
+                                    <TextBlock Grid.Column="2" 
+                                              Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}"
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                                              Margin="16,0"
+                                              VerticalAlignment="Center" />
+                                    
+                                    <!-- File Size -->
+                                    <TextBlock Grid.Column="3" 
+                                              Text="{Binding FileSizeBytes, Converter={StaticResource FileSizeConverter}}"
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                                              VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
             </Grid>
             
-            <!-- File Grid -->
-            <Border Grid.Row="2"
+            <!-- Right: Metadata Panel -->
+            <Border Grid.Column="1"
                    Background="{DynamicResource Brush.Background.Secondary}"
                    BorderBrush="{DynamicResource Brush.Border.Default}"
                    BorderThickness="1"
-                   CornerRadius="{StaticResource CornerRadius.Medium}">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding MediaFiles}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Width="160" Height="120" 
-                                       Margin="8"
-                                       Background="{DynamicResource Brush.Background.Tertiary}"
-                                       CornerRadius="{StaticResource CornerRadius.Small}">
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock Text="📁" FontSize="32" HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding FileName}" 
-                                                  FontSize="{StaticResource FontSize.Small}"
-                                                  Foreground="{DynamicResource Brush.Text.Primary}"
-                                                  TextTrimming="CharacterEllipsis"
-                                                  Margin="8,4" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                   CornerRadius="{StaticResource CornerRadius.Medium}"
+                   Padding="16">
+                
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="16" IsVisible="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <!-- Header -->
+                        <TextBlock Text="METADATA"
+                                  FontSize="{StaticResource FontSize.H3}"
+                                  FontWeight="{StaticResource FontWeight.SemiBold}"
+                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                        
+                        <!-- General Info -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="General"
+                                      FontSize="{StaticResource FontSize.Small}"
+                                      FontWeight="{StaticResource FontWeight.SemiBold}"
+                                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+                            
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="File:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.FileName}" TextWrapping="Wrap" />
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Size:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.FileSizeBytes, Converter={StaticResource FileSizeConverter}}" />
+                                
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Duration:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Duration, StringFormat='{}{0:hh\\:mm\\:ss\\.fff}'}" />
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Created:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.CreatedDate, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" />
+                            </Grid>
+                        </StackPanel>
+                        
+                        <!-- Video Info -->
+                        <StackPanel Spacing="8" IsVisible="{Binding SelectedMedia.Width, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <TextBlock Text="Video"
+                                      FontSize="{StaticResource FontSize.Small}"
+                                      FontWeight="{StaticResource FontWeight.SemiBold}"
+                                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+                            
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Codec:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.Codec}" />
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Resolution:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="1" Grid.Column="1">
+                                    <Run Text="{Binding SelectedMedia.Width}" />
+                                    <Run Text="x" />
+                                    <Run Text="{Binding SelectedMedia.Height}" />
+                                </TextBlock>
+                                
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Frame Rate:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.FrameRate, StringFormat='{}{0:F2} fps'}" />
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Aspect:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.AspectRatio}" />
+                            </Grid>
+                        </StackPanel>
+                        
+                        <!-- Audio Info -->
+                        <StackPanel Spacing="8" IsVisible="{Binding SelectedMedia.SampleRate, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <TextBlock Text="Audio"
+                                      FontSize="{StaticResource FontSize.Small}"
+                                      FontWeight="{StaticResource FontWeight.SemiBold}"
+                                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+                            
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Codec:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.AudioCodec}" />
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Sample Rate:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.SampleRate, StringFormat='{}{0} Hz'}" />
+                                
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Channels:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Channels}" />
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Bit Depth:" Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.BitDepth, StringFormat='{}{0} bit'}" />
+                            </Grid>
+                        </StackPanel>
+                        
+                        <!-- Actions -->
+                        <StackPanel Spacing="8">
+                            <Button Content="Preview"
+                                   Classes="Primary"
+                                   Command="{Binding PreviewMediaCommand}"
+                                   HorizontalAlignment="Stretch" />
+                            <Button Content="Edit Metadata"
+                                   Classes="Secondary"
+                                   Command="{Binding EditMetadataCommand}"
+                                   HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </StackPanel>
                 </ScrollViewer>
             </Border>
         </Grid>
-        
-        <!-- Metadata Panel -->
-        <Border Grid.Column="1"
-               Background="{DynamicResource Brush.Background.Secondary}"
-               BorderBrush="{DynamicResource Brush.Border.Default}"
-               BorderThickness="1"
-               CornerRadius="{StaticResource CornerRadius.Medium}"
-               Padding="16">
-            <StackPanel Spacing="16">
-                <TextBlock Text="METADATA" 
-                          FontSize="{StaticResource FontSize.H3}"
-                          FontWeight="{StaticResource FontWeight.SemiBold}"
-                          Foreground="{DynamicResource Brush.Text.Primary}" />
-                
-                <TextBlock Text="Select a file to view metadata"
-                          Foreground="{DynamicResource Brush.Text.Secondary}"
-                          FontSize="{StaticResource FontSize.Small}"
-                          TextWrapping="Wrap" />
-                
-                <StackPanel Spacing="8" Margin="0,16,0,0">
-                    <Button Content="Preview" 
-                           Classes="Primary"
-                           Command="{Binding PreviewMediaCommand}"
-                           IsEnabled="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                    <Button Content="Edit Metadata" 
-                           Classes="Secondary"
-                           Command="{Binding EditMetadataCommand}"
-                           IsEnabled="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                </StackPanel>
-            </StackPanel>
-        </Border>
     </Grid>
 </UserControl>
