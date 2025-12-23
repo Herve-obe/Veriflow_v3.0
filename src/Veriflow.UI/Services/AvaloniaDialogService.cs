@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Veriflow.Core.Interfaces;
 
-namespace Veriflow.Infrastructure.Services;
+namespace Veriflow.UI.Services;
 
 /// <summary>
 /// Avalonia implementation of dialog service
@@ -64,8 +64,7 @@ public class AvaloniaDialogService : IDialogService
     
     public async Task ShowMessageBoxAsync(string title, string message)
     {
-        // TODO: Implement proper message box (Avalonia doesn't have built-in MessageBox)
-        // For now, we'll use a simple approach
+        // TODO: Implement proper message box
         await Task.CompletedTask;
     }
     
