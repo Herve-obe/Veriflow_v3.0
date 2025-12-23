@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Services;
+using Veriflow.Infrastructure.Services;
 using Veriflow.UI.Services;
 using Veriflow.UI.ViewModels;
 
@@ -19,13 +20,13 @@ public static class ServiceConfiguration
         // Core Services
         services.AddSingleton<ISessionService, SessionService>();
         services.AddSingleton<IOffloadService, OffloadService>();
+        services.AddSingleton<IMediaService, FFmpegMediaService>();
         
         // UI Services
         services.AddSingleton<IDialogService>(sp => new AvaloniaDialogService(mainWindow));
         
         // TODO: Add other services as they are implemented
         // services.AddSingleton<IAudioEngine, MiniAudioEngine>();
-        // services.AddSingleton<IMediaService, FFmpegMediaService>();
         
         // ViewModels - Main
         services.AddSingleton<MainWindowViewModel>();
