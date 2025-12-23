@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using System.Linq;
 
 namespace Veriflow.UI.Views;
@@ -11,15 +10,15 @@ public partial class OffloadView : UserControl
     {
         InitializeComponent();
         
-        // Setup drag & drop handlers
+        // Setup drag & drop handlers for the entire control
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
     
     private void DragOver(object? sender, DragEventArgs e)
     {
-        // Only allow copy for folders (using new DataTransfer API)
-        if (e.DataTransfer.Contains(DataFormat.File))
+        // Only allow copy for folders
+        if (e.Data.Contains(DataFormats.Files))
         {
             e.DragEffects = DragDropEffects.Copy;
         }
@@ -31,9 +30,9 @@ public partial class OffloadView : UserControl
     
     private void Drop(object? sender, DragEventArgs e)
     {
-        if (!e.DataTransfer.Contains(DataFormat.File)) return;
+        if (!e.Data.Contains(DataFormats.Files)) return;
         
-        var files = e.DataTransfer.TryGetFiles();
+        var files = e.Data.GetFiles()?.ToArray();
         
         if (files != null && files.Length > 0 && DataContext is ViewModels.OffloadViewModel vm)
         {
@@ -42,25 +41,42 @@ public partial class OffloadView : UserControl
             // Check if it's a directory
             if (System.IO.Directory.Exists(path))
             {
-                // Determine which TextBox was dropped on by checking the Grid row
-                if (sender is TextBox textBox && textBox.Parent is Grid grid)
+                // Find which Border was dropped on by checking the source
+                var source = e.Source;
+                
+                // Traverse up to find the Border with a Name
+                while (source != null)
                 {
-                    var row = Grid.GetRow(textBox);
-                    
-                    switch (row)
+                    if (source is Border border && !string.IsNullOrEmpty(border.Name))
                     {
-                        case 0:
-                            vm.SourceFolder = path;
-                            vm.AppendLog($"Source: {path}");
-                            break;
-                        case 1:
-                            vm.DestinationA = path;
-                            vm.AppendLog($"Destination A: {path}");
-                            break;
-                        case 2:
-                            vm.DestinationB = path;
-                            vm.AppendLog($"Destination B: {path}");
-                            break;
+                        switch (border.Name)
+                        {
+                            case "SourceDropZone":
+                                vm.SourceFolder = path;
+                                vm.AppendLog($"Source: {path}");
+                                return;
+                            case "DestinationADropZone":
+                                vm.DestinationA = path;
+                                vm.AppendLog($"Destination A: {path}");
+                                return;
+                            case "DestinationBDropZone":
+                                vm.DestinationB = path;
+                                vm.AppendLog($"Destination B: {path}");
+                                return;
+                            case "VerifyTargetDropZone":
+                                vm.VerifyTargetFolder = path;
+                                vm.AppendLog($"Verify Target: {path}");
+                                return;
+                        }
+                    }
+                    
+                    if (source is Avalonia.Visual visual)
+                    {
+                        source = visual.Parent;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }

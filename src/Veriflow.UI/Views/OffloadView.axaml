@@ -11,200 +11,486 @@
         <vm:OffloadViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+    <!-- Professional Color Palette -->
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="AppBackground">#111316</SolidColorBrush>
+        <SolidColorBrush x:Key="SurfaceLight">#1C2128</SolidColorBrush>
+        <SolidColorBrush x:Key="SurfaceLighter">#252B36</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentColor">#0078D4</SolidColorBrush>
+        <SolidColorBrush x:Key="TextPrimary">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="TextSecondary">#9CA3AF</SolidColorBrush>
+        <SolidColorBrush x:Key="BorderColor">#30363D</SolidColorBrush>
+    </UserControl.Resources>
+    
+    <!-- Professional Styles -->
+    <UserControl.Styles>
+        <!-- Drop Zone Card Style -->
+        <Style Selector="Border.DropZone">
+            <Setter Property="Background" Value="{StaticResource SurfaceLight}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="20" />
+        </Style>
+        
+        <!-- Professional Button Styles -->
+        <Style Selector="Button.PrimaryAction">
+            <Setter Property="Background" Value="{StaticResource AccentColor}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        
+        <Style Selector="Button.PrimaryAction:pointerover">
+            <Setter Property="Background" Value="#1084E0" />
+        </Style>
+        
+        <Style Selector="Button.SecondaryAction">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        
+        <Style Selector="Button.SecondaryAction:pointerover">
+            <Setter Property="Background" Value="{StaticResource SurfaceLighter}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+        </Style>
+        
+        <!-- TextBox Professional Style -->
+        <Style Selector="TextBox.PathDisplay">
+            <Setter Property="Background" Value="#15171C" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="10,8" />
+        </Style>
+        
+        <!-- DataGrid Professional Style -->
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="GridLinesVisibility" Value="None" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="RowBackground" Value="Transparent" />
+        </Style>
+        
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource SurfaceLighter}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="12,10" />
+        </Style>
+        
+        <Style Selector="DataGridRow">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+        </Style>
+        
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{StaticResource SurfaceLighter}" />
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="20" Background="{StaticResource AppBackground}">
         <!-- Header -->
-        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
-            <TextBlock Text="OFFLOAD" 
-                      FontSize="{StaticResource FontSize.H1}"
-                      FontWeight="{StaticResource FontWeight.Bold}"
-                      Foreground="{DynamicResource Brush.Text.Primary}" />
-            <TextBlock Text="Secure dual-destination file copying with MHL 1.1 verification" 
-                      FontSize="{StaticResource FontSize.Body}"
-                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,24">
+            <TextBlock Text="OFFLOAD - Secure Copy &amp; Verify" 
+                      FontSize="24"
+                      FontWeight="Bold"
+                      Foreground="{StaticResource TextPrimary}" />
         </StackPanel>
         
-        <!-- Main Content -->
-        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*">
-            <!-- Mode Toggle -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="0,0,0,24">
-                <Button Content="OFFLOAD MODE" 
-                       Classes="Primary"
-                       IsEnabled="{Binding IsOffloadMode}"
-                       Command="{Binding ToggleModeCommand}" />
-                <Button Content="VERIFY MODE" 
-                       Classes="Secondary"
-                       IsEnabled="{Binding !IsOffloadMode}"
-                       Command="{Binding ToggleModeCommand}" />
-            </StackPanel>
-            
-            <!-- Folder Selection -->
-            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="200,*,Auto" Margin="0,0,0,24">
-                <!-- Source -->
-                <TextBlock Grid.Row="0" Grid.Column="0" 
-                          Text="Source Folder:"
-                          VerticalAlignment="Center"
-                          Foreground="{DynamicResource Brush.Text.Primary}" />
-                <TextBox Grid.Row="0" Grid.Column="1" 
-                        Classes="Modern"
-                        Text="{Binding SourceFolder}"
-                        IsReadOnly="True"
-                        DragDrop.AllowDrop="True"
-                        Watermark="Drag folder here or click Browse..."
-                        Margin="0,0,8,0" />
-                <Button Grid.Row="0" Grid.Column="2" 
-                       Content="Browse..."
-                       Classes="Secondary"
-                       Command="{Binding SelectSourceFolderCommand}" />
-                
-                <!-- Destination A -->
-                <TextBlock Grid.Row="1" Grid.Column="0" 
-                          Text="Destination A:"
-                          VerticalAlignment="Center"
-                          Foreground="{DynamicResource Brush.Text.Primary}"
-                          Margin="0,16,0,0" />
-                <TextBox Grid.Row="1" Grid.Column="1" 
-                        Classes="Modern"
-                        Text="{Binding DestinationA}"
-                        IsReadOnly="True"
-                        DragDrop.AllowDrop="True"
-                        Watermark="Drag folder here or click Browse..."
-                        Margin="0,16,8,0" />
-                <Button Grid.Row="1" Grid.Column="2" 
-                       Content="Browse..."
-                       Classes="Secondary"
-                       Command="{Binding SelectDestinationACommand}"
-                       Margin="0,16,0,0" />
-                
-                <!-- Destination B -->
-                <TextBlock Grid.Row="2" Grid.Column="0" 
-                          Text="Destination B:"
-                          VerticalAlignment="Center"
-                          Foreground="{DynamicResource Brush.Text.Primary}"
-                          Margin="0,16,0,0" />
-                <TextBox Grid.Row="2" Grid.Column="1" 
-                        Classes="Modern"
-                        Text="{Binding DestinationB}"
-                        IsReadOnly="True"
-                        DragDrop.AllowDrop="True"
-                        Watermark="Drag folder here or click Browse..."
-                        Margin="0,16,8,0" />
-                <Button Grid.Row="2" Grid.Column="2" 
-                       Content="Browse..."
-                       Classes="Secondary"
-                       Command="{Binding SelectDestinationBCommand}"
-                       Margin="0,16,0,0" />
-            </Grid>
-            
-            <!-- Progress -->
-            <Border Grid.Row="2" 
-                   Background="{DynamicResource Brush.Background.Secondary}"
-                   BorderBrush="{DynamicResource Brush.Border.Default}"
+        <!-- Mode Toggle + Actions -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,20">
+            <!-- Offload/Verify Toggle -->
+            <Border Grid.Column="0"
+                   Background="{StaticResource SurfaceLight}"
+                   BorderBrush="{StaticResource BorderColor}"
                    BorderThickness="1"
-                   CornerRadius="{StaticResource CornerRadius.Medium}"
-                   Padding="16"
-                   Margin="0,0,0,24">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="{Binding CurrentFile}"
-                              Foreground="{DynamicResource Brush.Text.Primary}"
-                              FontFamily="{StaticResource Font.Monospace}"
-                              FontSize="{StaticResource FontSize.Small}" />
-                    <ProgressBar Classes="Prominent"
-                                Value="{Binding Progress}"
-                                Maximum="100" />
-                    <TextBlock Text="{Binding Progress, StringFormat='{}{0:F1}% complete'}"
-                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                              FontSize="{StaticResource FontSize.Small}" />
-                </StackPanel>
+                   CornerRadius="6"
+                   Padding="10,8"
+                   Height="40">
+                <Grid ColumnDefinitions="Auto,Auto">
+                    <TextBlock Grid.Column="0"
+                              VerticalAlignment="Center"
+                              Margin="8,0,12,0"
+                              FontSize="14"
+                              FontWeight="SemiBold"
+                              Foreground="{StaticResource TextPrimary}"
+                              IsVisible="{Binding !IsOffloadMode}">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="Text" Value="Verify" />
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    <TextBlock Grid.Column="0"
+                              VerticalAlignment="Center"
+                              Margin="8,0,12,0"
+                              FontSize="14"
+                              FontWeight="SemiBold"
+                              Foreground="{StaticResource TextPrimary}"
+                              IsVisible="{Binding IsOffloadMode}">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="Text" Value="Offload" />
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    
+                    <ToggleButton Grid.Column="1"
+                                 IsChecked="{Binding IsOffloadMode, Mode=TwoWay}"
+                                 Width="44"
+                                 Height="22"
+                                 Padding="0"
+                                 CornerRadius="11"
+                                 Background="{StaticResource AccentColor}"
+                                 BorderThickness="0">
+                        <ToggleButton.Styles>
+                            <Style Selector="ToggleButton">
+                                <Setter Property="Background" Value="{StaticResource AccentColor}" />
+                                <Setter Property="Template">
+                                    <ControlTemplate>
+                                        <Border Background="{TemplateBinding Background}"
+                                               CornerRadius="11"
+                                               Padding="2">
+                                            <Canvas Width="40" Height="18">
+                                                <Ellipse Width="18" Height="18"
+                                                        Fill="White"
+                                                        Canvas.Left="22"
+                                                        x:Name="PART_Thumb">
+                                                    <Ellipse.Transitions>
+                                                        <Transitions>
+                                                            <DoubleTransition Property="Canvas.Left" Duration="0:0:0.2" />
+                                                        </Transitions>
+                                                    </Ellipse.Transitions>
+                                                </Ellipse>
+                                            </Canvas>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter>
+                            </Style>
+                            <Style Selector="ToggleButton:checked /template/ Ellipse#PART_Thumb">
+                                <Setter Property="Canvas.Left" Value="0" />
+                            </Style>
+                            <Style Selector="ToggleButton:checked">
+                                <Setter Property="Background" Value="#00B294" />
+                            </Style>
+                        </ToggleButton.Styles>
+                    </ToggleButton>
+                </Grid>
             </Border>
             
-            <!-- Log Area -->
-            <Border Grid.Row="3"
-                   Background="{DynamicResource Brush.Background.Secondary}"
-                   BorderBrush="{DynamicResource Brush.Border.Default}"
-                   BorderThickness="1"
-                   CornerRadius="{StaticResource CornerRadius.Medium}"
-                   Padding="16">
-                <ScrollViewer>
-                    <TextBlock Text="Ready to offload..."
-                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                              FontFamily="{StaticResource Font.Monospace}"
-                              FontSize="{StaticResource FontSize.Small}" />
-                </ScrollViewer>
-            </Border>
+            <!-- Reset All Button -->
+            <Button Grid.Column="2"
+                   Content="Reset All"
+                   Command="{Binding ResetAllCommand}"
+                   Classes="SecondaryAction"
+                   Height="40"
+                   Margin="12,0,0,0"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center" />
+                   
+            <!-- Start Button -->
+            <Button Grid.Column="3"
+                   Classes="PrimaryAction"
+                   Command="{Binding StartOffloadCommand}"
+                   Width="150"
+                   Height="40"
+                   Margin="12,0,0,0"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Content" Value="Start" />
+                    </Style>
+                    <Style Selector="Button:disabled">
+                        <Setter Property="Content" Value="Stop" />
+                        <Setter Property="Command" Value="{Binding CancelOffloadCommand}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
         </Grid>
         
-        <!-- Actions -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16" Margin="0,24,0,0">
-            <Button Content="Start Offload" 
-                   Classes="Primary"
-                   Command="{Binding StartOffloadCommand}"
-                   IsEnabled="{Binding !IsBusy}" />
-            <Button Content="Cancel" 
-                   Classes="Secondary"
-                   Command="{Binding CancelOffloadCommand}"
-                   IsEnabled="{Binding IsBusy}" />
-            <Button Content="View History" 
-                   Classes="Secondary"
-                   Command="{Binding ToggleHistoryCommand}" />
-            <Button Content="Clear History" 
-                   Classes="Secondary"
-                   Command="{Binding ClearHistoryCommand}"
-                   IsEnabled="{Binding History.Count}" />
-        </StackPanel>
-        
-        <!-- Copy History Panel -->
-        <Border Grid.Row="2" 
-               IsVisible="{Binding IsHistoryVisible}"
-               Background="{DynamicResource Brush.Background.Secondary}"
-               BorderBrush="{DynamicResource Brush.Border.Default}"
-               BorderThickness="1"
-               CornerRadius="{StaticResource CornerRadius.Medium}"
-               Padding="16"
-               Margin="0,80,0,0">
-            <Grid RowDefinitions="Auto,*">
-                <TextBlock Grid.Row="0" 
-                          Text="COPY HISTORY"
-                          FontSize="{StaticResource FontSize.H3}"
-                          FontWeight="{StaticResource FontWeight.Bold}"
-                          Foreground="{DynamicResource Brush.Text.Primary}"
-                          Margin="0,0,0,16" />
+        <!-- Drop Zones -->
+        <Grid Grid.Row="2" Margin="0,0,0,20">
+            <!-- OFFLOAD MODE: Source + Destinations -->
+            <Grid IsVisible="{Binding IsOffloadMode}" ColumnDefinitions="*,16,*">
+                <!-- Source Drop Zone (LEFT) -->
+                <Border Grid.Column="0" 
+                       Name="SourceDropZone"
+                       DragDrop.AllowDrop="True"
+                       Classes="DropZone" 
+                       MinHeight="240">
+                    <Grid RowDefinitions="Auto,*,Auto,Auto">
+                        <TextBlock Grid.Row="0"
+                                  Text="Source"
+                                  FontSize="14"
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource AccentColor}"
+                                  Margin="0,0,0,16" />
+                        
+                        <StackPanel Grid.Row="1"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Spacing="16">
+                            <!-- Upload Icon -->
+                            <Path Width="72" Height="72"
+                                 Fill="{StaticResource TextSecondary}"
+                                 Opacity="0.5"
+                                 Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                                 Stretch="Uniform" />
+                            
+                            <TextBlock Text="DROP ZONE"
+                                      FontSize="16"
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource TextSecondary}"
+                                      HorizontalAlignment="Center" />
+                            
+                            <TextBlock Text="Drop files or folders here"
+                                      FontSize="12"
+                                      Foreground="{StaticResource TextSecondary}"
+                                      Opacity="0.7"
+                                      HorizontalAlignment="Center" />
+                        </StackPanel>
+                        
+                        <TextBox Grid.Row="2"
+                                Classes="PathDisplay"
+                                Text="{Binding SourceFolder}"
+                                IsReadOnly="True"
+                                Watermark="No folder selected"
+                                Margin="0,16,0,10" />
+                        
+                        <Button Grid.Row="3"
+                               Content="Browse"
+                               Command="{Binding SelectSourceFolderCommand}"
+                               Classes="SecondaryAction"
+                               HorizontalAlignment="Right" />
+                    </Grid>
+                </Border>
                 
-                <DataGrid Grid.Row="1"
-                         ItemsSource="{Binding History}"
-                         AutoGenerateColumns="False"
-                         IsReadOnly="True"
-                         GridLinesVisibility="Horizontal"
-                         HeadersVisibility="Column"
-                         Background="Transparent"
-                         MaxHeight="300">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date/Time" 
-                                          Binding="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}"
-                                          Width="150" />
-                        <DataGridTextColumn Header="Source" 
-                                          Binding="{Binding SourcePath}"
-                                          Width="200" />
-                        <DataGridTextColumn Header="Dest A" 
-                                          Binding="{Binding DestinationAPath}"
-                                          Width="150" />
-                        <DataGridTextColumn Header="Dest B" 
-                                          Binding="{Binding DestinationBPath}"
-                                          Width="150" />
-                        <DataGridTextColumn Header="Files" 
-                                          Binding="{Binding FilesCount}"
-                                          Width="80" />
-                        <DataGridTextColumn Header="Size" 
-                                          Binding="{Binding FormattedSize}"
-                                          Width="100" />
-                        <DataGridTextColumn Header="Duration" 
-                                          Binding="{Binding FormattedDuration}"
-                                          Width="100" />
-                        <DataGridTextColumn Header="Status" 
-                                          Binding="{Binding Success}"
-                                          Width="80" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <!-- Destinations Drop Zones (RIGHT) -->
+                <Grid Grid.Column="2" RowDefinitions="*,16,*">
+                    <!-- Destination A -->
+                    <Border Grid.Row="0" 
+                           Name="DestinationADropZone"
+                           DragDrop.AllowDrop="True"
+                           Classes="DropZone">
+                        <Grid RowDefinitions="Auto,*,Auto,Auto">
+                            <TextBlock Grid.Row="0"
+                                      Text="Destination 1"
+                                      FontSize="14"
+                                      FontWeight="Bold"
+                                      Foreground="{StaticResource AccentColor}"
+                                      Margin="0,0,0,16" />
+                            
+                            <StackPanel Grid.Row="1"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Spacing="12">
+                                <Path Width="56" Height="56"
+                                     Fill="{StaticResource TextSecondary}"
+                                     Opacity="0.5"
+                                     Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                                     Stretch="Uniform" />
+                                
+                                <TextBlock Text="DROP ZONE"
+                                          FontSize="14"
+                                          FontWeight="SemiBold"
+                                          Foreground="{StaticResource TextSecondary}"
+                                          HorizontalAlignment="Center" />
+                            </StackPanel>
+                            
+                            <TextBox Grid.Row="2"
+                                    Classes="PathDisplay"
+                                    Text="{Binding DestinationA}"
+                                    IsReadOnly="True"
+                                    Watermark="No folder selected"
+                                    Margin="0,12,0,10" />
+                            
+                            <Button Grid.Row="3"
+                                   Content="Browse"
+                                   Command="{Binding SelectDestinationACommand}"
+                                   Classes="SecondaryAction"
+                                   HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Destination B (Optional) -->
+                    <Border Grid.Row="2" 
+                           Name="DestinationBDropZone"
+                           DragDrop.AllowDrop="True"
+                           Classes="DropZone" 
+                           Opacity="0.8">
+                        <Grid RowDefinitions="Auto,*,Auto,Auto">
+                            <TextBlock Grid.Row="0"
+                                      Text="Destination 2 (Optional)"
+                                      FontSize="14"
+                                      FontWeight="Bold"
+                                      Foreground="{StaticResource AccentColor}"
+                                      Margin="0,0,0,16" />
+                            
+                            <StackPanel Grid.Row="1"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Spacing="12">
+                                <Path Width="56" Height="56"
+                                     Fill="{StaticResource TextSecondary}"
+                                     Opacity="0.5"
+                                     Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                                     Stretch="Uniform" />
+
+                            </StackPanel>
+                            
+                            <TextBox Grid.Row="2"
+                                    Classes="PathDisplay"
+                                    Text="{Binding DestinationB}"
+                                    IsReadOnly="True"
+                                    Watermark="No folder selected"
+                                    Margin="0,12,0,10" />
+                            
+                            <Button Grid.Row="3"
+                                   Content="Browse"
+                                   Command="{Binding SelectDestinationBCommand}"
+                                   Classes="SecondaryAction"
+                                   HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+                </Grid>
             </Grid>
+            
+            <!-- VERIFY MODE: Target Only -->
+            <Grid IsVisible="{Binding !IsOffloadMode}">
+                <Border Name="VerifyTargetDropZone"
+                       DragDrop.AllowDrop="True"
+                       Classes="DropZone" 
+                       MinHeight="240">
+                    <Grid RowDefinitions="Auto,*,Auto,Auto">
+                        <TextBlock Grid.Row="0"
+                                  Text="Destination Target"
+                                  FontSize="14"
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource AccentColor}"
+                                  Margin="0,0,0,16" />
+                        
+                        <StackPanel Grid.Row="1"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Spacing="16">
+                            <Path Width="72" Height="72"
+                                 Fill="{StaticResource TextSecondary}"
+                                 Opacity="0.5"
+                                 Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                                 Stretch="Uniform" />
+                            
+                            <TextBlock Text="DROP ZONE"
+                                      FontSize="16"
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource TextSecondary}"
+                                      HorizontalAlignment="Center" />
+                            
+                            <TextBlock Text="Drop folder to verify here"
+                                      FontSize="12"
+                                      Foreground="{StaticResource TextSecondary}"
+                                      Opacity="0.7"
+                                      HorizontalAlignment="Center" />
+                        </StackPanel>
+                        
+                        <TextBox Grid.Row="2"
+                                Classes="PathDisplay"
+                                Text="{Binding VerifyTargetFolder}"
+                                IsReadOnly="True"
+                                Watermark="No folder selected"
+                                Margin="0,16,0,10" />
+                        
+                        <Button Grid.Row="3"
+                               Content="Browse"
+                               Command="{Binding SelectVerifyTargetCommand}"
+                               Classes="SecondaryAction"
+                               HorizontalAlignment="Right" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+        
+        <!-- Progress Bar -->
+        <Border Grid.Row="3"
+               Background="{StaticResource SurfaceLight}"
+               BorderBrush="{StaticResource BorderColor}"
+               BorderThickness="1"
+               CornerRadius="6"
+               Padding="16,14"
+               Margin="0,0,0,16"
+               IsVisible="{Binding IsBusy}">
+            <Grid RowDefinitions="Auto,Auto,Auto">
+                <TextBlock Grid.Row="0"
+                          Text="{Binding CurrentFile}"
+                          Foreground="{StaticResource TextPrimary}"
+                          FontSize="13"
+                          Margin="0,0,0,10" />
+                
+                <ProgressBar Grid.Row="1"
+                            Value="{Binding Progress}"
+                            Maximum="100"
+                            Height="6"
+                            Background="#1A1D23"
+                            Foreground="{StaticResource AccentColor}"
+                            CornerRadius="3"
+                            Margin="0,0,0,10" />
+                
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0"
+                              Text="{Binding Progress, StringFormat='Copying... {0:F1}% Completed'}"
+                              Foreground="{StaticResource TextSecondary}"
+                              FontSize="12" />
+                    <TextBlock Grid.Column="1"
+                              Text="{Binding TransferSpeed}"
+                              Foreground="{StaticResource TextSecondary}"
+                              FontSize="12" />
+                </Grid>
+            </Grid>
+        </Border>
+        
+        <!-- File List DataGrid -->
+        <Border Grid.Row="4"
+               Background="{StaticResource SurfaceLight}"
+               BorderBrush="{StaticResource BorderColor}"
+               BorderThickness="1"
+               CornerRadius="6"
+               Padding="0">
+            <DataGrid ItemsSource="{Binding History}"
+                     AutoGenerateColumns="False"
+                     IsReadOnly="True"
+                     Height="220">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="File Name" 
+                                      Binding="{Binding SourcePath}"
+                                      Width="*" />
+                    <DataGridTextColumn Header="xxHash64" 
+                                      Binding="{Binding MhlPathA}"
+                                      Width="320" />
+                    <DataGridTemplateColumn Header="Status" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Path Width="18" Height="18"
+                                     Fill="#00B294"
+                                     Data="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"
+                                     Stretch="Uniform"
+                                     HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Border>
     </Grid>
 </UserControl>

@@ -20,13 +20,18 @@ public partial class OffloadViewModel : ViewModelBase
     private CancellationTokenSource? _cancellationTokenSource;
     
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
     private string _sourceFolder = string.Empty;
     
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
     private string _destinationA = string.Empty;
     
     [ObservableProperty]
     private string _destinationB = string.Empty;
+    
+    [ObservableProperty]
+    private string _verifyTargetFolder = string.Empty;
     
     [ObservableProperty]
     private bool _isOffloadMode = true; // true = OFFLOAD, false = VERIFY
@@ -35,7 +40,37 @@ public partial class OffloadViewModel : ViewModelBase
     private double _progress;
     
     [ObservableProperty]
+    private double _progressA;
+    
+    [ObservableProperty]
+    private double _progressB;
+    
+    [ObservableProperty]
     private string _currentFile = string.Empty;
+    
+    [ObservableProperty]
+    private string _currentFileA = string.Empty;
+    
+    [ObservableProperty]
+    private string _currentFileB = string.Empty;
+    
+    [ObservableProperty]
+    private string _estimatedTimeRemaining = string.Empty;
+    
+    [ObservableProperty]
+    private string _estimatedTimeRemainingA = string.Empty;
+    
+    [ObservableProperty]
+    private string _estimatedTimeRemainingB = string.Empty;
+    
+    [ObservableProperty]
+    private string _transferSpeed = string.Empty;
+    
+    [ObservableProperty]
+    private string _transferSpeedA = string.Empty;
+    
+    [ObservableProperty]
+    private string _transferSpeedB = string.Empty;
     
     [ObservableProperty]
     private string _logText = "Ready to offload...\n";
@@ -87,11 +122,45 @@ public partial class OffloadViewModel : ViewModelBase
     }
     
     [RelayCommand]
+    private async Task SelectVerifyTargetAsync()
+    {
+        var folder = await _dialogService.ShowFolderPickerAsync("Select Folder to Verify");
+        if (!string.IsNullOrEmpty(folder))
+        {
+            VerifyTargetFolder = folder;
+            AppendLog($"Verify Target: {folder}");
+        }
+    }
+    
+    [RelayCommand]
+    private void ResetAll()
+    {
+        SourceFolder = string.Empty;
+        DestinationA = string.Empty;
+        DestinationB = string.Empty;
+        VerifyTargetFolder = string.Empty;
+        Progress = 0;
+        ProgressA = 0;
+        ProgressB = 0;
+        CurrentFile = string.Empty;
+        CurrentFileA = string.Empty;
+        CurrentFileB = string.Empty;
+        EstimatedTimeRemaining = string.Empty;
+        EstimatedTimeRemainingA = string.Empty;
+        EstimatedTimeRemainingB = string.Empty;
+        TransferSpeed = string.Empty;
+        TransferSpeedA = string.Empty;
+        TransferSpeedB = string.Empty;
+        AppendLog("All fields reset.");
+    }
+    
+    [RelayCommand(CanExecute = nameof(CanStartOffload))]
     private async Task StartOffloadAsync()
     {
-        if (string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationA) || string.IsNullOrEmpty(DestinationB))
+        // Validate: Source and DestinationA are required, DestinationB is optional
+        if (string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationA))
         {
-            StatusMessage = "Please select all folders";
+            StatusMessage = "Please select Source and Destination A";
             return;
         }
         
@@ -110,6 +179,17 @@ public partial class OffloadViewModel : ViewModelBase
                     Progress = p.PercentComplete;
                     CurrentFile = p.CurrentFile;
                     StatusMessage = p.Status;
+                    
+                    // Update ETA and transfer speed
+                    if (p.EstimatedTimeRemaining > TimeSpan.Zero)
+                    {
+                        EstimatedTimeRemaining = $"ETA: {p.EstimatedTimeRemaining:mm\\:ss}";
+                    }
+                    
+                    if (p.TransferSpeed > 0)
+                    {
+                        TransferSpeed = $"{FormatBytes((long)p.TransferSpeed)}/s";
+                    }
                 });
                 
                 var result = await _offloadService.OffloadAsync(
@@ -128,11 +208,22 @@ public partial class OffloadViewModel : ViewModelBase
                     AppendLog($"  MHL A: {result.MhlPathA}");
                     AppendLog($"  MHL B: {result.MhlPathB}");
                     StatusMessage = "Offload complete!";
+                    
+                    // Show success dialog
+                    var details = $"Files copied: {result.FilesProcessed}\n" +
+                                 $"Total size: {FormatBytes(result.BytesCopied)}\n" +
+                                 $"Duration: {result.Duration:mm\\:ss}\n" +
+                                 $"MHL A: {result.MhlPathA}\n" +
+                                 $"MHL B: {result.MhlPathB}";
+                    await ShowCompletionDialogAsync("Offload Complete", "All files have been successfully copied and verified.", details, true);
                 }
                 else
                 {
                     AppendLog($"\n✗ Offload failed: {result.ErrorMessage}");
                     StatusMessage = "Offload failed";
+                    
+                    // Show error dialog
+                    await ShowCompletionDialogAsync("Offload Failed", "The offload operation encountered an error.", result.ErrorMessage ?? "Unknown error", false);
                 }
             }
             else
@@ -160,6 +251,11 @@ public partial class OffloadViewModel : ViewModelBase
                     AppendLog($"  Files verified: {result.FilesVerified}");
                     AppendLog($"  All hashes match!");
                     StatusMessage = "Verification successful!";
+                    
+                    // Show success dialog
+                    var details = $"Files verified: {result.FilesVerified}\n" +
+                                 $"All checksums match!";
+                    await ShowCompletionDialogAsync("Verification Complete", "All files have been successfully verified.", details, true);
                 }
                 else
                 {
@@ -171,6 +267,12 @@ public partial class OffloadViewModel : ViewModelBase
                         AppendLog($"    - {mismatch}");
                     }
                     StatusMessage = "Verification failed";
+                    
+                    // Show error dialog
+                    var details = $"Files verified: {result.FilesVerified}\n" +
+                                 $"Mismatches: {result.MismatchCount}\n\n" +
+                                 string.Join("\n", result.MismatchedFiles);
+                    await ShowCompletionDialogAsync("Verification Failed", "Some files failed verification.", details, false);
                 }
             }
         }
@@ -204,10 +306,24 @@ public partial class OffloadViewModel : ViewModelBase
         _cancellationTokenSource?.Cancel();
     }
     
+    private bool CanStartOffload()
+    {
+        if (IsOffloadMode)
+        {
+            return !string.IsNullOrEmpty(SourceFolder) && !string.IsNullOrEmpty(DestinationA);
+        }
+        else
+        {
+            return !string.IsNullOrEmpty(VerifyTargetFolder);
+        }
+    }
+    
     [RelayCommand]
     private void ToggleMode()
     {
         IsOffloadMode = !IsOffloadMode;
+        OnPropertyChanged(nameof(IsOffloadMode));
+        StartOffloadCommand.NotifyCanExecuteChanged();
         StatusMessage = IsOffloadMode ? "OFFLOAD mode" : "VERIFY mode";
         AppendLog($"\nMode: {(IsOffloadMode ? "OFFLOAD" : "VERIFY")}");
     }
@@ -265,6 +381,31 @@ public partial class OffloadViewModel : ViewModelBase
             await _offloadService.ClearHistoryAsync();
             History.Clear();
             AppendLog("History cleared");
+        }
+    }
+    
+    private async Task ShowCompletionDialogAsync(string title, string subtitle, string details, bool isSuccess)
+    {
+        try
+        {
+            var dialog = new Views.OffloadCompletionDialog();
+            
+            if (isSuccess)
+            {
+                dialog.SetSuccess(title, subtitle, details);
+            }
+            else
+            {
+                dialog.SetError(title, subtitle, details);
+            }
+            
+            // Show dialog - note: this requires access to the main window
+            // For now, we'll use the dialog service's message box as a fallback
+            await _dialogService.ShowMessageBoxAsync(title, $"{subtitle}\n\n{details}");
+        }
+        catch (Exception ex)
+        {
+            AppendLog($"Error showing completion dialog: {ex.Message}");
         }
     }
 }

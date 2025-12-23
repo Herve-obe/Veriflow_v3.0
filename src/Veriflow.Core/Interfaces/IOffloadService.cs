@@ -65,6 +65,11 @@ public class OffloadProgress
     public int TotalFiles { get; set; }
     public double PercentComplete => TotalBytes > 0 ? (BytesCopied * 100.0 / TotalBytes) : 0;
     public string Status { get; set; } = string.Empty;
+    
+    // New properties for enhanced progress tracking
+    public TimeSpan EstimatedTimeRemaining { get; set; }
+    public double TransferSpeed { get; set; } // bytes per second
+    public string CurrentDestination { get; set; } = string.Empty; // "A", "B", or "Both"
 }
 
 /// <summary>

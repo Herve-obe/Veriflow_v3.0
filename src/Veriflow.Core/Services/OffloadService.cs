@@ -80,6 +80,12 @@ public class OffloadService : IOffloadService
                     var currentBytesCopied = Interlocked.Add(ref bytesCopied, fileSize);
                     var currentFilesProcessed = Interlocked.Increment(ref filesProcessed);
                     
+                    // Calculate ETA and transfer speed
+                    var elapsed = stopwatch.Elapsed.TotalSeconds;
+                    var transferSpeed = elapsed > 0 ? currentBytesCopied / elapsed : 0;
+                    var bytesRemaining = totalBytes - currentBytesCopied;
+                    var eta = transferSpeed > 0 ? TimeSpan.FromSeconds(bytesRemaining / transferSpeed) : TimeSpan.Zero;
+                    
                     // Report progress
                     progress?.Report(new OffloadProgress
                     {
@@ -88,7 +94,10 @@ public class OffloadService : IOffloadService
                         TotalBytes = totalBytes,
                         FilesProcessed = currentFilesProcessed,
                         TotalFiles = files.Length,
-                        Status = $"Copying {relativePath}... ({currentFilesProcessed}/{files.Length})"
+                        Status = $"Copying {relativePath}... ({currentFilesProcessed}/{files.Length})",
+                        EstimatedTimeRemaining = eta,
+                        TransferSpeed = transferSpeed,
+                        CurrentDestination = "Both"
                     });
                 }
                 finally

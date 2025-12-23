@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="300"
+        x:Class="Veriflow.UI.Views.OffloadCompletionDialog"
+        Title="Offload Complete"
+        Width="500" Height="300"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="{DynamicResource Brush.Background.Primary}">
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock x:Name="TitleText"
+                      Text="✓ Offload Complete"
+                      FontSize="{StaticResource FontSize.H2}"
+                      FontWeight="{StaticResource FontWeight.Bold}"
+                      Foreground="{DynamicResource Brush.Accent.Success}" />
+            <TextBlock x:Name="SubtitleText"
+                      Text="All files have been successfully copied and verified."
+                      FontSize="{StaticResource FontSize.Body}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </StackPanel>
+        
+        <!-- Details -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource Brush.Background.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border.Default}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource CornerRadius.Medium}"
+                Padding="16">
+            <ScrollViewer>
+                <StackPanel Spacing="8">
+                    <TextBlock x:Name="DetailsText"
+                              FontFamily="{StaticResource Font.Monospace}"
+                              FontSize="{StaticResource FontSize.Small}"
+                              Foreground="{DynamicResource Brush.Text.Primary}"
+                              TextWrapping="Wrap" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" 
+                   Orientation="Horizontal" 
+                   HorizontalAlignment="Right"
+                   Spacing="12"
+                   Margin="0,24,0,0">
+            <Button Content="OK"
+                   Classes="Primary"
+                   Width="100"
+                   Click="OnOkClick" />
+        </StackPanel>
+    </Grid>
+</Window>
