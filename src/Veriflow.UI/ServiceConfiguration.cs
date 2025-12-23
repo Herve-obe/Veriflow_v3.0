@@ -21,7 +21,7 @@ public static class ServiceConfiguration
         services.AddSingleton<ISessionService, SessionService>();
         services.AddSingleton<IOffloadService, OffloadService>();
         services.AddSingleton<IMediaService, FFmpegMediaService>();
-        services.AddSingleton<IAudioEngine, NAudioEngine>(); // NAudio with NuGet - Zero Config
+        services.AddSingleton<IAudioEngine, OpenALAudioEngine>(); // OpenAL Soft - Zero Config via Silk.NET
         services.AddSingleton<IVideoEngine, LibVLCVideoEngine>();
         services.AddSingleton<ISyncEngine, FFmpegSyncEngine>();
         services.AddSingleton<ITranscodeEngine, FFmpegTranscodeEngine>();
