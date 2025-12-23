@@ -30,8 +30,9 @@ public class FFmpegMediaService : IMediaService
         {
             FileName = Path.GetFileName(filePath),
             FilePath = filePath,
-            FileSize = new FileInfo(filePath).Length,
-            CreationDate = File.GetCreationTime(filePath)
+            FileSizeBytes = new FileInfo(filePath).Length,
+            CreatedDate = File.GetCreationTime(filePath),
+            ModifiedDate = File.GetLastWriteTime(filePath)
         };
         
         try
@@ -64,11 +65,8 @@ public class FFmpegMediaService : IMediaService
                     if (format.TryGetProperty("duration", out var duration))
                         mediaFile.Duration = TimeSpan.FromSeconds(duration.GetDouble());
                     
-                    if (format.TryGetProperty("bit_rate", out var bitrate))
-                    {
-                        if (long.TryParse(bitrate.GetString(), out var br))
-                            mediaFile.Bitrate = br;
-                    }
+                    if (format.TryGetProperty("format_name", out var formatName))
+                        mediaFile.Container = formatName.GetString();
                 }
                 
                 // Extract streams info
@@ -83,8 +81,10 @@ public class FFmpegMediaService : IMediaService
                         
                         if (type == "video")
                         {
+                            mediaFile.Type = MediaType.Video;
+                            
                             if (stream.TryGetProperty("codec_name", out var codec))
-                                mediaFile.VideoCodec = codec.GetString() ?? string.Empty;
+                                mediaFile.Codec = codec.GetString();
                             
                             if (stream.TryGetProperty("width", out var width))
                                 mediaFile.Width = width.GetInt32();
@@ -102,8 +102,11 @@ public class FFmpegMediaService : IMediaService
                         }
                         else if (type == "audio")
                         {
+                            if (mediaFile.Type == MediaType.Unknown)
+                                mediaFile.Type = MediaType.Audio;
+                            
                             if (stream.TryGetProperty("codec_name", out var codec))
-                                mediaFile.AudioCodec = codec.GetString() ?? string.Empty;
+                                mediaFile.AudioCodec = codec.GetString();
                             
                             if (stream.TryGetProperty("sample_rate", out var sampleRate))
                             {
@@ -113,6 +116,9 @@ public class FFmpegMediaService : IMediaService
                             
                             if (stream.TryGetProperty("channels", out var channels))
                                 mediaFile.Channels = channels.GetInt32();
+                            
+                            if (stream.TryGetProperty("bits_per_sample", out var bitDepth))
+                                mediaFile.BitDepth = bitDepth.GetInt32();
                         }
                     }
                 }
