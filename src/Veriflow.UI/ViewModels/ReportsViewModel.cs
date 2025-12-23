@@ -51,7 +51,7 @@ public partial class ReportsViewModel : ViewModelBase
         var session = _sessionService.CurrentSession;
         if (session != null)
         {
-            ReportData.ProjectName = session.ProjectName;
+            ReportData.ProjectName = session.Name; // Session.Name, not ProjectName
             ReportData.Date = session.CreatedDate;
         }
         
@@ -82,7 +82,7 @@ public partial class ReportsViewModel : ViewModelBase
         var outputPath = await _dialogService.ShowSaveFileDialogAsync(
             "Save Camera Report",
             $"CameraReport_{DateTime.Now:yyyyMMdd}.pdf",
-            "PDF Files|*.pdf"
+            new[] { "PDF Files|*.pdf" }
         );
         
         if (string.IsNullOrEmpty(outputPath)) return;
@@ -129,7 +129,7 @@ public partial class ReportsViewModel : ViewModelBase
         var outputPath = await _dialogService.ShowSaveFileDialogAsync(
             "Save Sound Report",
             $"SoundReport_{DateTime.Now:yyyyMMdd}.pdf",
-            "PDF Files|*.pdf"
+            new[] { "PDF Files|*.pdf" }
         );
         
         if (string.IsNullOrEmpty(outputPath)) return;
