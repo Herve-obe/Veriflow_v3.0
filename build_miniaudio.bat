@@ -45,14 +45,14 @@ if not exist "miniaudio.dll" (
 )
 
 echo.
-echo Copying DLL to output directories...
-copy /Y miniaudio.dll ..\..\src\Veriflow.UI\bin\Debug\net8.0\ >nul 2>nul
-copy /Y miniaudio.dll ..\..\src\Veriflow.UI\bin\Release\net8.0\ >nul 2>nul
+echo Copying DLL to Assets directory...
+copy /Y miniaudio.dll ..\..\src\Veriflow.UI\Assets\Native\win-x64\ >nul 2>nul
 
 echo.
 echo ========================================
 echo SUCCESS! miniaudio.dll compiled
 echo Location: native\win-x64\miniaudio.dll
+echo Copied to: src\Veriflow.UI\Assets\Native\win-x64\
 echo ========================================
 echo.
 

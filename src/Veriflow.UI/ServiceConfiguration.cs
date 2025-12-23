@@ -21,7 +21,7 @@ public static class ServiceConfiguration
         services.AddSingleton<ISessionService, SessionService>();
         services.AddSingleton<IOffloadService, OffloadService>();
         services.AddSingleton<IMediaService, FFmpegMediaService>();
-        services.AddSingleton<IAudioEngine, SmartAudioEngine>(); // Auto-detects MiniAudio or falls back
+        services.AddSingleton<IAudioEngine, MiniAudioEngine>(); // Professional 192kHz engine - no fallback
         services.AddSingleton<IVideoEngine, LibVLCVideoEngine>();
         services.AddSingleton<ISyncEngine, FFmpegSyncEngine>();
         services.AddSingleton<ITranscodeEngine, FFmpegTranscodeEngine>();

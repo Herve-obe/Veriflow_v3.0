@@ -25,4 +25,25 @@
     <ProjectReference Include="..\Veriflow.Core\Veriflow.Core.csproj" />
     <ProjectReference Include="..\Veriflow.Infrastructure\Veriflow.Infrastructure.csproj" />
   </ItemGroup>
+
+  <!-- Native Libraries - Automatic Deployment -->
+  <ItemGroup>
+    <!-- Windows x64 -->
+    <None Include="Assets\Native\win-x64\*.dll" Condition="'$(RuntimeIdentifier)' == 'win-x64' OR '$(RuntimeIdentifier)' == ''">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+    
+    <!-- macOS x64 -->
+    <None Include="Assets\Native\osx-x64\*.dylib" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+    
+    <!-- Linux x64 -->
+    <None Include="Assets\Native\linux-x64\*.so" Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
 </Project>

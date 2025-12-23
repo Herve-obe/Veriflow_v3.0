@@ -69,16 +69,22 @@ if [ ! -f "$LIB_NAME" ]; then
 fi
 
 echo ""
-echo "Copying library to output directories..."
-mkdir -p ../../src/Veriflow.UI/bin/Debug/net8.0
-mkdir -p ../../src/Veriflow.UI/bin/Release/net8.0
-cp -f "$LIB_NAME" ../../src/Veriflow.UI/bin/Debug/net8.0/ 2>/dev/null || true
-cp -f "$LIB_NAME" ../../src/Veriflow.UI/bin/Release/net8.0/ 2>/dev/null || true
+echo "Copying library to Assets directory..."
+if [[ "$OS" == "macos" ]]; then
+    mkdir -p ../../src/Veriflow.UI/Assets/Native/osx-x64
+    cp -f "$LIB_NAME" ../../src/Veriflow.UI/Assets/Native/osx-x64/ 2>/dev/null || true
+    DEST_DIR="src/Veriflow.UI/Assets/Native/osx-x64"
+else
+    mkdir -p ../../src/Veriflow.UI/Assets/Native/linux-x64
+    cp -f "$LIB_NAME" ../../src/Veriflow.UI/Assets/Native/linux-x64/ 2>/dev/null || true
+    DEST_DIR="src/Veriflow.UI/Assets/Native/linux-x64"
+fi
 
 echo ""
 echo "========================================"
 echo "SUCCESS! $LIB_NAME compiled"
 echo "Location: $NATIVE_DIR/$LIB_NAME"
+echo "Copied to: $DEST_DIR/"
 echo "========================================"
 echo ""
 
