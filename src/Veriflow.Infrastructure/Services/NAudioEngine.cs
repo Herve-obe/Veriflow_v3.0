@@ -28,7 +28,7 @@ public class NAudioEngine : IAudioEngine, IDisposable
     public int SampleRate => _sampleRate;
     public bool IsPlaying => _isPlaying;
     
-    public NAudioEngine(int maxTracks = 32, int sampleRate = 48000)
+    public NAudioEngine(int maxTracks = 32, int sampleRate = 192000)
     {
         _maxTracks = maxTracks;
         _sampleRate = sampleRate;

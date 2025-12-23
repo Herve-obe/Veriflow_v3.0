@@ -169,7 +169,7 @@ Veriflow 3.0 uses several third-party libraries. See [THIRD_PARTY_LICENSES.md](T
 
 **Key Dependencies**:
 - **Avalonia UI** (MIT) - Cross-platform UI framework
-- **NAudio** (MIT) - Audio processing
+- **MiniAudio** (Public Domain/MIT) - Professional HD audio engine
 - **LibVLCSharp** (LGPL v2.1) - Video playback
 - **FFmpeg** (LGPL v2.1) - Media processing
 - **QuestPDF** (Community/Professional) - PDF generation

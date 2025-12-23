@@ -25,7 +25,7 @@ public static class ServiceConfiguration
         services.AddSingleton<IVideoEngine, LibVLCVideoEngine>();
         services.AddSingleton<ISyncEngine, FFmpegSyncEngine>();
         services.AddSingleton<ITranscodeEngine, FFmpegTranscodeEngine>();
-        services.AddSingleton<IReportEngine, QuestPDFReportEngine>();
+        services.AddSingleton<IReportEngine, PdfSharpReportEngine>();
         
         // UI Services
         services.AddSingleton<IDialogService>(sp => new AvaloniaDialogService(mainWindow));

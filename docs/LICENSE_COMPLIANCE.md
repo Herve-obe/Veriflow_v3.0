@@ -41,15 +41,22 @@ Veriflow 3.0 uses only permissive open-source licenses compatible with commercia
 
 ### 3. Audio Libraries
 
-#### NAudio 2.2.1
-- **License**: MIT License (since version 2.0)
-- **Commercial Use**: ✅ Allowed
-- **Attribution**: Recommended
+#### MiniAudio (Latest)
+- **License**: Public Domain (Unlicense) OR MIT License (dual license)
+- **Commercial Use**: ✅ Allowed (completely free)
+- **Attribution**: Not required (but appreciated)
 - **Restrictions**: None
-- **Source**: https://github.com/naudio/NAudio
+- **Source**: https://github.com/mackron/miniaudio
 - **Status**: ✅ COMPLIANT
 
-**Note**: NAudio changed from MS-PL to MIT in version 2.0, making it fully compatible with commercial use.
+**Features**:
+- ✅ Professional HD audio (192kHz, 32-bit float)
+- ✅ Multi-track support (up to 32 tracks)
+- ✅ Cross-platform
+- ✅ Zero dependencies
+- ✅ Public domain - no licensing concerns
+
+**Note**: MiniAudio is dual-licensed as Public Domain (Unlicense) OR MIT, providing maximum flexibility for commercial use.
 
 ---
 

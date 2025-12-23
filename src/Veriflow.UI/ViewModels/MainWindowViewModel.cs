@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
+using Veriflow.UI.Views;
 
 namespace Veriflow.UI.ViewModels;
 
@@ -90,6 +91,13 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         await _sessionService.SaveSessionAsync();
         UpdateWindowTitle();
+    }
+    
+    [RelayCommand]
+    private void ShowAbout()
+    {
+        var aboutWindow = new AboutWindow();
+        aboutWindow.ShowDialog(null);
     }
     
     private void UpdateWindowTitle()

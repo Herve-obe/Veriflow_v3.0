@@ -27,12 +27,19 @@ Veriflow 3.0 uses the following third-party libraries and components. We are gra
 
 ## Audio Libraries
 
-### NAudio
-- **Version**: 2.2.1
-- **License**: MIT License
-- **Copyright**: © Mark Heath & Contributors
-- **Source**: https://github.com/naudio/NAudio
-- **License URL**: https://github.com/naudio/NAudio/blob/master/license.txt
+### MiniAudio
+- **Version**: Latest
+- **License**: Public Domain (Unlicense) OR MIT License
+- **Copyright**: © David Reid
+- **Source**: https://github.com/mackron/miniaudio
+- **License URL**: https://github.com/mackron/miniaudio/blob/master/LICENSE
+
+**Features**:
+- Professional HD audio support (up to 192kHz, 32-bit float)
+- Multi-track playback (up to 32 tracks)
+- Cross-platform (Windows, macOS, Linux)
+- Zero dependencies
+- Public domain - completely free for any use
 
 ---
 
@@ -218,3 +225,9 @@ For license compliance questions, please contact:
 
 **Last Updated**: 2025-12-23  
 **Veriflow Version**: 3.0.0-beta
+
+**Developed by**:
+- **Hervé OBEJERO** - Lead Developer & Architect
+- **Antigravity AI** - AI Development Assistant
+
+**Copyright © 2025 Hervé OBEJERO. All rights reserved.**
