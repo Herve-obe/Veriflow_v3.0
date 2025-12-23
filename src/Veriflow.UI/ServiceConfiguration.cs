@@ -22,6 +22,7 @@ public static class ServiceConfiguration
         services.AddSingleton<IOffloadService, OffloadService>();
         services.AddSingleton<IMediaService, FFmpegMediaService>();
         services.AddSingleton<IAudioEngine, NAudioEngine>();
+        services.AddSingleton<IVideoEngine, LibVLCVideoEngine>();
         
         // UI Services
         services.AddSingleton<IDialogService>(sp => new AvaloniaDialogService(mainWindow));
