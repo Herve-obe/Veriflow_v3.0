@@ -22,8 +22,8 @@ public class OpenALAudioEngine : IAudioEngine, IDisposable
     private readonly AL _al;
     private readonly ALContext _alc;
     private readonly List<AudioTrack> _tracks = new();
-    private Device* _device;
-    private Context* _context;
+    private IntPtr _device;
+    private IntPtr _context;
     private bool _isPlaying;
     private bool _disposed;
     private CancellationTokenSource? _updateCancellation;
@@ -44,11 +44,12 @@ public class OpenALAudioEngine : IAudioEngine, IDisposable
         try
         {
             // Open default device
-            _device = _alc.OpenDevice(string.Empty);
-            if (_device == null)
+            var device = _alc.OpenDevice(string.Empty);
+            if (device == null)
             {
                 throw new InvalidOperationException("Failed to open OpenAL device");
             }
+            _device = (IntPtr)device;
             
             // Create context with 192kHz support
             var attrs = stackalloc int[]
@@ -57,13 +58,14 @@ public class OpenALAudioEngine : IAudioEngine, IDisposable
                 0
             };
             
-            _context = _alc.CreateContext(_device, attrs);
-            if (_context == null)
+            var context = _alc.CreateContext(device, attrs);
+            if (context == null)
             {
                 throw new InvalidOperationException("Failed to create OpenAL context");
             }
+            _context = (IntPtr)context;
             
-            _alc.MakeContextCurrent(_context);
+            _alc.MakeContextCurrent(context);
             
             // Set listener properties
             _al.SetListenerProperty(ListenerVector3.Position, 0f, 0f, 0f);
@@ -334,15 +336,15 @@ public class OpenALAudioEngine : IAudioEngine, IDisposable
         }
         _tracks.Clear();
         
-        if (_context != null)
+        if (_context != IntPtr.Zero)
         {
             _alc.MakeContextCurrent(null);
-            _alc.DestroyContext(_context);
+            _alc.DestroyContext((Context*)_context);
         }
         
-        if (_device != null)
+        if (_device != IntPtr.Zero)
         {
-            _alc.CloseDevice(_device);
+            _alc.CloseDevice((Device*)_device);
         }
         
         _al.Dispose();
