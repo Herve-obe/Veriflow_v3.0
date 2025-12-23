@@ -21,7 +21,7 @@ public static class ServiceConfiguration
         services.AddSingleton<ISessionService, SessionService>();
         services.AddSingleton<IOffloadService, OffloadService>();
         services.AddSingleton<IMediaService, FFmpegMediaService>();
-        services.AddSingleton<IAudioEngine, MiniAudioEngine>(); // Professional 192kHz engine - no fallback
+        services.AddSingleton<IAudioEngine, NAudioEngine>(); // NAudio with NuGet - Zero Config
         services.AddSingleton<IVideoEngine, LibVLCVideoEngine>();
         services.AddSingleton<ISyncEngine, FFmpegSyncEngine>();
         services.AddSingleton<ITranscodeEngine, FFmpegTranscodeEngine>();
