@@ -27,6 +27,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _windowTitle = "Veriflow 3.0";
     
     [ObservableProperty]
+    private string _statusMessage = "Ready";
+    
+    [ObservableProperty]
     private ViewModelBase? _currentPageViewModel;
     
     public MainWindowViewModel(ISessionService sessionService, IServiceProvider serviceProvider)
@@ -45,6 +48,7 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentProfile = CurrentProfile == ProfileMode.Video ? ProfileMode.Audio : ProfileMode.Video;
         _sessionService.CurrentSession.CurrentProfile = CurrentProfile;
         _sessionService.MarkAsModified();
+        StatusMessage = $"Switched to {CurrentProfile} mode";
     }
     
     [RelayCommand]
