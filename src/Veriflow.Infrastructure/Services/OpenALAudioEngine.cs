@@ -14,7 +14,7 @@ namespace Veriflow.Infrastructure.Services;
 /// Supports 192kHz, 32-bit float, 32 tracks
 /// Zero Config deployment via Silk.NET.OpenAL.Soft.Native
 /// </summary>
-public unsafe class OpenALAudioEngine : IAudioEngine, IDisposable
+public class OpenALAudioEngine : IAudioEngine, IDisposable
 {
     private const int MaxTracksConst = 32;
     private const int SampleRateConst = 192000;
@@ -39,7 +39,7 @@ public unsafe class OpenALAudioEngine : IAudioEngine, IDisposable
         InitializeOpenAL();
     }
     
-    private void InitializeOpenAL()
+    private unsafe void InitializeOpenAL()
     {
         try
         {
@@ -320,7 +320,7 @@ public unsafe class OpenALAudioEngine : IAudioEngine, IDisposable
         }
     }
     
-    public void Dispose()
+    public unsafe void Dispose()
     {
         if (_disposed) return;
         
