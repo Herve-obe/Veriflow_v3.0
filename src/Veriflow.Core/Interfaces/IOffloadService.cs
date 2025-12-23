@@ -58,6 +58,7 @@ public class OffloadProgress
 public class OffloadResult
 {
     public bool Success { get; set; }
+    public int TotalFiles { get; set; }
     public int FilesProcessed { get; set; }
     public long BytesCopied { get; set; }
     public TimeSpan Duration { get; set; }

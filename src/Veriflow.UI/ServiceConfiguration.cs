@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Services;
+using Veriflow.UI.Services;
 using Veriflow.UI.ViewModels;
 
 namespace Veriflow.UI;
@@ -11,12 +12,16 @@ namespace Veriflow.UI;
 /// </summary>
 public static class ServiceConfiguration
 {
-    public static ServiceProvider ConfigureServices()
+    public static ServiceProvider ConfigureServices(Window mainWindow)
     {
         var services = new ServiceCollection();
         
         // Core Services
         services.AddSingleton<ISessionService, SessionService>();
+        services.AddSingleton<IOffloadService, OffloadService>();
+        
+        // UI Services
+        services.AddSingleton<IDialogService>(sp => new AvaloniaDialogService(mainWindow));
         
         // TODO: Add other services as they are implemented
         // services.AddSingleton<IAudioEngine, MiniAudioEngine>();
@@ -33,9 +38,7 @@ public static class ServiceConfiguration
         services.AddTransient<TranscodeViewModel>();
         services.AddTransient<ReportsViewModel>();
         
-        // Set ViewLocator
-        var locator = new ViewLocator();
-        
         return services.BuildServiceProvider();
     }
 }
+

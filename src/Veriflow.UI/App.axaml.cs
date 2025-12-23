@@ -17,17 +17,17 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Configure Dependency Injection
-        _serviceProvider = ServiceConfiguration.ConfigureServices();
-        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainViewModel = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_serviceProvider, _serviceProvider);
+            var mainWindow = new MainWindow();
             
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = mainViewModel
-            };
+            // Configure Dependency Injection with MainWindow reference
+            _serviceProvider = ServiceConfiguration.ConfigureServices(mainWindow);
+            
+            var mainViewModel = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_serviceProvider, _serviceProvider);
+            mainWindow.DataContext = mainViewModel;
+            
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
