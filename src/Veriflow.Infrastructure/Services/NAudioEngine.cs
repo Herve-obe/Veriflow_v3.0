@@ -19,7 +19,6 @@ public class NAudioEngine : IAudioEngine, IDisposable
     
     private readonly List<AudioTrack> _tracks = new();
     private IWavePlayer? _waveOut;
-    private MixingSampleProvider? _mixer;
     private bool _isPlaying;
     private bool _disposed;
     private CancellationTokenSource? _updateCancellation;
@@ -40,13 +39,6 @@ public class NAudioEngine : IAudioEngine, IDisposable
             DesiredLatency = 100,
             NumberOfBuffers = 2
         };
-        
-        _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(SampleRateConst, 2))
-        {
-            ReadFully = true
-        };
-        
-        _waveOut.Init(_mixer);
     }
     
     public async Task LoadTrackAsync(int trackIndex, string filePath, CancellationToken cancellationToken = default)
@@ -101,9 +93,14 @@ public class NAudioEngine : IAudioEngine, IDisposable
     {
         if (!_isPlaying && _waveOut != null)
         {
-            _waveOut.Play();
-            _isPlaying = true;
-            StartVuMeterUpdates();
+            var firstTrack = _tracks.FirstOrDefault();
+            if (firstTrack?.SampleProvider != null)
+            {
+                _waveOut.Init(firstTrack.SampleProvider);
+                _waveOut.Play();
+                _isPlaying = true;
+                StartVuMeterUpdates();
+            }
         }
     }
     
