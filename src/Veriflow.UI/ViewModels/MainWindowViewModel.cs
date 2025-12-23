@@ -65,7 +65,7 @@ public partial class MainWindowViewModel : ViewModelBase
             "SYNC" => _serviceProvider.GetRequiredService<SyncViewModel>(),
             "TRANSCODE" => _serviceProvider.GetRequiredService<TranscodeViewModel>(),
             "REPORTS" => _serviceProvider.GetRequiredService<ReportsViewModel>(),
-            _ => null
+            _ => _serviceProvider.GetRequiredService<OffloadViewModel>()
         };
         
         StatusMessage = $"Navigated to {pageName}";

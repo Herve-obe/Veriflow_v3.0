@@ -19,44 +19,34 @@ public partial class OffloadView : UserControl
     private void DragOver(object? sender, DragEventArgs e)
     {
         // Only allow folders
-        if (e.DataTransfer.Contains(Avalonia.Input.DataFormats.Files))
-        {
-            e.DragEffects = DragDropEffects.Copy;
-        }
-        else
-        {
-            e.DragEffects = DragDropEffects.None;
-        }
+        e.DragEffects = DragDropEffects.Copy;
     }
     
     private void Drop(object? sender, DragEventArgs e)
     {
-        if (e.DataTransfer.Contains(Avalonia.Input.DataFormats.Files))
+        var files = e.Data.GetFiles()?.ToArray();
+        if (files != null && files.Length > 0)
         {
-            var files = e.DataTransfer.GetFiles()?.ToArray();
-            if (files != null && files.Length > 0)
+            var path = files[0].Path.LocalPath;
+            
+            // Determine which border was dropped on
+            if (sender is Border border && DataContext is ViewModels.OffloadViewModel vm)
             {
-                var path = files[0].Path.LocalPath;
-                
-                // Determine which border was dropped on
-                if (sender is Border border && DataContext is ViewModels.OffloadViewModel vm)
+                // Check if it's a directory
+                if (System.IO.Directory.Exists(path))
                 {
-                    // Check if it's a directory
-                    if (System.IO.Directory.Exists(path))
-                    {
-                        // Find which border by checking the row
-                        var parent = border.Parent as Grid;
-                        var row = Grid.GetRow(border);
+                    // Find which border by checking the row
+                    var parent = border.Parent as Grid;
+                    var row = Grid.GetRow(border);
+                    
+                    if (row == 0)
+                        vm.SourceFolder = path;
+                    else if (row == 1)
+                        vm.DestinationA = path;
+                    else if (row == 2)
+                        vm.DestinationB = path;
                         
-                        if (row == 0)
-                            vm.SourceFolder = path;
-                        else if (row == 1)
-                            vm.DestinationA = path;
-                        else if (row == 2)
-                            vm.DestinationB = path;
-                            
-                        vm.AppendLog($"Dropped: {path}");
-                    }
+                    vm.AppendLog($"Dropped: {path}");
                 }
             }
         }
