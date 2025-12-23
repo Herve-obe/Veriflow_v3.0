@@ -48,7 +48,7 @@ public partial class ReportsViewModel : ViewModelBase
     private void InitializeReportData()
     {
         // Load session data if available
-        var session = _sessionService.GetCurrentSession();
+        var session = _sessionService.CurrentSession;
         if (session != null)
         {
             ReportData.ProjectName = session.ProjectName;
