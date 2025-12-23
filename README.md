@@ -9,7 +9,7 @@
 ### Key Features
 
 - 🎥 **Professional Media Management** - Organize and manage video/audio files
-- 📁 **Secure Offloading** - SHA256 checksum verification for data integrity
+- 📁 **Secure Offloading** - Ultra-fast xxHash64 verification for data integrity
 - 🎵 **Multi-Track Audio Player** - 32-track mixer with VU meters
 - 🎬 **Professional Video Player** - Frame-accurate playback with LibVLC
 - 🔄 **Audio/Video Sync** - FFT-based waveform correlation

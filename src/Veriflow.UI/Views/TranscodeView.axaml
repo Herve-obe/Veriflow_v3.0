@@ -53,13 +53,13 @@
                               FontWeight="{StaticResource FontWeight.SemiBold}"
                               Foreground="{DynamicResource Brush.Text.Primary}" />
                     <TextBlock Grid.Column="1" 
-                              Text="{Binding TranscodeQueue.Count, StringFormat='{}{0} items'}"
+                              Text="{Binding Queue.Count, StringFormat='{}{0} items'}"
                               Foreground="{DynamicResource Brush.Text.Secondary}"
                               VerticalAlignment="Center" />
                 </Grid>
                 
                 <ScrollViewer Grid.Row="1">
-                    <ItemsControl ItemsSource="{Binding TranscodeQueue}" Margin="16">
+                    <ItemsControl ItemsSource="{Binding Queue}" Margin="16">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{DynamicResource Brush.Background.Primary}"
@@ -70,7 +70,7 @@
                                        Margin="0,0,0,8">
                                     <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                                  Text="{Binding SourceFile}"
+                                                  Text="{Binding InputPath}"
                                                   FontFamily="{StaticResource Font.Monospace}"
                                                   FontSize="{StaticResource FontSize.Small}"
                                                   Foreground="{DynamicResource Brush.Text.Primary}" />
@@ -80,7 +80,7 @@
                                                   Foreground="{DynamicResource Brush.Text.Secondary}"
                                                   Margin="16,0,0,0" />
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                  Text="{Binding Preset}"
+                                                  Text="{Binding PresetName}"
                                                   FontSize="{StaticResource FontSize.Caption}"
                                                   Foreground="{DynamicResource Brush.Text.Secondary}"
                                                   Margin="0,4,0,8" />
@@ -101,15 +101,15 @@
         <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="16">
             <Button Content="Add Files" 
                    Classes="Primary"
-                   Command="{Binding AddFilesCommand}" />
+                   Command="{Binding AddFilesToQueueCommand}" />
             <Button Content="Start Transcode" 
                    Classes="Primary"
-                   Command="{Binding StartTranscodeCommand}"
-                   IsEnabled="{Binding !IsTranscoding}" />
+                   Command="{Binding StartProcessingCommand}"
+                   IsEnabled="{Binding !IsProcessing}" />
             <Button Content="Cancel" 
                    Classes="Secondary"
-                   Command="{Binding CancelTranscodeCommand}"
-                   IsEnabled="{Binding IsTranscoding}" />
+                   Command="{Binding StopQueueCommand}"
+                   IsEnabled="{Binding IsProcessing}" />
         </StackPanel>
     </Grid>
 </UserControl>

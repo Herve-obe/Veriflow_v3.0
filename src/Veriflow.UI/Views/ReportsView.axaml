@@ -42,13 +42,13 @@
                                   FontWeight="{StaticResource FontWeight.SemiBold}"
                                   Foreground="{DynamicResource Brush.Text.Primary}" />
                         <TextBlock Grid.Column="1" 
-                                  Text="{Binding ReportFiles.Count, StringFormat='{}{0} files'}"
+                                  Text="{Binding Clips.Count, StringFormat='{}{0} files'}"
                                   Foreground="{DynamicResource Brush.Text.Secondary}"
                                   VerticalAlignment="Center" />
                     </Grid>
                     
                     <ListBox Grid.Row="1"
-                            ItemsSource="{Binding ReportFiles}"
+                            ItemsSource="{Binding Clips}"
                             Background="Transparent"
                             Margin="8">
                         <ListBox.ItemTemplate>
@@ -101,10 +101,10 @@
                     <StackPanel Spacing="8">
                         <Button Content="Add Files" 
                                Classes="Secondary"
-                               Command="{Binding AddFilesCommand}" />
+                               Command="{Binding AddClipCommand}" />
                         <Button Content="Clear Files" 
                                Classes="Ghost"
-                               Command="{Binding ClearFilesCommand}" />
+                               Command="{Binding ClearClipsCommand}" />
                     </StackPanel>
                     
                     <Separator />
@@ -112,13 +112,8 @@
                     <StackPanel Spacing="8">
                         <Button Content="Generate PDF Report" 
                                Classes="Primary"
-                               Command="{Binding GeneratePdfReportCommand}"
-                               IsEnabled="{Binding ReportFiles.Count}" />
-                        <Button Content="Export EDL/ALE" 
-                               Classes="Secondary"
-                               Command="{Binding ExportEdlCommand}"
-                               IsEnabled="{Binding IsVideoMode}"
-                               IsVisible="{Binding IsVideoMode}" />
+                               Command="{Binding GenerateCameraReportCommand}"
+                               IsEnabled="{Binding Clips.Count}" />
                     </StackPanel>
                 </StackPanel>
             </Border>

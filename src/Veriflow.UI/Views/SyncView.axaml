@@ -40,7 +40,7 @@
                               Foreground="{DynamicResource Brush.Text.Primary}"
                               Margin="16,16,16,8" />
                     <ListBox Grid.Row="1"
-                            ItemsSource="{Binding VideoFiles}"
+                            ItemsSource="{Binding VideoPool}"
                             Background="Transparent"
                             Margin="8">
                         <ListBox.ItemTemplate>
@@ -53,7 +53,7 @@
                     <Button Grid.Row="2" 
                            Content="Import Videos"
                            Classes="Secondary"
-                           Command="{Binding ImportVideoFilesCommand}"
+                           Command="{Binding AddVideoFilesCommand}"
                            Margin="16" />
                 </Grid>
             </Border>
@@ -73,7 +73,7 @@
                               Foreground="{DynamicResource Brush.Text.Primary}"
                               Margin="16,16,16,8" />
                     <ListBox Grid.Row="1"
-                            ItemsSource="{Binding AudioFiles}"
+                            ItemsSource="{Binding AudioPool}"
                             Background="Transparent"
                             Margin="8">
                         <ListBox.ItemTemplate>
@@ -86,7 +86,7 @@
                     <Button Grid.Row="2" 
                            Content="Import Audio"
                            Classes="Secondary"
-                           Command="{Binding ImportAudioFilesCommand}"
+                           Command="{Binding AddAudioFilesCommand}"
                            Margin="16" />
                 </Grid>
             </Border>
@@ -106,16 +106,16 @@
                               Foreground="{DynamicResource Brush.Text.Primary}"
                               Margin="16,16,16,8" />
                     <ListBox Grid.Row="1"
-                            ItemsSource="{Binding SyncedPairs}"
+                            ItemsSource="{Binding SyncPairs}"
                             Background="Transparent"
                             Margin="8">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="{Binding Video.FileName}"
+                                    <TextBlock Text="{Binding VideoItem.FileName}"
                                               FontSize="{StaticResource FontSize.Small}"
                                               Foreground="{DynamicResource Brush.Accent.Video.Primary}" />
-                                    <TextBlock Text="{Binding Audio.FileName}"
+                                    <TextBlock Text="{Binding AudioItem.FileName}"
                                               FontSize="{StaticResource FontSize.Small}"
                                               Foreground="{DynamicResource Brush.Accent.Audio.Primary}" />
                                 </StackPanel>
@@ -138,7 +138,7 @@
                    IsEnabled="{Binding !IsBusy}" />
             <Button Content="Export Synced Files" 
                    Classes="Secondary"
-                   Command="{Binding ExportSyncedFilesCommand}" />
+                   Command="{Binding ExportCommand}" />
         </StackPanel>
     </Grid>
 </UserControl>
