@@ -78,90 +78,92 @@
                        BorderThickness="1"
                        CornerRadius="{StaticResource CornerRadius.Medium}">
                     
-                    <!-- Grid View -->
-                    <ScrollViewer IsVisible="{Binding IsGridView}"
-                                 VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding MediaFiles}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            
-                            <ItemsControl.ItemTemplate>
+                    <Grid>
+                        <!-- Grid View -->
+                        <ScrollViewer IsVisible="{Binding IsGridView}"
+                                     VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding MediaFiles}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Classes="Ghost"
+                                               Width="180"
+                                               Height="160"
+                                               Margin="8"
+                                               Command="{Binding $parent[UserControl].((vm:MediaViewModel)DataContext).SelectMediaCommand}"
+                                               CommandParameter="{Binding}">
+                                            <StackPanel Spacing="8">
+                                                <!-- Thumbnail -->
+                                                <Border Width="160" Height="120"
+                                                       Background="{DynamicResource Brush.Background.Tertiary}"
+                                                       CornerRadius="{StaticResource CornerRadius.Small}">
+                                                    <TextBlock Text="📁"
+                                                              FontSize="48"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"
+                                                              Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                                </Border>
+                                                
+                                                <!-- File Name -->
+                                                <TextBlock Text="{Binding FileName}"
+                                                          FontSize="{StaticResource FontSize.Small}"
+                                                          Foreground="{DynamicResource Brush.Text.Primary}"
+                                                          TextTrimming="CharacterEllipsis"
+                                                          TextAlignment="Center"
+                                                          MaxWidth="160" />
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        
+                        <!-- List View -->
+                        <ListBox IsVisible="{Binding !IsGridView}"
+                                ItemsSource="{Binding MediaFiles}"
+                                SelectedItem="{Binding SelectedMedia}"
+                                Background="Transparent">
+                            <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Classes="Ghost"
-                                           Width="180"
-                                           Height="160"
-                                           Margin="8"
-                                           Command="{Binding $parent[UserControl].((vm:MediaViewModel)DataContext).SelectMediaCommand}"
-                                           CommandParameter="{Binding}">
-                                        <StackPanel Spacing="8">
-                                            <!-- Thumbnail -->
-                                            <Border Width="160" Height="120"
-                                                   Background="{DynamicResource Brush.Background.Tertiary}"
-                                                   CornerRadius="{StaticResource CornerRadius.Small}">
-                                                <TextBlock Text="📁"
-                                                          FontSize="48"
-                                                          HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"
-                                                          Foreground="{DynamicResource Brush.Text.Secondary}" />
-                                            </Border>
-                                            
-                                            <!-- File Name -->
-                                            <TextBlock Text="{Binding FileName}"
-                                                      FontSize="{StaticResource FontSize.Small}"
-                                                      Foreground="{DynamicResource Brush.Text.Primary}"
-                                                      TextTrimming="CharacterEllipsis"
-                                                      TextAlignment="Center"
-                                                      MaxWidth="160" />
-                                        </StackPanel>
-                                    </Button>
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="8">
+                                        <!-- Icon -->
+                                        <TextBlock Grid.Column="0" 
+                                                  Text="📄"
+                                                  FontSize="24"
+                                                  Margin="0,0,12,0"
+                                                  VerticalAlignment="Center" />
+                                        
+                                        <!-- File Name -->
+                                        <TextBlock Grid.Column="1" 
+                                                  Text="{Binding FileName}"
+                                                  FontSize="{StaticResource FontSize.Body}"
+                                                  Foreground="{DynamicResource Brush.Text.Primary}"
+                                                  VerticalAlignment="Center" />
+                                        
+                                        <!-- Duration -->
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                  Margin="16,0"
+                                                  VerticalAlignment="Center" />
+                                        
+                                        <!-- File Size -->
+                                        <TextBlock Grid.Column="3" 
+                                                  Text="{Binding FileSizeBytes}"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                  VerticalAlignment="Center" />
+                                    </Grid>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                    
-                    <!-- List View -->
-                    <ListBox IsVisible="{Binding !IsGridView}"
-                            ItemsSource="{Binding MediaFiles}"
-                            SelectedItem="{Binding SelectedMedia}"
-                            Background="Transparent">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="8">
-                                    <!-- Icon -->
-                                    <TextBlock Grid.Column="0" 
-                                              Text="{Binding Type, Converter={StaticResource MediaTypeIconConverter}}"
-                                              FontSize="24"
-                                              Margin="0,0,12,0"
-                                              VerticalAlignment="Center" />
-                                    
-                                    <!-- File Name -->
-                                    <TextBlock Grid.Column="1" 
-                                              Text="{Binding FileName}"
-                                              FontSize="{StaticResource FontSize.Body}"
-                                              Foreground="{DynamicResource Brush.Text.Primary}"
-                                              VerticalAlignment="Center" />
-                                    
-                                    <!-- Duration -->
-                                    <TextBlock Grid.Column="2" 
-                                              Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}"
-                                              FontSize="{StaticResource FontSize.Small}"
-                                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                                              Margin="16,0"
-                                              VerticalAlignment="Center" />
-                                    
-                                    <!-- File Size -->
-                                    <TextBlock Grid.Column="3" 
-                                              Text="{Binding FileSizeBytes, Converter={StaticResource FileSizeConverter}}"
-                                              FontSize="{StaticResource FontSize.Small}"
-                                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                                              VerticalAlignment="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
                 </Border>
             </Grid>
             
