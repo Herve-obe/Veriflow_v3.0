@@ -81,23 +81,25 @@ public class NAudioEngine : IAudioEngine, IDisposable
                 
                 // Unload existing
                 track.Reader?.Dispose();
+                track.VolumeProvider = null;
+                track.PanProvider = null;
                 track.SampleProvider = null;
                 
                 // Load new file
                 track.Reader = new AudioFileReader(filePath);
                 
-                // Create sample provider with volume and pan
-                var volumeProvider = new VolumeSampleProvider(track.Reader)
+                // Create sample provider chain: Reader -> Volume -> Pan
+                track.VolumeProvider = new VolumeSampleProvider(track.Reader)
                 {
                     Volume = track.Volume
                 };
                 
-                var panProvider = new PanningSampleProvider(volumeProvider)
+                track.PanProvider = new PanningSampleProvider(track.VolumeProvider)
                 {
                     Pan = track.Pan
                 };
                 
-                track.SampleProvider = panProvider;
+                track.SampleProvider = track.PanProvider;
                 track.FilePath = filePath;
                 track.FileName = Path.GetFileName(filePath);
                 track.Duration = track.Reader.TotalTime;
@@ -131,6 +133,8 @@ public class NAudioEngine : IAudioEngine, IDisposable
         
         track.Reader?.Dispose();
         track.Reader = null;
+        track.VolumeProvider = null;
+        track.PanProvider = null;
         track.SampleProvider = null;
         track.FilePath = string.Empty;
         track.FileName = string.Empty;
@@ -189,10 +193,9 @@ public class NAudioEngine : IAudioEngine, IDisposable
         var track = _tracks[trackIndex];
         track.Volume = Math.Clamp(volume, 0f, 1f);
         
-        if (track.SampleProvider is PanningSampleProvider panProvider &&
-            panProvider.Source is VolumeSampleProvider volumeProvider)
+        if (track.VolumeProvider != null)
         {
-            volumeProvider.Volume = track.Volume;
+            track.VolumeProvider.Volume = track.Volume;
         }
     }
     
@@ -204,9 +207,9 @@ public class NAudioEngine : IAudioEngine, IDisposable
         var track = _tracks[trackIndex];
         track.Pan = Math.Clamp(pan, -1f, 1f);
         
-        if (track.SampleProvider is PanningSampleProvider panProvider)
+        if (track.PanProvider != null)
         {
-            panProvider.Pan = track.Pan;
+            track.PanProvider.Pan = track.Pan;
         }
     }
     
@@ -219,10 +222,9 @@ public class NAudioEngine : IAudioEngine, IDisposable
         track.IsMuted = muted;
         
         // Mute by setting volume to 0
-        if (track.SampleProvider is PanningSampleProvider panProvider &&
-            panProvider.Source is VolumeSampleProvider volumeProvider)
+        if (track.VolumeProvider != null)
         {
-            volumeProvider.Volume = muted ? 0f : track.Volume;
+            track.VolumeProvider.Volume = muted ? 0f : track.Volume;
         }
     }
     
@@ -239,16 +241,15 @@ public class NAudioEngine : IAudioEngine, IDisposable
         for (int i = 0; i < _maxTracks; i++)
         {
             var track = _tracks[i];
-            if (track.SampleProvider is PanningSampleProvider panProvider &&
-                panProvider.Source is VolumeSampleProvider volumeProvider)
+            if (track.VolumeProvider != null)
             {
                 if (anySolo)
                 {
-                    volumeProvider.Volume = track.IsSolo ? track.Volume : 0f;
+                    track.VolumeProvider.Volume = track.IsSolo ? track.Volume : 0f;
                 }
                 else
                 {
-                    volumeProvider.Volume = track.IsMuted ? 0f : track.Volume;
+                    track.VolumeProvider.Volume = track.IsMuted ? 0f : track.Volume;
                 }
             }
         }
@@ -263,7 +264,7 @@ public class NAudioEngine : IAudioEngine, IDisposable
     public double GetDuration()
     {
         return _tracks.Where(t => t.Reader != null)
-                      .Max(t => t.Duration.TotalSeconds);
+                      .Max(t => (double?)t.Duration.TotalSeconds) ?? 0;
     }
     
     public (float left, float right) GetTrackPeaks(int trackIndex)
@@ -313,6 +314,8 @@ public class NAudioEngine : IAudioEngine, IDisposable
     private class AudioTrack
     {
         public AudioFileReader? Reader { get; set; }
+        public VolumeSampleProvider? VolumeProvider { get; set; }
+        public PanningSampleProvider? PanProvider { get; set; }
         public ISampleProvider? SampleProvider { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public string FileName { get; set; } = string.Empty;

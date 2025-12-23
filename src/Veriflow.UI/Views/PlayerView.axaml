@@ -11,111 +11,235 @@
         <vm:PlayerViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="24">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24">
         <!-- Header -->
         <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
             <TextBlock Text="PLAYER" 
                       FontSize="{StaticResource FontSize.H1}"
                       FontWeight="{StaticResource FontWeight.Bold}"
                       Foreground="{DynamicResource Brush.Text.Primary}" />
-            <TextBlock Text="Professional audio/video playback with metadata" 
+            <TextBlock Text="Multi-track audio playback" 
                       FontSize="{StaticResource FontSize.Body}"
                       Foreground="{DynamicResource Brush.Text.Secondary}" />
         </StackPanel>
         
-        <!-- Playback Area -->
-        <Border Grid.Row="1"
+        <!-- Transport Controls -->
+        <Border Grid.Row="1" 
                Background="{DynamicResource Brush.Background.Secondary}"
                BorderBrush="{DynamicResource Brush.Border.Default}"
                BorderThickness="1"
                CornerRadius="{StaticResource CornerRadius.Medium}"
+               Padding="16"
                Margin="0,0,0,16">
-            <Grid RowDefinitions="*,Auto">
-                <!-- Video/Waveform Display -->
-                <Border Grid.Row="0" 
-                       Background="#000000"
-                       Margin="16">
-                    <TextBlock Text="🎬 Video Player / Waveform Display"
-                              FontSize="24"
-                              Foreground="#666666"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center" />
-                </Border>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- Playback Buttons -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Button Classes="Primary" 
+                           Width="48" Height="48"
+                           Command="{Binding PlayCommand}"
+                           ToolTip.Tip="Play (Space)">
+                        <PathIcon Data="M8 5v14l11-7z" Width="24" Height="24" />
+                    </Button>
+                    <Button Classes="Secondary" 
+                           Width="48" Height="48"
+                           Command="{Binding PauseCommand}"
+                           ToolTip.Tip="Pause">
+                        <PathIcon Data="M6 4h4v16H6V4zm8 0h4v16h-4V4z" Width="24" Height="24" />
+                    </Button>
+                    <Button Classes="Secondary" 
+                           Width="48" Height="48"
+                           Command="{Binding StopCommand}"
+                           ToolTip.Tip="Stop">
+                        <PathIcon Data="M6 6h12v12H6z" Width="24" Height="24" />
+                    </Button>
+                </StackPanel>
                 
                 <!-- Timeline -->
-                <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="16,0,16,16">
-                    <TextBlock Grid.Column="0" 
-                              Text="{Binding Timecode}"
-                              FontFamily="{StaticResource Font.Monospace}"
-                              FontSize="{StaticResource FontSize.Body}"
-                              Foreground="{DynamicResource Brush.Text.Primary}"
-                              VerticalAlignment="Center"
-                              Margin="0,0,16,0" />
-                    <Slider Grid.Column="1"
-                           Value="{Binding Position}"
+                <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,8">
+                        <TextBlock Grid.Column="0" 
+                                  Text="{Binding FormattedPosition}"
+                                  FontFamily="Consolas"
+                                  FontSize="{StaticResource FontSize.Body}"
+                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                        <TextBlock Grid.Column="2" 
+                                  Text="{Binding FormattedDuration}"
+                                  FontFamily="Consolas"
+                                  FontSize="{StaticResource FontSize.Body}"
+                                  Foreground="{DynamicResource Brush.Text.Secondary}" />
+                    </Grid>
+                    <Slider Minimum="0" 
                            Maximum="{Binding Duration}"
-                           VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="2" 
-                              Text="{Binding Duration, StringFormat='{}{0:F2}s'}"
-                              FontFamily="{StaticResource Font.Monospace}"
-                              FontSize="{StaticResource FontSize.Body}"
-                              Foreground="{DynamicResource Brush.Text.Secondary}"
-                              VerticalAlignment="Center"
-                              Margin="16,0,0,0" />
-                </Grid>
+                           Value="{Binding Position}"
+                           IsEnabled="{Binding Duration, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+                
+                <!-- Master VU Meters -->
+                <Border Grid.Column="2" 
+                       Width="120" Height="48"
+                       Background="{DynamicResource Brush.Background.Tertiary}"
+                       CornerRadius="{StaticResource CornerRadius.Small}"
+                       Padding="8">
+                    <Grid RowDefinitions="*,4,*">
+                        <!-- Left Channel -->
+                        <Grid Grid.Row="0">
+                            <Border Background="#222" CornerRadius="2" />
+                            <Border Background="#00FF00" 
+                                   CornerRadius="2"
+                                   HorizontalAlignment="Left"
+                                   Width="{Binding MasterPeakLeft, Converter={StaticResource PeakToWidthConverter}}" />
+                        </Grid>
+                        
+                        <!-- Right Channel -->
+                        <Grid Grid.Row="2">
+                            <Border Background="#222" CornerRadius="2" />
+                            <Border Background="#00FF00" 
+                                   CornerRadius="2"
+                                   HorizontalAlignment="Left"
+                                   Width="{Binding MasterPeakRight, Converter={StaticResource PeakToWidthConverter}}" />
+                        </Grid>
+                    </Grid>
+                </Border>
             </Grid>
         </Border>
         
-        <!-- Transport Controls -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" Margin="0,0,0,16">
-            <Button Content="⏮" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   ToolTip.Tip="Previous" />
-            <Button Content="⏪" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   ToolTip.Tip="Rewind" />
-            <Button Content="▶"
-                   Classes="Primary"
-                   Width="48" Height="48"
-                   FontSize="20"
-                   Command="{Binding PlayCommand}" />
-            <Button Content="⏸" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   Command="{Binding PauseCommand}"
-                   ToolTip.Tip="Pause" />
-            <Button Content="⏹" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   Command="{Binding StopCommand}"
-                   ToolTip.Tip="Stop" />
-            <Button Content="⏩" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   ToolTip.Tip="Forward" />
-            <Button Content="⏭" 
-                   Classes="Icon"
-                   Width="40" Height="40"
-                   FontSize="18"
-                   ToolTip.Tip="Next" />
-        </StackPanel>
+        <!-- Track Mixer -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Tracks}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="120" Height="400"
+                               Background="{DynamicResource Brush.Background.Secondary}"
+                               BorderBrush="{DynamicResource Brush.Border.Default}"
+                               BorderThickness="1"
+                               CornerRadius="{StaticResource CornerRadius.Medium}"
+                               Padding="8"
+                               Margin="0,0,8,8">
+                            <Grid RowDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+                                <!-- Track Number -->
+                                <TextBlock Grid.Row="0" 
+                                          Text="{Binding TrackNumber, StringFormat='Track {0}'}"
+                                          FontSize="{StaticResource FontSize.Small}"
+                                          FontWeight="{StaticResource FontWeight.SemiBold}"
+                                          Foreground="{DynamicResource Brush.Text.Primary}"
+                                          TextAlignment="Center"
+                                          Margin="0,0,0,8" />
+                                
+                                <!-- File Name -->
+                                <TextBlock Grid.Row="1" 
+                                          Text="{Binding FileName}"
+                                          FontSize="{StaticResource FontSize.Small}"
+                                          Foreground="{DynamicResource Brush.Text.Secondary}"
+                                          TextTrimming="CharacterEllipsis"
+                                          TextAlignment="Center"
+                                          Margin="0,0,0,8" />
+                                
+                                <!-- VU Meter -->
+                                <Border Grid.Row="2" 
+                                       Background="{DynamicResource Brush.Background.Tertiary}"
+                                       CornerRadius="{StaticResource CornerRadius.Small}"
+                                       Padding="4"
+                                       Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,4,*">
+                                        <!-- Left Channel -->
+                                        <Grid Grid.Column="0">
+                                            <Border Background="#222" CornerRadius="2" />
+                                            <Border Background="#00FF00" 
+                                                   CornerRadius="2"
+                                                   VerticalAlignment="Bottom"
+                                                   Height="{Binding PeakLeft, Converter={StaticResource PeakToHeightConverter}}" />
+                                        </Grid>
+                                        
+                                        <!-- Right Channel -->
+                                        <Grid Grid.Column="2">
+                                            <Border Background="#222" CornerRadius="2" />
+                                            <Border Background="#00FF00" 
+                                                   CornerRadius="2"
+                                                   VerticalAlignment="Bottom"
+                                                   Height="{Binding PeakRight, Converter={StaticResource PeakToHeightConverter}}" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                
+                                <!-- Volume Slider -->
+                                <StackPanel Grid.Row="3" Margin="0,0,0,8">
+                                    <TextBlock Text="Volume" 
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                                              TextAlignment="Center"
+                                              Margin="0,0,0,4" />
+                                    <Slider Minimum="0" Maximum="1" 
+                                           Value="{Binding Volume}"
+                                           Orientation="Vertical"
+                                           Height="80"
+                                           IsEnabled="{Binding IsLoaded}" />
+                                </StackPanel>
+                                
+                                <!-- Pan Slider -->
+                                <StackPanel Grid.Row="4" Margin="0,0,0,8">
+                                    <TextBlock Text="Pan" 
+                                              FontSize="{StaticResource FontSize.Small}"
+                                              Foreground="{DynamicResource Brush.Text.Secondary}"
+                                              TextAlignment="Center"
+                                              Margin="0,0,0,4" />
+                                    <Slider Minimum="-1" Maximum="1" 
+                                           Value="{Binding Pan}"
+                                           IsEnabled="{Binding IsLoaded}" />
+                                </StackPanel>
+                                
+                                <!-- Mute/Solo Buttons -->
+                                <Grid Grid.Row="5" ColumnDefinitions="*,*" ColumnSpacing="4" Margin="0,0,0,8">
+                                    <ToggleButton Grid.Column="0" 
+                                                 Content="M"
+                                                 IsChecked="{Binding IsMuted}"
+                                                 IsEnabled="{Binding IsLoaded}"
+                                                 ToolTip.Tip="Mute" />
+                                    <ToggleButton Grid.Column="1" 
+                                                 Content="S"
+                                                 IsChecked="{Binding IsSolo}"
+                                                 IsEnabled="{Binding IsLoaded}"
+                                                 ToolTip.Tip="Solo" />
+                                </Grid>
+                                
+                                <!-- Load/Unload Buttons -->
+                                <Grid Grid.Row="6" ColumnDefinitions="*,*" ColumnSpacing="4">
+                                    <Button Grid.Column="0" 
+                                           Content="Load"
+                                           Classes="Primary"
+                                           Command="{Binding $parent[UserControl].((vm:PlayerViewModel)DataContext).LoadTrackCommand}"
+                                           CommandParameter="{Binding TrackNumber}"
+                                           FontSize="{StaticResource FontSize.Small}" />
+                                    <Button Grid.Column="1" 
+                                           Content="X"
+                                           Classes="Secondary"
+                                           Command="{Binding $parent[UserControl].((vm:PlayerViewModel)DataContext).UnloadTrackCommand}"
+                                           CommandParameter="{Binding TrackNumber}"
+                                           IsEnabled="{Binding IsLoaded}"
+                                           FontSize="{StaticResource FontSize.Small}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         
-        <!-- Actions -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="16">
-            <Button Content="Open File" 
-                   Classes="Primary"
-                   Command="{Binding OpenFileCommand}" />
-            <Button Content="Export Frame" 
-                   Classes="Secondary" />
-            <Button Content="Add to Queue" 
-                   Classes="Secondary" />
-        </StackPanel>
+        <!-- Status Bar -->
+        <Border Grid.Row="3" 
+               Background="{DynamicResource Brush.Background.Secondary}"
+               BorderBrush="{DynamicResource Brush.Border.Default}"
+               BorderThickness="1,1,1,0"
+               Padding="16,8"
+               Margin="0,16,0,0">
+            <TextBlock Text="{Binding StatusMessage}"
+                      FontSize="{StaticResource FontSize.Small}"
+                      Foreground="{DynamicResource Brush.Text.Secondary}" />
+        </Border>
     </Grid>
 </UserControl>
