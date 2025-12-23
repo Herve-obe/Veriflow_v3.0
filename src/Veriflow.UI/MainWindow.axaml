@@ -1,9 +1,50 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Veriflow.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
         x:Class="Veriflow.UI.MainWindow"
-        Title="Veriflow.UI">
-    Welcome to Avalonia!
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1600" Height="900"
+        MinWidth="1280" MinHeight="720"
+        Background="#0D0D0D">
+    
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*">
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0" Background="#0D0D0D" Foreground="White">
+            <MenuItem Header="File">
+                <MenuItem Header="New Session" Command="{Binding NewSessionCommand}" InputGesture="Ctrl+N" />
+                <MenuItem Header="Open Session..." Command="{Binding OpenSessionCommand}" InputGesture="Ctrl+O" />
+                <MenuItem Header="Save Session" Command="{Binding SaveSessionCommand}" InputGesture="Ctrl+S" />
+                <Separator />
+                <MenuItem Header="Exit" />
+            </MenuItem>
+            <MenuItem Header="Edit" />
+            <MenuItem Header="View" />
+            <MenuItem Header="Help" />
+        </Menu>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+            <!-- Left Navigation -->
+            <StackPanel Grid.Column="0" Background="#1A1A1A" Width="80">
+                <TextBlock Text="NAV" Foreground="White" Margin="10" />
+            </StackPanel>
+            
+            <!-- Content Area -->
+            <Grid Grid.Column="1">
+                <TextBlock Text="Veriflow 3.0 - Ready" 
+                          Foreground="White" 
+                          FontSize="24"
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" />
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>
