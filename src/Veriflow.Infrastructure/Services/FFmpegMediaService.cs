@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Hashing;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -18,19 +19,19 @@ public class FFmpegMediaService : IMediaService
 {
     private const string FFprobePath = "ffprobe"; // Assumes ffprobe is in PATH
     private const string FFmpegPath = "ffmpeg";   // Assumes ffmpeg is in PATH
+    private const int BufferSize = 1024 * 1024;
     
-    public async Task<MediaMetadata> GetMetadataAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<MediaFile> GetMediaInfoAsync(string filePath, CancellationToken cancellationToken = default)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Media file not found: {filePath}");
         
-        var metadata = new MediaMetadata
+        var mediaFile = new MediaFile
         {
             FileName = Path.GetFileName(filePath),
             FilePath = filePath,
             FileSize = new FileInfo(filePath).Length,
-            CreationDate = File.GetCreationTime(filePath),
-            ModificationDate = File.GetLastWriteTime(filePath)
+            CreationDate = File.GetCreationTime(filePath)
         };
         
         try
@@ -52,111 +53,74 @@ public class FFmpegMediaService : IMediaService
             var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
             await process.WaitForExitAsync(cancellationToken);
             
-            if (process.ExitCode != 0)
+            if (process.ExitCode == 0)
             {
-                var error = await process.StandardError.ReadToEndAsync(cancellationToken);
-                throw new Exception($"FFprobe failed: {error}");
-            }
-            
-            // Parse JSON output
-            var jsonDoc = JsonDocument.Parse(output);
-            var root = jsonDoc.RootElement;
-            
-            // Extract format info
-            if (root.TryGetProperty("format", out var format))
-            {
-                if (format.TryGetProperty("format_name", out var formatName))
-                    metadata.Format = formatName.GetString() ?? string.Empty;
+                var jsonDoc = JsonDocument.Parse(output);
+                var root = jsonDoc.RootElement;
                 
-                if (format.TryGetProperty("duration", out var duration))
-                    metadata.Duration = TimeSpan.FromSeconds(duration.GetDouble());
-                
-                if (format.TryGetProperty("bit_rate", out var bitrate))
-                    metadata.Bitrate = bitrate.GetInt64();
-                
-                // Extract timecode from tags
-                if (format.TryGetProperty("tags", out var tags))
+                // Extract format info
+                if (root.TryGetProperty("format", out var format))
                 {
-                    if (tags.TryGetProperty("timecode", out var timecode))
-                        metadata.Timecode = timecode.GetString() ?? string.Empty;
+                    if (format.TryGetProperty("duration", out var duration))
+                        mediaFile.Duration = TimeSpan.FromSeconds(duration.GetDouble());
                     
-                    // Extract custom metadata
-                    foreach (var tag in tags.EnumerateObject())
-                    {
-                        metadata.CustomMetadata[tag.Name] = tag.Value.GetString() ?? string.Empty;
-                    }
+                    if (format.TryGetProperty("bit_rate", out var bitrate))
+                        long.TryParse(bitrate.GetString(), out var br) ? mediaFile.Bitrate = br : 0;
                 }
-            }
-            
-            // Extract streams info
-            if (root.TryGetProperty("streams", out var streams))
-            {
-                foreach (var stream in streams.EnumerateArray())
+                
+                // Extract streams info
+                if (root.TryGetProperty("streams", out var streams))
                 {
-                    if (!stream.TryGetProperty("codec_type", out var codecType))
-                        continue;
-                    
-                    var type = codecType.GetString();
-                    
-                    if (type == "video" && !metadata.HasVideo)
+                    foreach (var stream in streams.EnumerateArray())
                     {
-                        metadata.HasVideo = true;
+                        if (!stream.TryGetProperty("codec_type", out var codecType))
+                            continue;
                         
-                        if (stream.TryGetProperty("codec_name", out var codec))
-                            metadata.VideoCodec = codec.GetString() ?? string.Empty;
+                        var type = codecType.GetString();
                         
-                        if (stream.TryGetProperty("width", out var width))
-                            metadata.Width = width.GetInt32();
-                        
-                        if (stream.TryGetProperty("height", out var height))
-                            metadata.Height = height.GetInt32();
-                        
-                        if (stream.TryGetProperty("r_frame_rate", out var frameRate))
+                        if (type == "video")
                         {
-                            var fps = frameRate.GetString() ?? "0/1";
-                            var parts = fps.Split('/');
-                            if (parts.Length == 2 && double.TryParse(parts[0], out var num) && double.TryParse(parts[1], out var den) && den != 0)
-                                metadata.FrameRate = num / den;
+                            if (stream.TryGetProperty("codec_name", out var codec))
+                                mediaFile.VideoCodec = codec.GetString() ?? string.Empty;
+                            
+                            if (stream.TryGetProperty("width", out var width))
+                                mediaFile.Width = width.GetInt32();
+                            
+                            if (stream.TryGetProperty("height", out var height))
+                                mediaFile.Height = height.GetInt32();
+                            
+                            if (stream.TryGetProperty("r_frame_rate", out var frameRate))
+                            {
+                                var fps = frameRate.GetString() ?? "0/1";
+                                var parts = fps.Split('/');
+                                if (parts.Length == 2 && double.TryParse(parts[0], out var num) && double.TryParse(parts[1], out var den) && den != 0)
+                                    mediaFile.FrameRate = num / den;
+                            }
                         }
-                        
-                        if (stream.TryGetProperty("display_aspect_ratio", out var aspectRatio))
-                            metadata.AspectRatio = aspectRatio.GetString() ?? string.Empty;
-                        
-                        if (stream.TryGetProperty("pix_fmt", out var pixFmt))
-                            metadata.ColorSpace = pixFmt.GetString() ?? string.Empty;
-                        
-                        if (stream.TryGetProperty("bits_per_raw_sample", out var bitDepth))
-                            metadata.BitDepth = bitDepth.GetInt32();
-                    }
-                    else if (type == "audio" && !metadata.HasAudio)
-                    {
-                        metadata.HasAudio = true;
-                        
-                        if (stream.TryGetProperty("codec_name", out var codec))
-                            metadata.AudioCodec = codec.GetString() ?? string.Empty;
-                        
-                        if (stream.TryGetProperty("sample_rate", out var sampleRate))
-                            int.TryParse(sampleRate.GetString(), out var sr) ? metadata.SampleRate = sr : 0;
-                        
-                        if (stream.TryGetProperty("channels", out var channels))
-                            metadata.Channels = channels.GetInt32();
-                        
-                        if (stream.TryGetProperty("bit_rate", out var audioBitrate))
-                            int.TryParse(audioBitrate.GetString(), out var abr) ? metadata.AudioBitrate = abr : 0;
+                        else if (type == "audio")
+                        {
+                            if (stream.TryGetProperty("codec_name", out var codec))
+                                mediaFile.AudioCodec = codec.GetString() ?? string.Empty;
+                            
+                            if (stream.TryGetProperty("sample_rate", out var sampleRate))
+                                int.TryParse(sampleRate.GetString(), out var sr) ? mediaFile.SampleRate = sr : 0;
+                            
+                            if (stream.TryGetProperty("channels", out var channels))
+                                mediaFile.Channels = channels.GetInt32();
+                        }
                     }
                 }
             }
         }
-        catch (Exception ex)
+        catch
         {
-            // Log error but return partial metadata
-            metadata.CustomMetadata["error"] = ex.Message;
+            // Return partial metadata on error
         }
         
-        return metadata;
+        return mediaFile;
     }
     
-    public async Task<byte[]> GenerateThumbnailAsync(string filePath, double timeInSeconds = 0, int width = 160, int height = 120, CancellationToken cancellationToken = default)
+    public async Task<byte[]> GenerateThumbnailAsync(string filePath, TimeSpan position, CancellationToken cancellationToken = default)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Media file not found: {filePath}");
@@ -168,7 +132,7 @@ public class FFmpegMediaService : IMediaService
             var startInfo = new ProcessStartInfo
             {
                 FileName = FFmpegPath,
-                Arguments = $"-ss {timeInSeconds} -i \"{filePath}\" -vframes 1 -vf scale={width}:{height} -y \"{tempFile}\"",
+                Arguments = $"-ss {position.TotalSeconds} -i \"{filePath}\" -vframes 1 -vf scale=160:120 -y \"{tempFile}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -180,10 +144,7 @@ public class FFmpegMediaService : IMediaService
             await process.WaitForExitAsync(cancellationToken);
             
             if (process.ExitCode != 0 || !File.Exists(tempFile))
-            {
-                var error = await process.StandardError.ReadToEndAsync(cancellationToken);
-                throw new Exception($"FFmpeg thumbnail generation failed: {error}");
-            }
+                return Array.Empty<byte>();
             
             return await File.ReadAllBytesAsync(tempFile, cancellationToken);
         }
@@ -194,12 +155,11 @@ public class FFmpegMediaService : IMediaService
         }
     }
     
-    public async Task<float[]> GenerateWaveformDataAsync(string filePath, int samples = 1000, CancellationToken cancellationToken = default)
+    public async Task<float[]> GenerateWaveformAsync(string filePath, int width, CancellationToken cancellationToken = default)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Media file not found: {filePath}");
         
-        // Extract audio to raw PCM data
         var tempFile = Path.Combine(Path.GetTempPath(), $"audio_{Guid.NewGuid()}.raw");
         
         try
@@ -226,11 +186,11 @@ public class FFmpegMediaService : IMediaService
             var floatData = new float[audioData.Length / 4];
             Buffer.BlockCopy(audioData, 0, floatData, 0, audioData.Length);
             
-            // Downsample to requested number of samples
-            var waveform = new float[samples];
-            var step = floatData.Length / samples;
+            // Downsample to requested width
+            var waveform = new float[width];
+            var step = floatData.Length / width;
             
-            for (int i = 0; i < samples; i++)
+            for (int i = 0; i < width; i++)
             {
                 var start = i * step;
                 var end = Math.Min(start + step, floatData.Length);
@@ -251,40 +211,33 @@ public class FFmpegMediaService : IMediaService
         }
     }
     
-    public async Task<bool> ValidateFileAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<string> CalculateHashAsync(string filePath, string algorithm = "xxHash64", IProgress<double>? progress = null, CancellationToken cancellationToken = default)
     {
         if (!File.Exists(filePath))
-            return false;
+            throw new FileNotFoundException($"File not found: {filePath}");
         
-        try
+        using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, true);
+        var hash = new XxHash64();
+        
+        var buffer = new byte[BufferSize];
+        int bytesRead;
+        long totalBytes = stream.Length;
+        long processedBytes = 0;
+        
+        while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
         {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = FFprobePath,
-                Arguments = $"-v error \"{filePath}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            
-            using var process = new Process { StartInfo = startInfo };
-            process.Start();
-            
-            var error = await process.StandardError.ReadToEndAsync(cancellationToken);
-            await process.WaitForExitAsync(cancellationToken);
-            
-            return string.IsNullOrWhiteSpace(error);
+            hash.Append(buffer.AsSpan(0, bytesRead));
+            processedBytes += bytesRead;
+            progress?.Report(processedBytes * 100.0 / totalBytes);
         }
-        catch
-        {
-            return false;
-        }
+        
+        var hashBytes = hash.GetHashAndReset();
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
     }
     
-    public async Task<string> ExtractTimecodeAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<bool> VerifyHashAsync(string filePath, string expectedHash, string algorithm = "xxHash64", CancellationToken cancellationToken = default)
     {
-        var metadata = await GetMetadataAsync(filePath, cancellationToken);
-        return metadata.Timecode;
+        var actualHash = await CalculateHashAsync(filePath, algorithm, null, cancellationToken);
+        return string.Equals(actualHash, expectedHash, StringComparison.OrdinalIgnoreCase);
     }
 }
