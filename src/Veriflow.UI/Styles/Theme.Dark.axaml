@@ -1,0 +1,162 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- ========================================
+         VERIFLOW DARK THEME - BASE COLORS
+         Professional DIT Tool Color Palette
+         ======================================== -->
+    
+    <!-- Background Colors -->
+    <Color x:Key="Color.Background.Primary">#0D0D0D</Color>
+    <Color x:Key="Color.Background.Secondary">#1A1A1A</Color>
+    <Color x:Key="Color.Background.Tertiary">#252525</Color>
+    <Color x:Key="Color.Background.Hover">#2F2F2F</Color>
+    <Color x:Key="Color.Background.Pressed">#1F1F1F</Color>
+    
+    <!-- Text Colors -->
+    <Color x:Key="Color.Text.Primary">#E8E8E8</Color>
+    <Color x:Key="Color.Text.Secondary">#A0A0A0</Color>
+    <Color x:Key="Color.Text.Disabled">#606060</Color>
+    <Color x:Key="Color.Text.Inverted">#0D0D0D</Color>
+    
+    <!-- Border Colors -->
+    <Color x:Key="Color.Border.Default">#3A3A3A</Color>
+    <Color x:Key="Color.Border.Focus">#0A84FF</Color>
+    <Color x:Key="Color.Divider">#2A2A2A</Color>
+    
+    <!-- Semantic Colors -->
+    <Color x:Key="Color.Success">#30D158</Color>
+    <Color x:Key="Color.Warning">#FFD60A</Color>
+    <Color x:Key="Color.Error">#FF453A</Color>
+    <Color x:Key="Color.Info">#64D2FF</Color>
+    
+    <!-- Profile Accent Colors - Video (Blue) -->
+    <Color x:Key="Color.Accent.Video.Primary">#0A84FF</Color>
+    <Color x:Key="Color.Accent.Video.Hover">#409CFF</Color>
+    <Color x:Key="Color.Accent.Video.Pressed">#0070DD</Color>
+    
+    <!-- Profile Accent Colors - Audio (Red) -->
+    <Color x:Key="Color.Accent.Audio.Primary">#FF453A</Color>
+    <Color x:Key="Color.Accent.Audio.Hover">#FF6259</Color>
+    <Color x:Key="Color.Accent.Audio.Pressed">#E63946</Color>
+    
+    <!-- ========================================
+         SOLID COLOR BRUSHES
+         ======================================== -->
+    
+    <!-- Background Brushes -->
+    <SolidColorBrush x:Key="Brush.Background.Primary" Color="{StaticResource Color.Background.Primary}" />
+    <SolidColorBrush x:Key="Brush.Background.Secondary" Color="{StaticResource Color.Background.Secondary}" />
+    <SolidColorBrush x:Key="Brush.Background.Tertiary" Color="{StaticResource Color.Background.Tertiary}" />
+    <SolidColorBrush x:Key="Brush.Background.Hover" Color="{StaticResource Color.Background.Hover}" />
+    <SolidColorBrush x:Key="Brush.Background.Pressed" Color="{StaticResource Color.Background.Pressed}" />
+    
+    <!-- Text Brushes -->
+    <SolidColorBrush x:Key="Brush.Text.Primary" Color="{StaticResource Color.Text.Primary}" />
+    <SolidColorBrush x:Key="Brush.Text.Secondary" Color="{StaticResource Color.Text.Secondary}" />
+    <SolidColorBrush x:Key="Brush.Text.Disabled" Color="{StaticResource Color.Text.Disabled}" />
+    <SolidColorBrush x:Key="Brush.Text.Inverted" Color="{StaticResource Color.Text.Inverted}" />
+    
+    <!-- Border Brushes -->
+    <SolidColorBrush x:Key="Brush.Border.Default" Color="{StaticResource Color.Border.Default}" />
+    <SolidColorBrush x:Key="Brush.Border.Focus" Color="{StaticResource Color.Border.Focus}" />
+    <SolidColorBrush x:Key="Brush.Divider" Color="{StaticResource Color.Divider}" />
+    
+    <!-- Semantic Brushes -->
+    <SolidColorBrush x:Key="Brush.Success" Color="{StaticResource Color.Success}" />
+    <SolidColorBrush x:Key="Brush.Warning" Color="{StaticResource Color.Warning}" />
+    <SolidColorBrush x:Key="Brush.Error" Color="{StaticResource Color.Error}" />
+    <SolidColorBrush x:Key="Brush.Info" Color="{StaticResource Color.Info}" />
+    
+    <!-- Video Profile Brushes -->
+    <SolidColorBrush x:Key="Brush.Accent.Video.Primary" Color="{StaticResource Color.Accent.Video.Primary}" />
+    <SolidColorBrush x:Key="Brush.Accent.Video.Hover" Color="{StaticResource Color.Accent.Video.Hover}" />
+    <SolidColorBrush x:Key="Brush.Accent.Video.Pressed" Color="{StaticResource Color.Accent.Video.Pressed}" />
+    
+    <!-- Audio Profile Brushes -->
+    <SolidColorBrush x:Key="Brush.Accent.Audio.Primary" Color="{StaticResource Color.Accent.Audio.Primary}" />
+    <SolidColorBrush x:Key="Brush.Accent.Audio.Hover" Color="{StaticResource Color.Accent.Audio.Hover}" />
+    <SolidColorBrush x:Key="Brush.Accent.Audio.Pressed" Color="{StaticResource Color.Accent.Audio.Pressed}" />
+    
+    <!-- Dynamic Accent Brush (will be set based on profile) -->
+    <SolidColorBrush x:Key="Brush.Accent.Primary" Color="{StaticResource Color.Accent.Video.Primary}" />
+    <SolidColorBrush x:Key="Brush.Accent.Hover" Color="{StaticResource Color.Accent.Video.Hover}" />
+    <SolidColorBrush x:Key="Brush.Accent.Pressed" Color="{StaticResource Color.Accent.Video.Pressed}" />
+    
+    <!-- ========================================
+         GRADIENT BRUSHES
+         ======================================== -->
+    
+    <LinearGradientBrush x:Key="Brush.Accent.Video.Gradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#0A84FF" Offset="0" />
+        <GradientStop Color="#00D4FF" Offset="1" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="Brush.Accent.Audio.Gradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#FF453A" Offset="0" />
+        <GradientStop Color="#FF6B9D" Offset="1" />
+    </LinearGradientBrush>
+    
+    <!-- ========================================
+         SPACING & SIZING
+         ======================================== -->
+    
+    <!-- Grid System (8px base unit) -->
+    <x:Double x:Key="Spacing.Micro">4</x:Double>
+    <x:Double x:Key="Spacing.Small">8</x:Double>
+    <x:Double x:Key="Spacing.Medium">16</x:Double>
+    <x:Double x:Key="Spacing.Large">24</x:Double>
+    <x:Double x:Key="Spacing.XLarge">32</x:Double>
+    <x:Double x:Key="Spacing.XXLarge">48</x:Double>
+    
+    <!-- Border Radius -->
+    <CornerRadius x:Key="CornerRadius.Small">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadius.Medium">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadius.Large">12</CornerRadius>
+    
+    <!-- Control Heights -->
+    <x:Double x:Key="Height.Control.Compact">32</x:Double>
+    <x:Double x:Key="Height.Control.Comfortable">40</x:Double>
+    <x:Double x:Key="Height.Control.Large">48</x:Double>
+    
+    <!-- ========================================
+         TYPOGRAPHY
+         ======================================== -->
+    
+    <!-- Font Families -->
+    <FontFamily x:Key="Font.Primary">Inter</FontFamily>
+    <FontFamily x:Key="Font.Monospace">JetBrains Mono</FontFamily>
+    <FontFamily x:Key="Font.Display">Outfit</FontFamily>
+    
+    <!-- Font Sizes -->
+    <x:Double x:Key="FontSize.Display">32</x:Double>
+    <x:Double x:Key="FontSize.H1">24</x:Double>
+    <x:Double x:Key="FontSize.H2">20</x:Double>
+    <x:Double x:Key="FontSize.H3">16</x:Double>
+    <x:Double x:Key="FontSize.Body">14</x:Double>
+    <x:Double x:Key="FontSize.Small">12</x:Double>
+    <x:Double x:Key="FontSize.Caption">11</x:Double>
+    
+    <!-- Font Weights -->
+    <FontWeight x:Key="FontWeight.Regular">Normal</FontWeight>
+    <FontWeight x:Key="FontWeight.Medium">Medium</FontWeight>
+    <FontWeight x:Key="FontWeight.SemiBold">SemiBold</FontWeight>
+    <FontWeight x:Key="FontWeight.Bold">Bold</FontWeight>
+    
+    <!-- ========================================
+         SHADOWS & EFFECTS
+         ======================================== -->
+    
+    <BoxShadows x:Key="Shadow.Small">0 2 8 0 #4D000000</BoxShadows>
+    <BoxShadows x:Key="Shadow.Medium">0 4 16 0 #4D000000</BoxShadows>
+    <BoxShadows x:Key="Shadow.Large">0 8 32 0 #80000000</BoxShadows>
+    
+    <!-- ========================================
+         ANIMATION DURATIONS
+         ======================================== -->
+    
+    <x:TimeSpan x:Key="Duration.Fast">0:0:0.15</x:TimeSpan>
+    <x:TimeSpan x:Key="Duration.Normal">0:0:0.2</x:TimeSpan>
+    <x:TimeSpan x:Key="Duration.Slow">0:0:0.25</x:TimeSpan>
+    
+</ResourceDictionary>

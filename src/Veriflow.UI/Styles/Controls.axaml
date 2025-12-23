@@ -1,0 +1,167 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- ========================================
+         BUTTON STYLES
+         Professional DIT Tool Buttons
+         ======================================== -->
+    
+    <!-- Primary Button Style -->
+    <Style Selector="Button.Primary" x:DataType="Button">
+        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="{StaticResource CornerRadius.Medium}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Height" Value="{StaticResource Height.Control.Compact}" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Primary}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeight.Medium}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="{StaticResource Duration.Fast}" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button.Primary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Hover}" />
+    </Style>
+    
+    <Style Selector="Button.Primary:pressed">
+        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Pressed}" />
+    </Style>
+    
+    <Style Selector="Button.Primary:disabled">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Tertiary}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Disabled}" />
+        <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+    
+    <!-- Secondary Button Style -->
+    <Style Selector="Button.Secondary" x:DataType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource CornerRadius.Medium}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Height" Value="{StaticResource Height.Control.Compact}" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Primary}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeight.Medium}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="{StaticResource Duration.Fast}" />
+                <BrushTransition Property="BorderBrush" Duration="{StaticResource Duration.Fast}" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button.Secondary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    
+    <Style Selector="Button.Secondary:pressed">
+        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Pressed}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Pressed}" />
+    </Style>
+    
+    <!-- Ghost Button Style -->
+    <Style Selector="Button.Ghost" x:DataType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Height" Value="{StaticResource Height.Control.Compact}" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Primary}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Foreground" Duration="{StaticResource Duration.Fast}" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button.Ghost:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Primary}" />
+    </Style>
+    
+    <!-- Icon Button Style -->
+    <Style Selector="Button.Icon" x:DataType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="{StaticResource Duration.Fast}" />
+                <BrushTransition Property="Foreground" Duration="{StaticResource Duration.Fast}" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button.Icon:pointerover">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Hover}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
+    </Style>
+    
+    <!-- ========================================
+         TEXTBOX STYLES
+         ======================================== -->
+    
+    <Style Selector="TextBox.Modern" x:DataType="TextBox">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Secondary}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource CornerRadius.Medium}" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Height" Value="{StaticResource Height.Control.Compact}" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Primary}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="{StaticResource Duration.Fast}" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="TextBox.Modern:focus">
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Primary}" />
+    </Style>
+    
+    <Style Selector="TextBox.Modern:disabled">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Tertiary}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Disabled}" />
+    </Style>
+    
+    <!-- ========================================
+         PROGRESSBAR STYLES
+         ======================================== -->
+    
+    <Style Selector="ProgressBar.Modern" x:DataType="ProgressBar">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Tertiary}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Primary}" />
+        <Setter Property="Height" Value="4" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    
+    <Style Selector="ProgressBar.Prominent" x:DataType="ProgressBar">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Tertiary}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Gradient}" />
+        <Setter Property="Height" Value="8" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+    
+</Styles>
