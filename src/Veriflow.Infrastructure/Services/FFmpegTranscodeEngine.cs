@@ -402,7 +402,7 @@ public class FFmpegTranscodeEngine : ITranscodeEngine
         string inputPath,
         string outputPath,
         TranscodePreset preset,
-        IProgress<double>? progress = null,
+        IProgress<TranscodeProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var result = new TranscodeResult();
@@ -449,8 +449,13 @@ public class FFmpegTranscodeEngine : ITranscodeEngine
                         var seconds = double.Parse(match.Groups[3].Value);
                         var currentTime = hours * 3600 + minutes * 60 + seconds;
                         
-                        // Report progress (simplified - would need duration for accurate %)
-                        progress?.Report(currentTime);
+                        // Report progress
+                        progress?.Report(new TranscodeProgress
+                        {
+                            Percentage = 0, // Would need duration for accurate %
+                            Elapsed = DateTime.Now - startTime,
+                            Speed = 1.0
+                        });
                     }
                 }
             };
@@ -477,6 +482,19 @@ public class FFmpegTranscodeEngine : ITranscodeEngine
         }
         
         return result;
+    }
+    
+    public async Task<bool> ValidateInputAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        return await Task.FromResult(File.Exists(filePath));
+    }
+    
+    public async Task<long> EstimateOutputSizeAsync(
+        string inputPath,
+        TranscodePreset preset,
+        CancellationToken cancellationToken = default)
+    {
+        return await Task.FromResult(new FileInfo(inputPath).Length);
     }
     
     private string BuildFFmpegArguments(string inputPath, string outputPath, TranscodePreset preset)

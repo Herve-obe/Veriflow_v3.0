@@ -22,7 +22,7 @@ public interface ITranscodeEngine
     /// <summary>
     /// Get available presets
     /// </summary>
-    TranscodePreset[] GetAvailablePresets();
+    List<TranscodePreset> GetAvailablePresets();
     
     /// <summary>
     /// Validate input file
@@ -45,12 +45,17 @@ public class TranscodePreset
 {
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string VideoCodec { get; set; } = string.Empty;
     public string AudioCodec { get; set; } = string.Empty;
     public string Container { get; set; } = string.Empty;
-    public int? VideoBitrate { get; set; }
-    public int? AudioBitrate { get; set; }
+    public string? VideoBitrate { get; set; }
+    public string? AudioBitrate { get; set; }
+    public string? Profile { get; set; }
+    public string? Preset { get; set; }
+    public string? Crf { get; set; }
+    public string? Quality { get; set; }
     public int? Width { get; set; }
     public int? Height { get; set; }
     public double? FrameRate { get; set; }
