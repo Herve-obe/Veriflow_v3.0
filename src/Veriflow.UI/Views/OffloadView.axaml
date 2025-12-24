@@ -441,58 +441,61 @@
                                   Foreground="{StaticResource AccentColor}"
                                   Margin="0,0,0,12" />
                         
-                        <DataGrid Grid.Row="1"
-                                 ItemsSource="{Binding OffloadFileProgress}"
-                                 AutoGenerateColumns="False"
-                                 IsReadOnly="True"
-                                 GridLinesVisibility="None"
-                                 HeadersVisibility="Column"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 CanUserReorderColumns="False"
-                                 CanUserResizeColumns="True"
-                                 CanUserSortColumns="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="File" 
-                                                   Binding="{Binding FileName}"
-                                                   Width="*"
-                                                   FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
-                                <DataGridTextColumn Header="xxHash64" 
-                                                   Binding="{Binding XxHash64}"
-                                                   Width="280"
-                                                   FontSize="12"
-                                                   FontFamily="Consolas"
-                                                   Foreground="{StaticResource TextSecondary}" />
-                                <DataGridTextColumn Header="Status" 
-                                                   Binding="{Binding Status}"
-                                                   Width="120"
-                                                   FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
-                            </DataGrid.Columns>
-                            <DataGrid.Styles>
-                                <Style Selector="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#1A1A1A" />
-                                    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="FontWeight" Value="SemiBold" />
-                                    <Setter Property="Padding" Value="12,8" />
-                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-                                    <Setter Property="BorderBrush" Value="#30363D" />
-                                </Style>
-                                <Style Selector="DataGridRow">
-                                    <Setter Property="Height" Value="32" />
-                                    <Setter Property="Background" Value="#222328" />
-                                </Style>
-                                <Style Selector="DataGridRow:nth-child(2n)">
-                                    <Setter Property="Background" Value="#2e2d32" />
-                                </Style>
-                                <Style Selector="DataGridCell">
-                                    <Setter Property="Padding" Value="12,6" />
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </DataGrid.Styles>
-                        </DataGrid>
+                        <ScrollViewer Grid.Row="1"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Disabled">
+                            <DataGrid ItemsSource="{Binding OffloadFileProgress}"
+                                     AutoGenerateColumns="False"
+                                     IsReadOnly="True"
+                                     GridLinesVisibility="None"
+                                     HeadersVisibility="Column"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     CanUserReorderColumns="False"
+                                     CanUserResizeColumns="True"
+                                     CanUserSortColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="File" 
+                                                       Binding="{Binding FileName}"
+                                                       Width="*"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}" />
+                                    <DataGridTextColumn Header="xxHash64" 
+                                                       Binding="{Binding XxHash64}"
+                                                       Width="280"
+                                                       FontSize="12"
+                                                       FontFamily="Consolas"
+                                                       Foreground="{StaticResource TextSecondary}" />
+                                    <DataGridTextColumn Header="Status" 
+                                                       Binding="{Binding Status}"
+                                                       Width="120"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}" />
+                                </DataGrid.Columns>
+                                <DataGrid.Styles>
+                                    <Style Selector="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="#1A1A1A" />
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+                                        <Setter Property="FontSize" Value="12" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        <Setter Property="Padding" Value="12,8" />
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                        <Setter Property="BorderBrush" Value="#30363D" />
+                                    </Style>
+                                    <Style Selector="DataGridRow">
+                                        <Setter Property="Height" Value="32" />
+                                        <Setter Property="Background" Value="#222328" />
+                                    </Style>
+                                    <Style Selector="DataGridRow:nth-child(2n)">
+                                        <Setter Property="Background" Value="#2e2d32" />
+                                    </Style>
+                                    <Style Selector="DataGridCell">
+                                        <Setter Property="Padding" Value="12,6" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                </DataGrid.Styles>
+                            </DataGrid>
+                        </ScrollViewer>
                     </Grid>
                 </Border>
                 
@@ -515,7 +518,8 @@
                         
                         <ScrollViewer Grid.Row="1"
                                      VerticalScrollBarVisibility="Auto"
-                                     HorizontalScrollBarVisibility="Auto">
+                                     HorizontalScrollBarVisibility="Auto"
+                                     MaxHeight="150">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
                                     Background="#0D0D0D"
@@ -685,58 +689,61 @@
                                   Foreground="{StaticResource AccentColor}"
                                   Margin="0,0,0,12" />
                         
-                        <DataGrid Grid.Row="1"
-                                 ItemsSource="{Binding VerifyFileProgress}"
-                                 AutoGenerateColumns="False"
-                                 IsReadOnly="True"
-                                 GridLinesVisibility="None"
-                                 HeadersVisibility="Column"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 CanUserReorderColumns="False"
-                                 CanUserResizeColumns="True"
-                                 CanUserSortColumns="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="File" 
-                                                   Binding="{Binding FileName}"
-                                                   Width="*"
-                                                   FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
-                                <DataGridTextColumn Header="xxHash64" 
-                                                   Binding="{Binding XxHash64}"
-                                                   Width="280"
-                                                   FontSize="12"
-                                                   FontFamily="Consolas"
-                                                   Foreground="{StaticResource TextSecondary}" />
-                                <DataGridTextColumn Header="Status" 
-                                                   Binding="{Binding Status}"
-                                                   Width="120"
-                                                   FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
-                            </DataGrid.Columns>
-                            <DataGrid.Styles>
-                                <Style Selector="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#1A1A1A" />
-                                    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="FontWeight" Value="SemiBold" />
-                                    <Setter Property="Padding" Value="12,8" />
-                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-                                    <Setter Property="BorderBrush" Value="#30363D" />
-                                </Style>
-                                <Style Selector="DataGridRow">
-                                    <Setter Property="Height" Value="32" />
-                                    <Setter Property="Background" Value="#222328" />
-                                </Style>
-                                <Style Selector="DataGridRow:nth-child(2n)">
-                                    <Setter Property="Background" Value="#2e2d32" />
-                                </Style>
-                                <Style Selector="DataGridCell">
-                                    <Setter Property="Padding" Value="12,6" />
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </DataGrid.Styles>
-                        </DataGrid>
+                        <ScrollViewer Grid.Row="1"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Disabled">
+                            <DataGrid ItemsSource="{Binding VerifyFileProgress}"
+                                     AutoGenerateColumns="False"
+                                     IsReadOnly="True"
+                                     GridLinesVisibility="None"
+                                     HeadersVisibility="Column"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     CanUserReorderColumns="False"
+                                     CanUserResizeColumns="True"
+                                     CanUserSortColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="File" 
+                                                       Binding="{Binding FileName}"
+                                                       Width="*"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}" />
+                                    <DataGridTextColumn Header="xxHash64" 
+                                                       Binding="{Binding XxHash64}"
+                                                       Width="280"
+                                                       FontSize="12"
+                                                       FontFamily="Consolas"
+                                                       Foreground="{StaticResource TextSecondary}" />
+                                    <DataGridTextColumn Header="Status" 
+                                                       Binding="{Binding Status}"
+                                                       Width="120"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}" />
+                                </DataGrid.Columns>
+                                <DataGrid.Styles>
+                                    <Style Selector="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="#1A1A1A" />
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+                                        <Setter Property="FontSize" Value="12" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        <Setter Property="Padding" Value="12,8" />
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                        <Setter Property="BorderBrush" Value="#30363D" />
+                                    </Style>
+                                    <Style Selector="DataGridRow">
+                                        <Setter Property="Height" Value="32" />
+                                        <Setter Property="Background" Value="#222328" />
+                                    </Style>
+                                    <Style Selector="DataGridRow:nth-child(2n)">
+                                        <Setter Property="Background" Value="#2e2d32" />
+                                    </Style>
+                                    <Style Selector="DataGridCell">
+                                        <Setter Property="Padding" Value="12,6" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                </DataGrid.Styles>
+                            </DataGrid>
+                        </ScrollViewer>
                     </Grid>
                 </Border>
                 
@@ -759,7 +766,8 @@
                         
                         <ScrollViewer Grid.Row="1"
                                      VerticalScrollBarVisibility="Auto"
-                                     HorizontalScrollBarVisibility="Auto">
+                                     HorizontalScrollBarVisibility="Auto"
+                                     MaxHeight="150">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
                                     Background="#0D0D0D"
