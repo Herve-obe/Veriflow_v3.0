@@ -81,13 +81,17 @@ public partial class OffloadViewModel : ViewModelBase
     private string _transferSpeedB = string.Empty;
     
     [ObservableProperty]
-    private string _logText = "Ready to offload...\n";
+    private string _logText = "Ready.\n";
     
     [ObservableProperty]
     private ObservableCollection<CopyHistoryEntry> _history = new();
     
     [ObservableProperty]
     private bool _isHistoryVisible;
+    
+    // File Progress Collections for DataGrid
+    public ObservableCollection<FileProgressItem> OffloadFileProgress { get; } = new();
+    public ObservableCollection<FileProgressItem> VerifyFileProgress { get; } = new();
     
     public OffloadViewModel(IDialogService dialogService, IOffloadService offloadService)
     {
