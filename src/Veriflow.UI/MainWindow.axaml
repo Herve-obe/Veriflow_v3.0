@@ -138,57 +138,59 @@
                     
                     <!-- Video/Audio Profile Toggle -->
                     <Border Margin="20,0,20,24"
-                           Background="#30363D"
-                           CornerRadius="8"
-                           Padding="4">
-                        <Grid ColumnDefinitions="*,*">
-                            <Button Grid.Column="0"
-                                   Content="VIDEO"
-                                   Height="36"
-                                   FontSize="12"
-                                   FontWeight="SemiBold"
-                                   Command="{Binding ToggleProfileCommand}"
-                                   CornerRadius="6"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="BorderThickness" Value="0" />
-                                    </Style>
-                                    <Style Selector="Button:pointerover">
-                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
-                                        <Setter Property="Opacity" Value="0.9" />
-                                    </Style>
-                                </Button.Styles>
-                            </Button>
+                           Background="{StaticResource SurfaceLight}"
+                           BorderBrush="{StaticResource BorderColor}"
+                           BorderThickness="1"
+                           CornerRadius="6"
+                           Padding="10,8"
+                           Height="40"
+                           MinWidth="140">
+                        <Grid ColumnDefinitions="Auto,Auto" Width="100">
+                            <TextBlock Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      Margin="8,0,12,0"
+                                      FontSize="14"
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource TextPrimary}"
+                                      Text="{Binding CurrentProfile}" />
                             
                             <Button Grid.Column="1"
-                                   Content="AUDIO"
-                                   Height="36"
-                                   FontSize="12"
-                                   FontWeight="SemiBold"
                                    Command="{Binding ToggleProfileCommand}"
-                                   CornerRadius="6"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center">
+                                   Width="44"
+                                   Height="22"
+                                   Padding="0"
+                                   CornerRadius="11"
+                                   BorderThickness="0"
+                                   Cursor="Hand">
                                 <Button.Styles>
                                     <Style Selector="Button">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="Foreground" Value="#FFFFFFAA" />
-                                        <Setter Property="BorderThickness" Value="0" />
-                                    </Style>
-                                    <Style Selector="Button:pointerover">
-                                        <Setter Property="Background" Value="#FFFFFF10" />
-                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="Background" Value="#0A84FF" />
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <Border Background="{TemplateBinding Background}"
+                                                       CornerRadius="11"
+                                                       Padding="2">
+                                                    <Canvas Width="40" Height="18">
+                                                        <Ellipse Width="18" Height="18"
+                                                                Fill="White"
+                                                                Canvas.Left="22"
+                                                                x:Name="PART_Thumb">
+                                                            <Ellipse.Transitions>
+                                                                <Transitions>
+                                                                    <DoubleTransition Property="Canvas.Left" Duration="0:0:0.2" />
+                                                                </Transitions>
+                                                            </Ellipse.Transitions>
+                                                        </Ellipse>
+                                                    </Canvas>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter>
                                     </Style>
                                 </Button.Styles>
                             </Button>
                         </Grid>
                     </Border>
                     
-                    <Separator Margin="20,0" Background="#FFFFFF20" />
                     
                     <!-- Navigation Buttons -->
                     <StackPanel Spacing="4" Margin="20,24,20,0">

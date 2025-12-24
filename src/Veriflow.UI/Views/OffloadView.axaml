@@ -362,8 +362,7 @@
                            Name="DestinationBDropZone"
                            DragDrop.AllowDrop="True"
                            Classes="DropZone"
-                           MinHeight="200"
-                           Opacity="0.8">
+                           MinHeight="200">
                         <Grid RowDefinitions="Auto,*,Auto,Auto">
                             <TextBlock Grid.Row="0"
                                       Text="Destination 2 (Optional)"
@@ -487,7 +486,7 @@
                                      HorizontalScrollBarVisibility="Auto">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
-                                    Background="Transparent"
+                                    Background="#0D0D0D"
                                     BorderThickness="0"
                                     FontFamily="Consolas"
                                     FontSize="12"
