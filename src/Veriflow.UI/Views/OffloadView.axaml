@@ -100,9 +100,9 @@
         </Style>
     </UserControl.Styles>
     
-    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="20" Background="{StaticResource AppBackground}">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{StaticResource AppBackground}">
         <!-- Header -->
-        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,24">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="20,20,20,24">
             <TextBlock Text="OFFLOAD - Secure Copy &amp; Verify" 
                       FontSize="24"
                       FontWeight="Bold"
@@ -110,7 +110,7 @@
         </StackPanel>
         
         <!-- Mode Toggle + Actions -->
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,20">
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="20,0,20,20">
             <!-- Offload/Verify Toggle -->
             <Border Grid.Column="0"
                    Background="{StaticResource SurfaceLight}"
@@ -216,7 +216,7 @@
         </Grid>
         
         <!-- Drop Zones -->
-        <Grid Grid.Row="2" Margin="0,0,0,20">
+        <Grid Grid.Row="2" Margin="20,0">
             <!-- OFFLOAD MODE: Source + Destinations -->
             <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
                 
@@ -686,38 +686,5 @@
                 
             </Grid> <!-- End VERIFY MODE -->
         </Grid>
-        
-        <!-- File List DataGrid -->
-        <Border Grid.Row="4"
-               Background="{StaticResource SurfaceLight}"
-               BorderBrush="{StaticResource BorderColor}"
-               BorderThickness="1"
-               CornerRadius="6"
-               Padding="0">
-            <DataGrid ItemsSource="{Binding History}"
-                     AutoGenerateColumns="False"
-                     IsReadOnly="True"
-                     Height="220">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="File Name" 
-                                      Binding="{Binding SourcePath}"
-                                      Width="*" />
-                    <DataGridTextColumn Header="xxHash64" 
-                                      Binding="{Binding MhlPathA}"
-                                      Width="320" />
-                    <DataGridTemplateColumn Header="Status" Width="100">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Path Width="18" Height="18"
-                                     Fill="#00B294"
-                                     Data="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"
-                                     Stretch="Uniform"
-                                     HorizontalAlignment="Center" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
     </Grid>
 </UserControl>

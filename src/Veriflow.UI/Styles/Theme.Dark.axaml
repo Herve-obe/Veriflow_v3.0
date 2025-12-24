@@ -12,7 +12,7 @@
     <Color x:Key="Color.Background.Tertiary">#252525</Color>
     <Color x:Key="Color.Background.Hover">#2F2F2F</Color>
     <Color x:Key="Color.Background.Pressed">#1F1F1F</Color>
-    <Color x:Key="Color.Sidebar">#005ba1</Color>
+    <Color x:Key="Color.Sidebar">#143f69</Color>
     
     <!-- Text Colors -->
     <Color x:Key="Color.Text.Primary">#E8E8E8</Color>

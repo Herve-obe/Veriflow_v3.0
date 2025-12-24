@@ -33,7 +33,7 @@
         <KeyBinding Gesture="Ctrl+Q" Command="{Binding ExitCommand}" />
     </Window.KeyBindings>
     
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*">
         <!-- Menu Bar -->
         <Menu Grid.Row="0" 
               Background="{DynamicResource Brush.Background.Primary}" 
@@ -276,24 +276,5 @@
             <ContentControl Grid.Column="1" 
                            Content="{Binding CurrentPageViewModel}" />
         </Grid>
-        
-        <!-- Status Bar -->
-        <Border Grid.Row="2" 
-                Background="{DynamicResource Brush.Background.Secondary}"
-                BorderBrush="{DynamicResource Brush.Border.Default}"
-                BorderThickness="0,1,0,0"
-                Padding="8">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Grid.Column="0" 
-                          Text="{Binding StatusMessage}"
-                          Foreground="{DynamicResource Brush.Text.Secondary}"
-                          FontSize="{StaticResource FontSize.Small}" />
-                <TextBlock Grid.Column="1" 
-                          Text="{Binding CurrentProfile}"
-                          Foreground="{DynamicResource Brush.Accent.Primary}"
-                          FontSize="{StaticResource FontSize.Small}"
-                          FontWeight="{StaticResource FontWeight.SemiBold}" />
-            </Grid>
-        </Border>
     </Grid>
 </Window>
