@@ -86,6 +86,7 @@
                Height="36"
                Margin="0,0,0,50"
                HorizontalAlignment="Center"
+               HorizontalContentAlignment="Center"
                Background="#2D3139"
                Foreground="#E6EDF3"
                BorderBrush="#444C56"

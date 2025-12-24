@@ -71,6 +71,7 @@ public class AvaloniaDialogService : IDialogService
         {
             Content = "OK",
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             Width = 100,
             Height = 36
         };
@@ -112,6 +113,7 @@ public class AvaloniaDialogService : IDialogService
         var yesButton = new Button
         {
             Content = "Yes",
+            HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             Width = 100,
             Height = 36
         };
@@ -119,6 +121,7 @@ public class AvaloniaDialogService : IDialogService
         var noButton = new Button
         {
             Content = "No",
+            HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             Width = 100,
             Height = 36
         };

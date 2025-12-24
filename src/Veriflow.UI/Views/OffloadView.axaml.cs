@@ -96,9 +96,13 @@ public partial class OffloadView : UserControl
                                 vm.DestinationB = path;
                                 vm.AppendLog($"Destination B: {path}");
                                 return;
-                            case "VerifyTargetDropZone":
+                            case "VerifyTargetADropZone":
                                 vm.VerifyTargetA = path;
                                 vm.AppendLog($"Verify Target A: {path}");
+                                return;
+                            case "VerifyTargetBDropZone":
+                                vm.VerifyTargetB = path;
+                                vm.AppendLog($"Verify Target B: {path}");
                                 return;
                         }
                     }
