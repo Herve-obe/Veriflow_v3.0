@@ -8,7 +8,8 @@
         Height="280"
         CanResize="False"
         WindowStartupLocation="CenterOwner"
-        Background="#0F1419">
+        Background="#0F1419"
+        SystemDecorations="None">
     
     <Window.Styles>
         <Style Selector="Window">
@@ -87,6 +88,7 @@
                Margin="0,0,0,50"
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
+               VerticalContentAlignment="Center"
                Background="#2D3139"
                Foreground="#E6EDF3"
                BorderBrush="#444C56"

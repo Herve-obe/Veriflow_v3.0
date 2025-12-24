@@ -72,6 +72,7 @@ public class AvaloniaDialogService : IDialogService
             Content = "OK",
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Width = 100,
             Height = 36
         };
@@ -85,6 +86,8 @@ public class AvaloniaDialogService : IDialogService
             Height = 250,
             CanResize = false,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            SystemDecorations = Avalonia.Controls.SystemDecorations.None,
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#222628")),
             Content = new StackPanel
             {
                 Margin = new Avalonia.Thickness(20),
@@ -114,6 +117,7 @@ public class AvaloniaDialogService : IDialogService
         {
             Content = "Yes",
             HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Width = 100,
             Height = 36
         };
@@ -122,6 +126,7 @@ public class AvaloniaDialogService : IDialogService
         {
             Content = "No",
             HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Width = 100,
             Height = 36
         };
@@ -136,6 +141,8 @@ public class AvaloniaDialogService : IDialogService
             Height = 250,
             CanResize = false,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            SystemDecorations = Avalonia.Controls.SystemDecorations.None,
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#222628")),
             Content = new StackPanel
             {
                 Margin = new Avalonia.Thickness(20),
