@@ -432,7 +432,7 @@
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
-                       MinHeight="200">
+                       Height="250">
                     <Grid RowDefinitions="Auto,*">
                         <TextBlock Grid.Row="0"
                                   Text="File Progress"
@@ -453,7 +453,8 @@
                                      BorderThickness="0"
                                      CanUserReorderColumns="False"
                                      CanUserResizeColumns="True"
-                                     CanUserSortColumns="False">
+                                     CanUserSortColumns="False"
+                                     MinHeight="150">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="File" 
                                                        Binding="{Binding FileName}"
@@ -680,7 +681,7 @@
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
-                       MinHeight="200">
+                       Height="250">
                     <Grid RowDefinitions="Auto,*">
                         <TextBlock Grid.Row="0"
                                   Text="File Progress"
@@ -701,7 +702,8 @@
                                      BorderThickness="0"
                                      CanUserReorderColumns="False"
                                      CanUserResizeColumns="True"
-                                     CanUserSortColumns="False">
+                                     CanUserSortColumns="False"
+                                     MinHeight="150">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="File" 
                                                        Binding="{Binding FileName}"
