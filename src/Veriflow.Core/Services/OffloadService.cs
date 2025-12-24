@@ -19,8 +19,8 @@ namespace Veriflow.Core.Services;
 /// </summary>
 public class OffloadService : IOffloadService
 {
-    private const int BufferSize = 1024 * 1024; // 1MB buffer for file copying
-    private const int MaxConcurrentCopies = 4; // Limit concurrent file operations
+    private const int BufferSize = 4 * 1024 * 1024; // 4MB buffer for better throughput
+    private const int MaxConcurrentCopies = 2; // Reduced for stability (prevents freezes)
     private static readonly string HistoryFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Veriflow",
@@ -44,9 +44,31 @@ public class OffloadService : IOffloadService
                 throw new DirectoryNotFoundException($"Source path not found: {sourcePath}");
             
             Directory.CreateDirectory(destinationA);
-            Directory.CreateDirectory(destinationB);
             
-            // Get all files to copy
+            // Only create Destination B if provided (optional)
+            if (!string.IsNullOrEmpty(destinationB))
+            {
+                Directory.CreateDirectory(destinationB);
+            }
+            
+            
+            // STEP 1: Copy all directory structure first (including empty folders)
+            var allDirectories = Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories);
+            foreach (var sourceDir in allDirectories)
+            {
+                var relativePath = Path.GetRelativePath(sourcePath, sourceDir);
+                var destDirA = Path.Combine(destinationA, relativePath);
+                
+                Directory.CreateDirectory(destDirA);
+                
+                if (!string.IsNullOrEmpty(destinationB))
+                {
+                    var destDirB = Path.Combine(destinationB, relativePath);
+                    Directory.CreateDirectory(destDirB);
+                }
+            }
+            
+            // STEP 2: Get all files to copy
             var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
             var totalBytes = files.Sum(f => new FileInfo(f).Length);
             long bytesCopied = 0;
@@ -63,17 +85,18 @@ public class OffloadService : IOffloadService
                 {
                     var relativePath = Path.GetRelativePath(sourcePath, sourceFile);
                     var destFileA = Path.Combine(destinationA, relativePath);
-                    var destFileB = Path.Combine(destinationB, relativePath);
                     
-                    // Create destination directories
-                    Directory.CreateDirectory(Path.GetDirectoryName(destFileA)!);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destFileB)!);
+                    // Directories already created in STEP 1
                     
-                    // Copy to both destinations in parallel
-                    await Task.WhenAll(
-                        CopyFileWithHashAsync(sourceFile, destFileA, cancellationToken),
-                        CopyFileWithHashAsync(sourceFile, destFileB, cancellationToken)
-                    );
+                    // Copy to Destination A (required)
+                    await CopyFileWithHashAsync(sourceFile, destFileA, cancellationToken);
+                    
+                    // Copy to Destination B only if provided (optional)
+                    if (!string.IsNullOrEmpty(destinationB))
+                    {
+                        var destFileB = Path.Combine(destinationB, relativePath);
+                        await CopyFileWithHashAsync(sourceFile, destFileB, cancellationToken);
+                    }
                     
                     // Thread-safe progress update
                     var fileSize = new FileInfo(sourceFile).Length;
@@ -122,14 +145,18 @@ public class OffloadService : IOffloadService
                 Status = "Generating MHL verification files..."
             });
             
+            
             var mhlPathA = Path.Combine(destinationA, $"veriflow_{DateTime.Now:yyyyMMdd_HHmmss}.mhl");
-            var mhlPathB = Path.Combine(destinationB, $"veriflow_{DateTime.Now:yyyyMMdd_HHmmss}.mhl");
-            
             await GenerateMhlAsync(destinationA, mhlPathA);
-            await GenerateMhlAsync(destinationB, mhlPathB);
-            
             result.MhlPathA = mhlPathA;
-            result.MhlPathB = mhlPathB;
+            
+            // Only generate MHL for Destination B if provided (optional)
+            if (!string.IsNullOrEmpty(destinationB))
+            {
+                var mhlPathB = Path.Combine(destinationB, $"veriflow_{DateTime.Now:yyyyMMdd_HHmmss}.mhl");
+                await GenerateMhlAsync(destinationB, mhlPathB);
+                result.MhlPathB = mhlPathB;
+            }
             result.Success = true;
             
             progress?.Report(new OffloadProgress

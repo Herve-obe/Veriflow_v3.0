@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using System.Linq;
 
 namespace Veriflow.UI.Views;
@@ -13,6 +14,38 @@ public partial class OffloadView : UserControl
         // Setup drag & drop handlers for the entire control
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
+        
+        // Diagnostic: Log DataContext changes
+        this.DataContextChanged += (s, e) =>
+        {
+            if (DataContext is ViewModels.OffloadViewModel vm)
+            {
+                vm.AppendLog($">>> DataContext set to OffloadViewModel");
+                vm.AppendLog($">>> StartOffloadCommand exists: {vm.StartOffloadCommand != null}");
+            }
+        };
+    }
+    
+    // Diagnostic: Click event handler to test if button responds
+    private void StartButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is ViewModels.OffloadViewModel vm)
+        {
+            vm.AppendLog(">>> CLICK EVENT FIRED - Button works!");
+            vm.AppendLog($">>> StartOffloadCommand: {vm.StartOffloadCommand?.GetType().Name ?? "NULL"}");
+            vm.AppendLog($">>> CanExecute: {vm.StartOffloadCommand?.CanExecute(null) ?? false}");
+            
+            // Try to execute command manually
+            if (vm.StartOffloadCommand?.CanExecute(null) == true)
+            {
+                vm.AppendLog(">>> Executing command manually...");
+                vm.StartOffloadCommand.Execute(null);
+            }
+            else
+            {
+                vm.AppendLog(">>> Command CanExecute returned FALSE");
+            }
+        }
     }
     
     private void DragOver(object? sender, DragEventArgs e)

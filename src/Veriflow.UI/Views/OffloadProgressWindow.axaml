@@ -1,0 +1,106 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Veriflow.UI.ViewModels"
+        x:Class="Veriflow.UI.Views.OffloadProgressWindow"
+        x:DataType="vm:OffloadViewModel"
+        Title="Copying Files..."
+        Width="500"
+        Height="280"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="#0F1419">
+    
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="BorderBrush" Value="#2D3139" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </Window.Styles>
+    
+    <Grid Margin="20" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+        <!-- Title -->
+        <TextBlock Grid.Row="0"
+                  Text="Copying Files..."
+                  FontSize="18"
+                  FontWeight="SemiBold"
+                  Foreground="#E6EDF3"
+                  Margin="0,0,0,20" />
+        
+        <!-- Progress Percentage -->
+        <TextBlock Grid.Row="1"
+                  Text="{Binding Progress, StringFormat='{}{0:F1}%'}"
+                  FontSize="14"
+                  Foreground="#8B949E"
+                  Margin="0,0,0,8" />
+        
+        <!-- Progress Bar -->
+        <ProgressBar Grid.Row="2"
+                    Value="{Binding Progress}"
+                    Maximum="100"
+                    Height="8"
+                    Background="#1A1D23"
+                    Foreground="#0078D4"
+                    CornerRadius="4"
+                    Margin="0,0,0,20" />
+        
+        <!-- Current File -->
+        <StackPanel Grid.Row="3" Margin="0,0,0,8">
+            <TextBlock Text="Current File:"
+                      FontSize="12"
+                      Foreground="#8B949E"
+                      Margin="0,0,0,4" />
+            <TextBlock Text="{Binding CurrentFile}"
+                      FontSize="13"
+                      Foreground="#E6EDF3"
+                      TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        
+        <!-- Speed and ETA -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,*" Margin="0,0,0,20">
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Transfer Speed:"
+                          FontSize="12"
+                          Foreground="#8B949E"
+                          Margin="0,0,0,4" />
+                <TextBlock Text="{Binding TransferSpeed}"
+                          FontSize="13"
+                          Foreground="#E6EDF3" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Time Remaining:"
+                          FontSize="12"
+                          Foreground="#8B949E"
+                          Margin="0,0,0,4" />
+                <TextBlock Text="{Binding EstimatedTimeRemaining}"
+                          FontSize="13"
+                          Foreground="#E6EDF3" />
+            </StackPanel>
+        </Grid>
+        
+        <!-- Cancel Button -->
+        <Button Grid.Row="6"
+               Content="Cancel"
+               Command="{Binding CancelOffloadCommand}"
+               Width="120"
+               Height="36"
+               Margin="0,0,0,50"
+               HorizontalAlignment="Center"
+               Background="#2D3139"
+               Foreground="#E6EDF3"
+               BorderBrush="#444C56"
+               BorderThickness="1"
+               CornerRadius="6"
+               FontSize="13"
+               Cursor="Hand">
+            <Button.Styles>
+                <Style Selector="Button:pointerover">
+                    <Setter Property="Background" Value="#373E47" />
+                </Style>
+                <Style Selector="Button:pressed">
+                    <Setter Property="Background" Value="#444C56" />
+                </Style>
+            </Button.Styles>
+        </Button>
+    </Grid>
+</Window>

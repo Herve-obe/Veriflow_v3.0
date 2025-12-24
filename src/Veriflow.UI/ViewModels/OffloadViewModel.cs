@@ -133,6 +133,34 @@ public partial class OffloadViewModel : ViewModelBase
     }
     
     [RelayCommand]
+    private void ClearSource()
+    {
+        SourceFolder = string.Empty;
+        AppendLog("Source cleared");
+    }
+    
+    [RelayCommand]
+    private void ClearDestinationA()
+    {
+        DestinationA = string.Empty;
+        AppendLog("Destination A cleared");
+    }
+    
+    [RelayCommand]
+    private void ClearDestinationB()
+    {
+        DestinationB = string.Empty;
+        AppendLog("Destination B cleared");
+    }
+    
+    [RelayCommand]
+    private void ClearVerifyTarget()
+    {
+        VerifyTargetFolder = string.Empty;
+        AppendLog("Verify target cleared");
+    }
+    
+    [RelayCommand]
     private void ResetAll()
     {
         SourceFolder = string.Empty;
@@ -157,6 +185,8 @@ public partial class OffloadViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStartOffload))]
     private async Task StartOffloadAsync()
     {
+        AppendLog("=== START BUTTON CLICKED ===");
+        
         // Validate: Source and DestinationA are required, DestinationB is optional
         if (string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationA))
         {
@@ -166,6 +196,24 @@ public partial class OffloadViewModel : ViewModelBase
         
         IsBusy = true;
         _cancellationTokenSource = new CancellationTokenSource();
+        
+        // Show progress popup window
+        Views.OffloadProgressWindow? progressWindow = null;
+        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var mainWindow = Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                ? desktop.MainWindow
+                : null;
+            
+            if (mainWindow != null)
+            {
+                progressWindow = new Views.OffloadProgressWindow
+                {
+                    DataContext = this
+                };
+                progressWindow.Show(mainWindow);
+            }
+        });
         
         try
         {
@@ -198,6 +246,8 @@ public partial class OffloadViewModel : ViewModelBase
                     DestinationB,
                     progressReporter,
                     _cancellationTokenSource.Token);
+                
+                AppendLog($">>> OffloadAsync returned, Success={result.Success}");
                 
                 if (result.Success)
                 {
@@ -291,6 +341,15 @@ public partial class OffloadViewModel : ViewModelBase
             IsBusy = false;
             Progress = 0;
             CurrentFile = string.Empty;
+            
+            // Close progress window
+            if (progressWindow != null)
+            {
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    progressWindow.Close();
+                });
+            }
             
             // Refresh history after offload
             if (IsOffloadMode)
