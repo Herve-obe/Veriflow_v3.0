@@ -65,7 +65,7 @@
         
         <!-- TextBox Professional Style -->
         <Style Selector="TextBox.PathDisplay">
-            <Setter Property="Background" Value="#15171C" />
+            <Setter Property="Background" Value="#0D0D0D" />
             <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
@@ -307,15 +307,28 @@
                             <StackPanel Grid.Row="1"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
-                                       Spacing="12">
-                                <Path Width="56" Height="56"
+                                       Spacing="16">
+                                <!-- Upload Icon -->
+                                <Path Width="72" Height="72"
                                      Fill="{StaticResource TextSecondary}"
                                      Opacity="0.5"
                                      Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                      Stretch="Uniform" />
+                                
+                                <TextBlock Text="DROP ZONE"
+                                          FontSize="16"
+                                          FontWeight="SemiBold"
+                                          Foreground="{StaticResource TextSecondary}"
+                                          HorizontalAlignment="Center" />
+                                
+                                <TextBlock Text="Drop files or folders here"
+                                          FontSize="12"
+                                          Foreground="{StaticResource TextSecondary}"
+                                          Opacity="0.7"
+                                          HorizontalAlignment="Center" />
                             </StackPanel>
                             
-                            <Grid Grid.Row="2" Margin="0,12,0,10">
+                            <Grid Grid.Row="2" Margin="0,16,0,10">
                                 <TextBox Classes="PathDisplay"
                                         Text="{Binding DestinationA}"
                                         IsReadOnly="True"
@@ -362,16 +375,28 @@
                             <StackPanel Grid.Row="1"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
-                                       Spacing="12">
-                                <Path Width="56" Height="56"
+                                       Spacing="16">
+                                <!-- Upload Icon -->
+                                <Path Width="72" Height="72"
                                      Fill="{StaticResource TextSecondary}"
                                      Opacity="0.5"
                                      Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                      Stretch="Uniform" />
-
+                                
+                                <TextBlock Text="DROP ZONE"
+                                          FontSize="16"
+                                          FontWeight="SemiBold"
+                                          Foreground="{StaticResource TextSecondary}"
+                                          HorizontalAlignment="Center" />
+                                
+                                <TextBlock Text="Drop files or folders here"
+                                          FontSize="12"
+                                          Foreground="{StaticResource TextSecondary}"
+                                          Opacity="0.7"
+                                          HorizontalAlignment="Center" />
                             </StackPanel>
                             
-                            <Grid Grid.Row="2" Margin="0,12,0,10">
+                            <Grid Grid.Row="2" Margin="0,16,0,10">
                                 <TextBox Classes="PathDisplay"
                                         Text="{Binding DestinationB}"
                                         IsReadOnly="True"

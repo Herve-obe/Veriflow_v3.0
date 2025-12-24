@@ -138,7 +138,7 @@
                     
                     <!-- Video/Audio Profile Toggle -->
                     <Border Margin="20,0,20,24"
-                           Background="#FFFFFF15"
+                           Background="#30363D"
                            CornerRadius="8"
                            Padding="4">
                         <Grid ColumnDefinitions="*,*">
