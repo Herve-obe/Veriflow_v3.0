@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.Input;
 using Veriflow.Core.Interfaces;
 
 namespace Veriflow.UI.Services;
@@ -64,14 +65,102 @@ public class AvaloniaDialogService : IDialogService
     
     public async Task ShowMessageBoxAsync(string title, string message)
     {
-        // TODO: Implement proper message box
-        await Task.CompletedTask;
+        Window? dialog = null;
+        
+        var okButton = new Button
+        {
+            Content = "OK",
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            Width = 100,
+            Height = 36
+        };
+        
+        okButton.Click += (s, e) => dialog?.Close();
+        
+        dialog = new Window
+        {
+            Title = title,
+            Width = 500,
+            Height = 250,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = new StackPanel
+            {
+                Margin = new Avalonia.Thickness(20),
+                Spacing = 20,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = message,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        FontSize = 14
+                    },
+                    okButton
+                }
+            }
+        };
+        
+        await dialog.ShowDialog(_mainWindow);
     }
     
     public async Task<bool> ShowConfirmationAsync(string title, string message)
     {
-        // TODO: Implement proper confirmation dialog
-        await Task.CompletedTask;
-        return true;
+        bool result = false;
+        Window? dialog = null;
+        
+        var yesButton = new Button
+        {
+            Content = "Yes",
+            Width = 100,
+            Height = 36
+        };
+        
+        var noButton = new Button
+        {
+            Content = "No",
+            Width = 100,
+            Height = 36
+        };
+        
+        yesButton.Click += (s, e) => { result = true; dialog?.Close(); };
+        noButton.Click += (s, e) => { result = false; dialog?.Close(); };
+        
+        dialog = new Window
+        {
+            Title = title,
+            Width = 500,
+            Height = 250,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = new StackPanel
+            {
+                Margin = new Avalonia.Thickness(20),
+                Spacing = 20,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = message,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        FontSize = 14
+                    },
+                    new StackPanel
+                    {
+                        Orientation = Avalonia.Layout.Orientation.Horizontal,
+                        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                        Spacing = 10,
+                        Children =
+                        {
+                            yesButton,
+                            noButton
+                        }
+                    }
+                }
+            }
+        };
+        
+        await dialog.ShowDialog(_mainWindow);
+        return result;
     }
 }
