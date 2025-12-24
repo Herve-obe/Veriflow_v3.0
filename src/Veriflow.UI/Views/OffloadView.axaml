@@ -13,8 +13,8 @@
     
     <!-- Professional Color Palette -->
     <UserControl.Resources>
-        <SolidColorBrush x:Key="AppBackground">#111316</SolidColorBrush>
-        <SolidColorBrush x:Key="SurfaceLight">#1C2128</SolidColorBrush>
+        <SolidColorBrush x:Key="AppBackground">#222328</SolidColorBrush>
+        <SolidColorBrush x:Key="SurfaceLight">#2e2d32</SolidColorBrush>
         <SolidColorBrush x:Key="SurfaceLighter">#252B36</SolidColorBrush>
         <SolidColorBrush x:Key="AccentColor">#0078D4</SolidColorBrush>
         <SolidColorBrush x:Key="TextPrimary">#FFFFFF</SolidColorBrush>

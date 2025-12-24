@@ -7,7 +7,7 @@
          ======================================== -->
     
     <!-- Background Colors -->
-    <Color x:Key="Color.Background.Primary">#222628</Color>
+    <Color x:Key="Color.Background.Primary">#2e2d32</Color>
     <Color x:Key="Color.Background.Secondary">#1A1A1A</Color>
     <Color x:Key="Color.Background.Tertiary">#252525</Color>
     <Color x:Key="Color.Background.Hover">#2F2F2F</Color>

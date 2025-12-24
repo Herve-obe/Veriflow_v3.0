@@ -118,7 +118,7 @@
                                Spacing="12">
                         <!-- Logo Placeholder -->
                         <Border Width="40" Height="40"
-                               Background="#FFFFFF20"
+                               Background="#30363D"
                                CornerRadius="8">
                             <TextBlock Text="V"
                                       FontSize="24"
@@ -158,7 +158,8 @@
                                         <Setter Property="BorderThickness" Value="0" />
                                     </Style>
                                     <Style Selector="Button:pointerover">
-                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Hover}" />
+                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
+                                        <Setter Property="Opacity" Value="0.9" />
                                     </Style>
                                 </Button.Styles>
                             </Button>
