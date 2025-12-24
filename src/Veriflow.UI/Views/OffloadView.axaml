@@ -218,7 +218,7 @@
         <!-- Drop Zones -->
         <Grid Grid.Row="2" Margin="20,0">
             <!-- OFFLOAD MODE: Source + Destinations -->
-            <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
+            <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,*,Auto">
                 
                 <!-- Cards Row -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,16,*,16,*">
@@ -535,7 +535,7 @@
             </Grid> <!-- End OFFLOAD MODE -->
             
             <!-- VERIFY MODE: Two Targets -->
-            <Grid IsVisible="{Binding !IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
+            <Grid IsVisible="{Binding !IsOffloadMode}" RowDefinitions="Auto,*,Auto">
                 
                 <!-- Cards Row -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,16,*">
