@@ -199,9 +199,7 @@ public class OffloadService : IOffloadService
     }
     
     public async Task<VerifyResult> VerifyAsync(
-        string sourcePath,
-        string destinationA,
-        string destinationB,
+        string targetPath,
         IProgress<OffloadProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
@@ -210,29 +208,26 @@ public class OffloadService : IOffloadService
         
         try
         {
-            // Find MHL files
-            var mhlFilesA = Directory.GetFiles(destinationA, "*.mhl");
-            var mhlFilesB = Directory.GetFiles(destinationB, "*.mhl");
+            // Find MHL file in target folder
+            var mhlFiles = Directory.GetFiles(targetPath, "*.mhl");
             
-            if (mhlFilesA.Length == 0 || mhlFilesB.Length == 0)
+            if (mhlFiles.Length == 0)
             {
                 result.Success = false;
-                result.ErrorMessage = "MHL files not found in one or both destinations";
+                result.ErrorMessage = "No MHL file found in target folder";
                 return result;
             }
             
             // Use the most recent MHL file
-            var mhlFileA = mhlFilesA.OrderByDescending(f => File.GetCreationTime(f)).First();
-            var mhlFileB = mhlFilesB.OrderByDescending(f => File.GetCreationTime(f)).First();
+            var mhlFile = mhlFiles.OrderByDescending(f => File.GetCreationTime(f)).First();
             
             // Parse MHL and verify hashes
-            var hashesA = ParseMhlFile(mhlFileA);
-            var hashesB = ParseMhlFile(mhlFileB);
+            var expectedHashes = ParseMhlFile(mhlFile);
             
             int filesVerified = 0;
-            int totalFiles = hashesA.Count;
+            int totalFiles = expectedHashes.Count;
             
-            foreach (var kvp in hashesA)
+            foreach (var kvp in expectedHashes)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 
@@ -247,35 +242,23 @@ public class OffloadService : IOffloadService
                     Status = $"Verifying {filePath}..."
                 });
                 
-                // Verify file exists and hash matches in destination A
-                var fullPathA = Path.Combine(destinationA, filePath);
-                if (!File.Exists(fullPathA))
+                // Verify file exists and hash matches
+                var fullPath = Path.Combine(targetPath, filePath);
+                if (!File.Exists(fullPath))
                 {
-                    mismatches.Add($"{filePath} (missing in A)");
+                    mismatches.Add($"{filePath} (missing)");
                     continue;
                 }
                 
-                var actualHashA = await ComputeXxHash64Async(fullPathA, cancellationToken);
-                if (actualHashA != expectedHash)
+                var actualHash = await ComputeXxHash64Async(fullPath, cancellationToken);
+                if (actualHash != expectedHash)
                 {
-                    mismatches.Add($"{filePath} (hash mismatch in A)");
+                    mismatches.Add($"{filePath} (hash mismatch)");
                 }
-                
-                // Verify file exists and hash matches in destination B
-                var fullPathB = Path.Combine(destinationB, filePath);
-                if (!File.Exists(fullPathB))
+                else
                 {
-                    mismatches.Add($"{filePath} (missing in B)");
-                    continue;
+                    filesVerified++;
                 }
-                
-                var actualHashB = await ComputeXxHash64Async(fullPathB, cancellationToken);
-                if (actualHashB != expectedHash)
-                {
-                    mismatches.Add($"{filePath} (hash mismatch in B)");
-                }
-                
-                filesVerified++;
             }
             
             result.FilesVerified = filesVerified;
@@ -285,10 +268,7 @@ public class OffloadService : IOffloadService
             
             progress?.Report(new OffloadProgress
             {
-                CurrentFile = "Complete",
-                FilesProcessed = filesVerified,
-                TotalFiles = totalFiles,
-                Status = result.Success ? "Verification successful!" : $"Verification failed: {mismatches.Count} mismatches"
+                Status = result.Success ? "Verification complete!" : "Verification failed"
             });
         }
         catch (Exception ex)

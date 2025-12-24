@@ -23,12 +23,10 @@ public interface IOffloadService
         CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Verify existing offload by comparing hashes
+    /// Verify files in target folder against its MHL file
     /// </summary>
     Task<VerifyResult> VerifyAsync(
-        string sourcePath,
-        string destinationA,
-        string destinationB,
+        string targetPath,
         IProgress<OffloadProgress>? progress = null,
         CancellationToken cancellationToken = default);
     

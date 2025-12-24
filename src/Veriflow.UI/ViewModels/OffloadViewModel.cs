@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,7 +34,12 @@ public partial class OffloadViewModel : ViewModelBase
     private string _destinationB = string.Empty;
     
     [ObservableProperty]
-    private string _verifyTargetFolder = string.Empty;
+    [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
+    private string _verifyTargetA = string.Empty;
+    
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
+    private string _verifyTargetB = string.Empty;
     
     [ObservableProperty]
     private bool _isOffloadMode = true; // true = OFFLOAD, false = VERIFY
@@ -122,13 +130,24 @@ public partial class OffloadViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private async Task SelectVerifyTargetAsync()
+    private async Task SelectVerifyTargetAAsync()
     {
-        var folder = await _dialogService.ShowFolderPickerAsync("Select Folder to Verify");
+        var folder = await _dialogService.ShowFolderPickerAsync("Select Verify Target #1");
         if (!string.IsNullOrEmpty(folder))
         {
-            VerifyTargetFolder = folder;
-            AppendLog($"Verify Target: {folder}");
+            VerifyTargetA = folder;
+            AppendLog($"Verify Target A: {folder}");
+        }
+    }
+    
+    [RelayCommand]
+    private async Task SelectVerifyTargetBAsync()
+    {
+        var folder = await _dialogService.ShowFolderPickerAsync("Select Verify Target #2");
+        if (!string.IsNullOrEmpty(folder))
+        {
+            VerifyTargetB = folder;
+            AppendLog($"Verify Target B: {folder}");
         }
     }
     
@@ -154,10 +173,17 @@ public partial class OffloadViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private void ClearVerifyTarget()
+    private void ClearVerifyTargetA()
     {
-        VerifyTargetFolder = string.Empty;
-        AppendLog("Verify target cleared");
+        VerifyTargetA = string.Empty;
+        AppendLog("Verify target A cleared");
+    }
+    
+    [RelayCommand]
+    private void ClearVerifyTargetB()
+    {
+        VerifyTargetB = string.Empty;
+        AppendLog("Verify target B cleared");
     }
     
     [RelayCommand]
@@ -166,7 +192,8 @@ public partial class OffloadViewModel : ViewModelBase
         SourceFolder = string.Empty;
         DestinationA = string.Empty;
         DestinationB = string.Empty;
-        VerifyTargetFolder = string.Empty;
+        VerifyTargetA = string.Empty;
+        VerifyTargetB = string.Empty;
         Progress = 0;
         ProgressA = 0;
         ProgressB = 0;
@@ -281,47 +308,91 @@ public partial class OffloadViewModel : ViewModelBase
                 AppendLog("\n=== Starting VERIFY ===");
                 StatusMessage = "Verifying...";
                 
-                var progressReporter = new Progress<OffloadProgress>(p =>
+                int totalFilesVerified = 0;
+                int totalMismatches = 0;
+                var allMismatchedFiles = new List<string>();
+                
+                // Verify Target A if provided
+                if (!string.IsNullOrEmpty(VerifyTargetA))
                 {
-                    Progress = p.PercentComplete;
-                    CurrentFile = p.CurrentFile;
-                    StatusMessage = p.Status;
-                });
+                    AppendLog($"\nVerifying Target A: {VerifyTargetA}");
+                    
+                    var progressReporter = new Progress<OffloadProgress>(p =>
+                    {
+                        Progress = p.PercentComplete;
+                        CurrentFile = p.CurrentFile;
+                        StatusMessage = $"Verifying A: {p.Status}";
+                    });
+                    
+                    var resultA = await _offloadService.VerifyAsync(
+                        VerifyTargetA,
+                        progressReporter,
+                        _cancellationTokenSource.Token);
+                    
+                    totalFilesVerified += resultA.FilesVerified;
+                    totalMismatches += resultA.MismatchCount;
+                    allMismatchedFiles.AddRange(resultA.MismatchedFiles.Select(f => $"[A] {f}"));
+                    
+                    AppendLog($"Target A: {resultA.FilesVerified} files verified, {resultA.MismatchCount} mismatches");
+                }
                 
-                var result = await _offloadService.VerifyAsync(
-                    SourceFolder,
-                    DestinationA,
-                    DestinationB,
-                    progressReporter,
-                    _cancellationTokenSource.Token);
+                // Verify Target B if provided
+                if (!string.IsNullOrEmpty(VerifyTargetB))
+                {
+                    AppendLog($"\nVerifying Target B: {VerifyTargetB}");
+                    
+                    var progressReporter = new Progress<OffloadProgress>(p =>
+                    {
+                        Progress = p.PercentComplete;
+                        CurrentFile = p.CurrentFile;
+                        StatusMessage = $"Verifying B: {p.Status}";
+                    });
+                    
+                    var resultB = await _offloadService.VerifyAsync(
+                        VerifyTargetB,
+                        progressReporter,
+                        _cancellationTokenSource.Token);
+                    
+                    totalFilesVerified += resultB.FilesVerified;
+                    totalMismatches += resultB.MismatchCount;
+                    allMismatchedFiles.AddRange(resultB.MismatchedFiles.Select(f => $"[B] {f}"));
+                    
+                    AppendLog($"Target B: {resultB.FilesVerified} files verified, {resultB.MismatchCount} mismatches");
+                }
                 
-                if (result.Success)
+                // Show combined results
+                if (totalMismatches == 0 && totalFilesVerified > 0)
                 {
                     AppendLog($"\n✓ Verification complete!");
-                    AppendLog($"  Files verified: {result.FilesVerified}");
+                    AppendLog($"  Total files verified: {totalFilesVerified}");
                     AppendLog($"  All hashes match!");
                     StatusMessage = "Verification successful!";
                     
-                    // Show success dialog
-                    var details = $"Files verified: {result.FilesVerified}\n" +
+                    var details = $"Total files verified: {totalFilesVerified}\n" +
                                  $"All checksums match!";
                     await ShowCompletionDialogAsync("Verification Complete", "All files have been successfully verified.", details, true);
+                }
+                else if (totalFilesVerified == 0)
+                {
+                    AppendLog($"\n✗ No files verified!");
+                    StatusMessage = "No files found";
+                    
+                    await ShowCompletionDialogAsync("Verification Failed", "No files were found to verify.", "Please check that the folders contain MHL files.", false);
                 }
                 else
                 {
                     AppendLog($"\n✗ Verification failed!");
-                    AppendLog($"  Files verified: {result.FilesVerified}");
-                    AppendLog($"  Mismatches: {result.MismatchCount}");
-                    foreach (var mismatch in result.MismatchedFiles)
+                    AppendLog($"  Total files verified: {totalFilesVerified}");
+                    AppendLog($"  Mismatches: {totalMismatches}");
+                    foreach (var mismatch in allMismatchedFiles)
                     {
                         AppendLog($"    - {mismatch}");
                     }
                     StatusMessage = "Verification failed";
                     
-                    // Show error dialog
-                    var details = $"Files verified: {result.FilesVerified}\n" +
-                                 $"Mismatches: {result.MismatchCount}\n\n" +
-                                 string.Join("\n", result.MismatchedFiles);
+                    var details = $"Total files verified: {totalFilesVerified}\n" +
+                                 $"Mismatches: {totalMismatches}\n\n" +
+                                 string.Join("\n", allMismatchedFiles);
                     await ShowCompletionDialogAsync("Verification Failed", "Some files failed verification.", details, false);
                 }
             }
@@ -369,11 +440,13 @@ public partial class OffloadViewModel : ViewModelBase
     {
         if (IsOffloadMode)
         {
+            // Offload mode: Source and Destination A required
             return !string.IsNullOrEmpty(SourceFolder) && !string.IsNullOrEmpty(DestinationA);
         }
         else
         {
-            return !string.IsNullOrEmpty(VerifyTargetFolder);
+            // Verify mode: At least ONE target required
+            return !string.IsNullOrEmpty(VerifyTargetA) || !string.IsNullOrEmpty(VerifyTargetB);
         }
     }
     
