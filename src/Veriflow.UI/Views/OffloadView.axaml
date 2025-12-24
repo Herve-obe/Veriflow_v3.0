@@ -698,7 +698,7 @@
                                      HorizontalScrollBarVisibility="Auto">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
-                                    Background="Transparent"
+                                    Background="#0D0D0D"
                                     BorderThickness="0"
                                     FontFamily="Consolas"
                                     FontSize="12"

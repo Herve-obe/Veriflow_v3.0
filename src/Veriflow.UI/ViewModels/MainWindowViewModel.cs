@@ -21,6 +21,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private ProfileMode _currentProfile = ProfileMode.Video;
     
+    // Computed property for profile toggle UI
+    public bool IsVideoMode => CurrentProfile == ProfileMode.Video;
+    
     [ObservableProperty]
     private string _currentPage = "OFFLOAD";
     
@@ -50,6 +53,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _sessionService.CurrentSession.CurrentProfile = CurrentProfile;
         _sessionService.MarkAsModified();
         StatusMessage = $"Switched to {CurrentProfile} mode";
+        OnPropertyChanged(nameof(IsVideoMode));
     }
     
     [RelayCommand]

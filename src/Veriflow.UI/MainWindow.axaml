@@ -154,17 +154,18 @@
                                       Foreground="{StaticResource TextPrimary}"
                                       Text="{Binding CurrentProfile}" />
                             
-                            <Button Grid.Column="1"
-                                   Command="{Binding ToggleProfileCommand}"
-                                   Width="44"
-                                   Height="22"
-                                   Padding="0"
-                                   CornerRadius="11"
-                                   BorderThickness="0"
-                                   Cursor="Hand">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="#0A84FF" />
+                            <ToggleButton Grid.Column="1"
+                                         IsChecked="{Binding IsVideoMode, Mode=OneWay}"
+                                         Command="{Binding ToggleProfileCommand}"
+                                         Width="44"
+                                         Height="22"
+                                         Padding="0"
+                                         CornerRadius="11"
+                                         BorderThickness="0"
+                                         Cursor="Hand">
+                                <ToggleButton.Styles>
+                                    <Style Selector="ToggleButton">
+                                        <Setter Property="Background" Value="#FF453A" />
                                         <Setter Property="Template">
                                             <ControlTemplate>
                                                 <Border Background="{TemplateBinding Background}"
@@ -173,7 +174,7 @@
                                                     <Canvas Width="40" Height="18">
                                                         <Ellipse Width="18" Height="18"
                                                                 Fill="White"
-                                                                Canvas.Left="22"
+                                                                Canvas.Left="0"
                                                                 x:Name="PART_Thumb">
                                                             <Ellipse.Transitions>
                                                                 <Transitions>
@@ -186,8 +187,14 @@
                                             </ControlTemplate>
                                         </Setter>
                                     </Style>
-                                </Button.Styles>
-                            </Button>
+                                    <Style Selector="ToggleButton:checked /template/ Ellipse#PART_Thumb">
+                                        <Setter Property="Canvas.Left" Value="22" />
+                                    </Style>
+                                    <Style Selector="ToggleButton:checked">
+                                        <Setter Property="Background" Value="#0A84FF" />
+                                    </Style>
+                                </ToggleButton.Styles>
+                            </ToggleButton>
                         </Grid>
                     </Border>
                     
