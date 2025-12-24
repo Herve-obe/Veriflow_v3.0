@@ -216,9 +216,12 @@
         </Grid>
         
         <!-- Drop Zones -->
-        <Grid Grid.Row="2" Margin="20,0">
-            <!-- OFFLOAD MODE: Source + Destinations -->
-            <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,*,Auto">
+        <ScrollViewer Grid.Row="2" 
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="20,0">
+                <!-- OFFLOAD MODE: Source + Destinations -->
+                <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
                 
                 <!-- Cards Row -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,16,*,16,*">
@@ -783,6 +786,8 @@
                 </Border>
                 
             </Grid> <!-- End VERIFY MODE -->
-        </Grid>
-    </Grid>
+            
+            </Grid> <!-- End Margin Grid -->
+        </ScrollViewer>
+    </Grid> <!-- End Main Grid -->
 </UserControl>
