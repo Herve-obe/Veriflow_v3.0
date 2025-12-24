@@ -475,13 +475,17 @@
             </Grid> <!-- End OFFLOAD MODE -->
             
             <!-- VERIFY MODE: Two Targets -->
-            <Grid IsVisible="{Binding !IsOffloadMode}" ColumnDefinitions="*,16,*">
-                <!-- Verify Target #1 -->
-                <Border Name="VerifyTargetADropZone"
-                       Grid.Column="0"
-                       DragDrop.AllowDrop="True"
-                       Classes="DropZone" 
-                       MinHeight="240">
+            <Grid IsVisible="{Binding !IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
+                
+                <!-- Cards Row -->
+                <Grid Grid.Row="0" ColumnDefinitions="*,16,*">
+                    <!-- Verify Target #1 -->
+                    <Border Name="VerifyTargetADropZone"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           DragDrop.AllowDrop="True"
+                           Classes="DropZone" 
+                           MinHeight="200">
                     <Grid RowDefinitions="Auto,*,Auto,Auto">
                         <TextBlock Grid.Row="0"
                                   Text="Verify Target #1"
@@ -540,13 +544,14 @@
                                HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
-                
-                <!-- Verify Target #2 -->
-                <Border Name="VerifyTargetBDropZone"
-                       Grid.Column="2"
-                       DragDrop.AllowDrop="True"
-                       Classes="DropZone" 
-                       MinHeight="240">
+                    
+                    <!-- Verify Target #2 -->
+                    <Border Name="VerifyTargetBDropZone"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           DragDrop.AllowDrop="True"
+                           Classes="DropZone" 
+                           MinHeight="200">
                     <Grid RowDefinitions="Auto,*,Auto,Auto">
                         <TextBlock Grid.Row="0"
                                   Text="Verify Target #2 (Optional)"
@@ -604,8 +609,82 @@
                                Classes="SecondaryAction"
                                HorizontalAlignment="Right" />
                     </Grid>
+                    </Border>
+                </Grid> <!-- End Cards Row -->
+                
+                <!-- DataGrid Row -->
+                <Border Grid.Row="1" 
+                       Margin="0,20,0,0"
+                       Background="{StaticResource SurfaceLight}"
+                       BorderBrush="{StaticResource BorderColor}"
+                       BorderThickness="1"
+                       CornerRadius="6"
+                       Padding="16"
+                       MinHeight="200">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0"
+                                  Text="File Progress"
+                                  FontSize="14"
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource AccentColor}"
+                                  Margin="0,0,0,12" />
+                        
+                        <DataGrid Grid.Row="1"
+                                 ItemsSource="{Binding VerifyFileProgress}"
+                                 AutoGenerateColumns="False"
+                                 IsReadOnly="True"
+                                 GridLinesVisibility="Horizontal"
+                                 HeadersVisibility="Column"
+                                 Background="Transparent"
+                                 RowBackground="Transparent">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="File" 
+                                                   Binding="{Binding FileName}"
+                                                   Width="*" />
+                                <DataGridTextColumn Header="xxHash64" 
+                                                   Binding="{Binding XxHash64}"
+                                                   Width="200" />
+                                <DataGridTextColumn Header="Status" 
+                                                   Binding="{Binding Status}"
+                                                   Width="120" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </Border>
-            </Grid>
+                
+                <!-- Log Console Row -->
+                <Border Grid.Row="2"
+                       Margin="0,20,0,0"
+                       Background="{StaticResource SurfaceLight}"
+                       BorderBrush="{StaticResource BorderColor}"
+                       BorderThickness="1"
+                       CornerRadius="6"
+                       Padding="16"
+                       MinHeight="150">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0"
+                                  Text="Log Console"
+                                  FontSize="14"
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource AccentColor}"
+                                  Margin="0,0,0,12" />
+                        
+                        <ScrollViewer Grid.Row="1"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto">
+                            <TextBox Text="{Binding LogText}"
+                                    IsReadOnly="True"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{StaticResource TextSecondary}"
+                                    TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+                
+            </Grid> <!-- End VERIFY MODE -->
         </Grid>
         
         <!-- File List DataGrid -->
