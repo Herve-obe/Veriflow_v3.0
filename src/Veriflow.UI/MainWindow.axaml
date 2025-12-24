@@ -105,74 +105,170 @@
         </Menu>
         
         <!-- Main Content -->
-        <Grid Grid.Row="1" ColumnDefinitions="80,*">
-            <!-- Left Navigation Bar -->
+        <Grid Grid.Row="1" ColumnDefinitions="280,*">
+            <!-- Left Navigation Sidebar -->
             <Border Grid.Column="0" 
-                    Background="{DynamicResource Brush.Background.Secondary}"
+                    Background="{DynamicResource Brush.Sidebar}"
                     BorderBrush="{DynamicResource Brush.Border.Default}"
                     BorderThickness="0,0,1,0">
-                <StackPanel Spacing="8" Margin="8">
-                    <!-- Profile Toggle Buttons -->
-                    <StackPanel Spacing="4">
-                        <Button Content="VIDEO" 
-                                Width="64" Height="26"
-                                FontSize="{StaticResource FontSize.Caption}"
-                                FontWeight="{StaticResource FontWeight.SemiBold}"
-                                Command="{Binding ToggleProfileCommand}">
-                            <Button.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
-                                    <Setter Property="Foreground" Value="White" />
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-                        <Button Content="AUDIO" 
-                                Width="64" Height="26"
-                                FontSize="{StaticResource FontSize.Caption}"
-                                FontWeight="{StaticResource FontWeight.SemiBold}"
-                                Command="{Binding ToggleProfileCommand}">
-                            <Button.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Audio.Primary}" />
-                                    <Setter Property="Foreground" Value="White" />
-                                </Style>
-                            </Button.Styles>
-                        </Button>
+                <StackPanel Spacing="0">
+                    <!-- App Branding -->
+                    <StackPanel Orientation="Horizontal" 
+                               Margin="20,24,20,32"
+                               Spacing="12">
+                        <!-- Logo Placeholder -->
+                        <Border Width="40" Height="40"
+                               Background="#FFFFFF20"
+                               CornerRadius="8">
+                            <TextBlock Text="V"
+                                      FontSize="24"
+                                      FontWeight="Bold"
+                                      Foreground="White"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                        </Border>
+                        
+                        <!-- App Name -->
+                        <TextBlock Text="Veriflow"
+                                  FontSize="20"
+                                  FontWeight="SemiBold"
+                                  Foreground="White"
+                                  VerticalAlignment="Center" />
                     </StackPanel>
                     
-                    <Separator Margin="0,16,0,0" />
+                    <!-- Video/Audio Profile Toggle -->
+                    <Border Margin="20,0,20,24"
+                           Background="#FFFFFF15"
+                           CornerRadius="8"
+                           Padding="4">
+                        <Grid ColumnDefinitions="*,*">
+                            <Button Grid.Column="0"
+                                   Content="VIDEO"
+                                   Height="36"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Command="{Binding ToggleProfileCommand}"
+                                   CornerRadius="6"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center">
+                                <Button.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Primary}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video.Hover}" />
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+                            
+                            <Button Grid.Column="1"
+                                   Content="AUDIO"
+                                   Height="36"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Command="{Binding ToggleProfileCommand}"
+                                   CornerRadius="6"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center">
+                                <Button.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#FFFFFFAA" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="#FFFFFF10" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Separator Margin="20,0" Background="#FFFFFF20" />
                     
                     <!-- Navigation Buttons -->
-                    <Button Content="F1" 
-                            Classes="Ghost"
-                            ToolTip.Tip="OFFLOAD"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="OFFLOAD" />
-                    <Button Content="F2" 
-                            Classes="Ghost"
-                            ToolTip.Tip="MEDIA"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="MEDIA" />
-                    <Button Content="F3" 
-                            Classes="Ghost"
-                            ToolTip.Tip="PLAYER"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="PLAYER" />
-                    <Button Content="F4" 
-                            Classes="Ghost"
-                            ToolTip.Tip="SYNC"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="SYNC" />
-                    <Button Content="F5" 
-                            Classes="Ghost"
-                            ToolTip.Tip="TRANSCODE"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="TRANSCODE" />
-                    <Button Content="F6" 
-                            Classes="Ghost"
-                            ToolTip.Tip="REPORTS"
-                            Command="{Binding NavigateToPageCommand}"
-                            CommandParameter="REPORTS" />
+                    <StackPanel Spacing="4" Margin="20,24,20,0">
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="OFFLOAD (F1)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="OFFLOAD"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="📤" FontSize="18" />
+                                <TextBlock Text="OFFLOAD" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="MEDIA (F2)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="MEDIA"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="🎬" FontSize="18" />
+                                <TextBlock Text="MEDIA" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="PLAYER (F3)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="PLAYER"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="▶️" FontSize="18" />
+                                <TextBlock Text="PLAYER" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="SYNC (F4)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="SYNC"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="🔄" FontSize="18" />
+                                <TextBlock Text="SYNC" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="TRANSCODE (F5)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="TRANSCODE"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="⚙️" FontSize="18" />
+                                <TextBlock Text="TRANSCODE" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="Ghost"
+                               ToolTip.Tip="REPORTS (F6)"
+                               Command="{Binding NavigateToPageCommand}"
+                               CommandParameter="REPORTS"
+                               Height="48"
+                               HorizontalContentAlignment="Left"
+                               Padding="16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="📊" FontSize="18" />
+                                <TextBlock Text="REPORTS" FontWeight="Medium" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             
