@@ -194,11 +194,20 @@
             <!-- Reset All Button (Offload mode only) -->
             <Button Grid.Column="2"
                    Content="Reset All"
-                   Command="{Binding ResetAllCommand}"
+                   Command="{Binding ResetOffloadModeCommand}"
                    Classes="SecondaryAction"
                    Height="40"
                    Margin="12,0,0,0"
                    IsVisible="{Binding IsOffloadMode}"
+            
+            <!-- Reset All Button (Verify mode only) -->
+            <Button Grid.Column="2"
+                   Content="Reset All"
+                   Command="{Binding ResetVerifyModeCommand}"
+                   Classes="SecondaryAction"
+                   Height="40"
+                   Margin="12,0,0,0"
+                   IsVisible="{Binding !IsOffloadMode}" />
                    VerticalContentAlignment="Center"
                    HorizontalContentAlignment="Center" />
                    

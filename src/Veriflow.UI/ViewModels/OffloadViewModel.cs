@@ -193,11 +193,17 @@ public partial class OffloadViewModel : ViewModelBase
     [RelayCommand]
     private void ResetAll()
     {
+        // Reset both modes completely
+        ResetOffloadMode();
+        ResetVerifyMode();
+    }
+    
+    [RelayCommand]
+    private void ResetOffloadMode()
+    {
         SourceFolder = string.Empty;
         DestinationA = string.Empty;
         DestinationB = string.Empty;
-        VerifyTargetA = string.Empty;
-        VerifyTargetB = string.Empty;
         Progress = 0;
         ProgressA = 0;
         ProgressB = 0;
@@ -211,14 +217,28 @@ public partial class OffloadViewModel : ViewModelBase
         TransferSpeedA = string.Empty;
         TransferSpeedB = string.Empty;
         
-        // Clear DataGrid
+        // Clear Offload DataGrid
         OffloadFileProgress.Clear();
+        
+        // Clear Log Console
+        LogText = string.Empty;
+        
+        AppendLog("Offload mode reset.");
+    }
+    
+    [RelayCommand]
+    private void ResetVerifyMode()
+    {
+        VerifyTargetA = string.Empty;
+        VerifyTargetB = string.Empty;
+        
+        // Clear Verify DataGrid
         VerifyFileProgress.Clear();
         
         // Clear Log Console
         LogText = string.Empty;
         
-        AppendLog("All fields reset.");
+        AppendLog("Verify mode reset.");
     }
     
     [RelayCommand(CanExecute = nameof(CanStartOffload))]
