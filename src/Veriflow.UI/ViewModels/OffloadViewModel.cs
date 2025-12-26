@@ -220,9 +220,6 @@ public partial class OffloadViewModel : ViewModelBase
         // Clear Offload DataGrid
         OffloadFileProgress.Clear();
         
-        // Clear Log Console
-        LogText = string.Empty;
-        
         AppendLog("Offload mode reset.");
     }
     
@@ -234,9 +231,6 @@ public partial class OffloadViewModel : ViewModelBase
         
         // Clear Verify DataGrid
         VerifyFileProgress.Clear();
-        
-        // Clear Log Console
-        LogText = string.Empty;
         
         AppendLog("Verify mode reset.");
     }
