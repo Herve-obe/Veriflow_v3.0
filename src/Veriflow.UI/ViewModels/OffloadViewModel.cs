@@ -240,12 +240,28 @@ public partial class OffloadViewModel : ViewModelBase
     {
         AppendLog("=== START BUTTON CLICKED ===");
         
-        // Validate: Source and DestinationA are required, DestinationB is optional
-        if (string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationA))
+        // Validate based on mode
+        if (IsOffloadMode)
         {
-            StatusMessage = "Please select Source and Destination A";
-            return;
+            // Offload mode: Source and DestinationA are required
+            if (string.IsNullOrEmpty(SourceFolder) || string.IsNullOrEmpty(DestinationA))
+            {
+                StatusMessage = "Please select Source and Destination A";
+                AppendLog("Validation failed: Source or Destination A missing");
+                return;
+            }
         }
+        else
+        {
+            // Verify mode: At least one target is required
+            if (string.IsNullOrEmpty(VerifyTargetA) && string.IsNullOrEmpty(VerifyTargetB))
+            {
+                StatusMessage = "Please select at least one verify target";
+                AppendLog("Validation failed: No verify targets selected");
+                return;
+            }
+        }
+        
         
         IsBusy = true;
         _cancellationTokenSource = new CancellationTokenSource();
