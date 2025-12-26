@@ -210,6 +210,14 @@ public partial class OffloadViewModel : ViewModelBase
         TransferSpeed = string.Empty;
         TransferSpeedA = string.Empty;
         TransferSpeedB = string.Empty;
+        
+        // Clear DataGrid
+        OffloadFileProgress.Clear();
+        VerifyFileProgress.Clear();
+        
+        // Clear Log Console
+        LogText = string.Empty;
+        
         AppendLog("All fields reset.");
     }
     
