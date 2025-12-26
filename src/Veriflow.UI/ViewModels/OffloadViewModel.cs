@@ -98,26 +98,6 @@ public partial class OffloadViewModel : ViewModelBase
         _dialogService = dialogService;
         _offloadService = offloadService;
         StatusMessage = "Ready to offload";
-        
-        // Add test data for immediate visual feedback
-        OffloadFileProgress.Add(new FileProgressItem 
-        { 
-            FileName = "test_video_001.mov", 
-            Hash = "a1b2c3d4e5f67890", 
-            Status = 1 // Success
-        });
-        OffloadFileProgress.Add(new FileProgressItem 
-        { 
-            FileName = "test_audio_002.wav", 
-            Hash = "1234567890abcdef", 
-            Status = 2 // Error
-        });
-        OffloadFileProgress.Add(new FileProgressItem 
-        { 
-            FileName = "test_image_003.jpg", 
-            Hash = "", 
-            Status = 0 // Pending
-        });
     }
     
     [RelayCommand]
@@ -273,13 +253,38 @@ public partial class OffloadViewModel : ViewModelBase
                 AppendLog("\n=== Starting OFFLOAD ===");
                 StatusMessage = "Offloading...";
                 
+                // STEP 1: Clear previous progress
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    OffloadFileProgress.Clear();
+                });
+                
+                // STEP 2: Scan source folder and populate DataGrid
+                AppendLog($"Scanning source folder: {SourceFolder}");
+                var files = Directory.GetFiles(SourceFolder, "*", SearchOption.AllDirectories);
+                AppendLog($"Found {files.Length} files to copy");
+                
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    foreach (var file in files)
+                    {
+                        var relativePath = Path.GetRelativePath(SourceFolder, file);
+                        OffloadFileProgress.Add(new FileProgressItem
+                        {
+                            FileName = relativePath,
+                            Hash = "Waiting...",
+                            Status = 0 // Pending
+                        });
+                    }
+                });
+                
+                // STEP 3: Create progress reporter that updates DataGrid
                 var progressReporter = new Progress<OffloadProgress>(p =>
                 {
                     Progress = p.PercentComplete;
                     CurrentFile = p.CurrentFile;
                     StatusMessage = p.Status;
                     
-                    // Update ETA and transfer speed
                     if (p.EstimatedTimeRemaining > TimeSpan.Zero)
                     {
                         EstimatedTimeRemaining = $"ETA: {p.EstimatedTimeRemaining:mm\\:ss}";
@@ -289,6 +294,17 @@ public partial class OffloadViewModel : ViewModelBase
                     {
                         TransferSpeed = $"{FormatBytes((long)p.TransferSpeed)}/s";
                     }
+                    
+                    // Update DataGrid item status when file completes
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        var item = OffloadFileProgress.FirstOrDefault(x => x.FileName == p.CurrentFile);
+                        if (item != null && p.FilesProcessed > 0)
+                        {
+                            item.Hash = "Calculated"; // Will be updated with actual hash later
+                            item.Status = 1; // Success (we'll assume success unless error occurs)
+                        }
+                    });
                 });
                 
                 var result = await _offloadService.OffloadAsync(
