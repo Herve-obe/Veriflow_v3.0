@@ -688,18 +688,74 @@
                        CornerRadius="6"
                        Padding="16"
                        Height="250">
-                    <StackPanel>
-                        <TextBlock Text="File Progress"
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0"
+                                  Text="File Progress"
                                   FontSize="14"
                                   FontWeight="Bold"
                                   Foreground="{StaticResource AccentColor}"
                                   Margin="0,0,0,12" />
                         
-                        <!-- Empty grey area -->
-                        <Border Background="#2A2A2A"
-                               CornerRadius="4"
-                               Height="180" />
-                    </StackPanel>
+                        <DataGrid Grid.Row="1"
+                                 ItemsSource="{Binding VerifyFileProgress}"
+                                 AutoGenerateColumns="False"
+                                 IsReadOnly="True"
+                                 GridLinesVisibility="None"
+                                 HeadersVisibility="Column"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 CanUserReorderColumns="False"
+                                 CanUserResizeColumns="True"
+                                 CanUserSortColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="File" 
+                                                   Binding="{Binding FileName}"
+                                                   Width="*"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextPrimary}" />
+                                <DataGridTextColumn Header="xxHash64" 
+                                                   Binding="{Binding Hash}"
+                                                   Width="280"
+                                                   FontSize="12"
+                                                   FontFamily="JetBrains Mono"
+                                                   Foreground="#A0A0A0" />
+                                <DataGridTemplateColumn Header="Status" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Path Data="{Binding StatusIconData}"
+                                                 Fill="{Binding StatusColor}"
+                                                 Width="20"
+                                                 Height="20"
+                                                 Stretch="Uniform"
+                                                 HorizontalAlignment="Center" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#1A1A1A" />
+                                    <Setter Property="Foreground" Value="#A0A0A0" />
+                                    <Setter Property="FontSize" Value="12" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="Padding" Value="12,8" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                    <Setter Property="BorderBrush" Value="#30363D" />
+                                </Style>
+                                <Style Selector="DataGridRow">
+                                    <Setter Property="Height" Value="32" />
+                                    <Setter Property="Background" Value="#222328" />
+                                </Style>
+                                <Style Selector="DataGridRow:nth-child(2n)">
+                                    <Setter Property="Background" Value="#2e2d32" />
+                                </Style>
+                                <Style Selector="DataGridCell">
+                                    <Setter Property="Padding" Value="12,6" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </DataGrid.Styles>
+                        </DataGrid>
+                    </Grid>
                 </Border>
                 
                 <!-- Log Console Row -->
