@@ -126,9 +126,9 @@
          ======================================== -->
     
     <!-- Font Families -->
-    <FontFamily x:Key="Font.Primary">Inter</FontFamily>
+    <FontFamily x:Key="Font.Primary">Roboto</FontFamily>
     <FontFamily x:Key="Font.Monospace">JetBrains Mono</FontFamily>
-    <FontFamily x:Key="Font.Display">Outfit</FontFamily>
+    <FontFamily x:Key="Font.Display">Roboto</FontFamily>
     
     <!-- Font Sizes -->
     <x:Double x:Key="FontSize.Display">32</x:Double>
