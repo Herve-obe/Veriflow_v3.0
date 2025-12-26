@@ -98,6 +98,26 @@ public partial class OffloadViewModel : ViewModelBase
         _dialogService = dialogService;
         _offloadService = offloadService;
         StatusMessage = "Ready to offload";
+        
+        // Add test data for immediate visual feedback
+        OffloadFileProgress.Add(new FileProgressItem 
+        { 
+            FileName = "test_video_001.mov", 
+            Hash = "a1b2c3d4e5f67890", 
+            Status = 1 // Success
+        });
+        OffloadFileProgress.Add(new FileProgressItem 
+        { 
+            FileName = "test_audio_002.wav", 
+            Hash = "1234567890abcdef", 
+            Status = 2 // Error
+        });
+        OffloadFileProgress.Add(new FileProgressItem 
+        { 
+            FileName = "test_image_003.jpg", 
+            Hash = "", 
+            Status = 0 // Pending
+        });
     }
     
     [RelayCommand]
@@ -542,6 +562,53 @@ public partial class OffloadViewModel : ViewModelBase
         catch (Exception ex)
         {
             AppendLog($"Error showing completion dialog: {ex.Message}");
+        }
+    }
+}
+
+/// <summary>
+/// Model for file progress items in DataGrid
+/// </summary>
+public partial class FileProgressItem : ObservableObject
+{
+    [ObservableProperty]
+    private string _fileName = string.Empty;
+    
+    [ObservableProperty]
+    private string _hash = string.Empty;
+    
+    [ObservableProperty]
+    private int _status = 0; // 0 = Pending, 1 = Success, 2 = Error
+    
+    /// <summary>
+    /// Returns icon geometry based on status
+    /// </summary>
+    public string StatusIconData
+    {
+        get
+        {
+            return Status switch
+            {
+                1 => "M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z", // Check icon
+                2 => "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z", // X icon
+                _ => "" // Empty for pending
+            };
+        }
+    }
+    
+    /// <summary>
+    /// Returns color based on status
+    /// </summary>
+    public string StatusColor
+    {
+        get
+        {
+            return Status switch
+            {
+                1 => "#00FF00", // Lime Green for success
+                2 => "#FF0000", // Red for error
+                _ => "Transparent" // Transparent for pending
+            };
         }
     }
 }
