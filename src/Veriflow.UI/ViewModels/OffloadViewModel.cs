@@ -370,6 +370,12 @@ public partial class OffloadViewModel : ViewModelBase
                 AppendLog("\n=== Starting VERIFY ===");
                 StatusMessage = "Verifying...";
                 
+                // STEP 1: Clear previous progress
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    VerifyFileProgress.Clear();
+                });
+                
                 int totalFilesVerified = 0;
                 int totalMismatches = 0;
                 var allMismatchedFiles = new List<string>();
