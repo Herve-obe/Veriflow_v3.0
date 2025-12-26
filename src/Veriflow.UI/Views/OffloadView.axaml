@@ -199,6 +199,8 @@
                    Height="40"
                    Margin="12,0,0,0"
                    IsVisible="{Binding IsOffloadMode}"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center" />
             
             <!-- Reset All Button (Verify mode only) -->
             <Button Grid.Column="2"
@@ -207,7 +209,7 @@
                    Classes="SecondaryAction"
                    Height="40"
                    Margin="12,0,0,0"
-                   IsVisible="{Binding !IsOffloadMode}" />
+                   IsVisible="{Binding !IsOffloadMode}"
                    VerticalContentAlignment="Center"
                    HorizontalContentAlignment="Center" />
                    
