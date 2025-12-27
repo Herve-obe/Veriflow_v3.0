@@ -172,7 +172,6 @@
                         <Border Background="{StaticResource Brush.Surface.Card}"
                                BorderBrush="{StaticResource Brush.Border.Default}"
                                BorderThickness="2"
-                               BorderDashArray="4,4"
                                CornerRadius="6"
                                Padding="40"
                                MinHeight="400">
