@@ -41,6 +41,17 @@
     <Color x:Key="Color.Accent.Audio.Hover">#FF6259</Color>
     <Color x:Key="Color.Accent.Audio.Pressed">#E63946</Color>
     
+    <!-- UI Component Colors -->
+    <Color x:Key="Color.Sidebar.Background">#30363D</Color>
+    <Color x:Key="Color.Surface.Card">#2e2d32</Color>
+    <Color x:Key="Color.Surface.CardLight">#252B36</Color>
+    <Color x:Key="Color.Surface.Input">#0D0D0D</Color>
+    <Color x:Key="Color.Surface.Hover">#1A1A1A</Color>
+    
+    <!-- Accent Variants -->
+    <Color x:Key="Color.Accent.Video.HoverAlt">#1084E0</Color>
+    <Color x:Key="Color.Accent.Success">#00B294</Color>
+    
     <!-- ========================================
          SOLID COLOR BRUSHES
          ======================================== -->
@@ -79,6 +90,17 @@
     <SolidColorBrush x:Key="Brush.Accent.Audio.Primary" Color="{StaticResource Color.Accent.Audio.Primary}" />
     <SolidColorBrush x:Key="Brush.Accent.Audio.Hover" Color="{StaticResource Color.Accent.Audio.Hover}" />
     <SolidColorBrush x:Key="Brush.Accent.Audio.Pressed" Color="{StaticResource Color.Accent.Audio.Pressed}" />
+    
+    <!-- UI Component Brushes -->
+    <SolidColorBrush x:Key="Brush.Sidebar.Background" Color="{StaticResource Color.Sidebar.Background}" />
+    <SolidColorBrush x:Key="Brush.Surface.Card" Color="{StaticResource Color.Surface.Card}" />
+    <SolidColorBrush x:Key="Brush.Surface.CardLight" Color="{StaticResource Color.Surface.CardLight}" />
+    <SolidColorBrush x:Key="Brush.Surface.Input" Color="{StaticResource Color.Surface.Input}" />
+    <SolidColorBrush x:Key="Brush.Surface.Hover" Color="{StaticResource Color.Surface.Hover}" />
+    
+    <!-- Accent Variant Brushes -->
+    <SolidColorBrush x:Key="Brush.Accent.Video.HoverAlt" Color="{StaticResource Color.Accent.Video.HoverAlt}" />
+    <SolidColorBrush x:Key="Brush.Accent.Success" Color="{StaticResource Color.Accent.Success}" />
     
     <!-- Dynamic Accent Brush (will be set based on profile) -->
     <SolidColorBrush x:Key="Brush.Accent.Primary" Color="{StaticResource Color.Accent.Video.Primary}" />

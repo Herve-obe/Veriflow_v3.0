@@ -91,6 +91,33 @@
         <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Primary}" />
     </Style>
     
+    <!-- Navigation Button Style (Sidebar) -->
+    <Style Selector="Button.NavigationButton" x:DataType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#B0B0B0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Height" Value="45" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Primary}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2" />
+                <BrushTransition Property="Foreground" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <!-- Navigation Button Hover (Inactive) -->
+    <Style Selector="Button.NavigationButton:pointerover">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    
     <!-- Icon Button Style -->
     <Style Selector="Button.Icon" x:DataType="Button">
         <Setter Property="Background" Value="Transparent" />

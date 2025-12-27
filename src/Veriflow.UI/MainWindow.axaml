@@ -117,7 +117,7 @@
                                Spacing="12">
                         <!-- Logo Placeholder -->
                         <Border Width="40" Height="40"
-                               Background="#30363D"
+                               Background="{StaticResource Brush.Sidebar.Background}"
                                CornerRadius="8">
                             <TextBlock Text="V"
                                       FontSize="24"
@@ -129,7 +129,7 @@
                         
                         <!-- App Name -->
                         <TextBlock Text="Veriflow"
-                                  FontSize="20"
+                                  FontSize="36"
                                   FontWeight="SemiBold"
                                   Foreground="White"
                                   VerticalAlignment="Center" />
@@ -143,12 +143,13 @@
                            CornerRadius="6"
                            Padding="10,8"
                            Height="40"
-                           MinWidth="140">
+                           MinWidth="140"
+                           HorizontalAlignment="Center">
                         <Grid ColumnDefinitions="Auto,Auto" Width="100">
                             <TextBlock Grid.Column="0"
                                       VerticalAlignment="Center"
                                       Margin="8,0,12,0"
-                                      FontSize="14"
+                                      FontSize="22"
                                       FontWeight="SemiBold"
                                       Foreground="{StaticResource TextPrimary}"
                                       Text="{Binding CurrentProfile}" />
@@ -164,7 +165,7 @@
                                          Cursor="Hand">
                                 <ToggleButton.Styles>
                                     <Style Selector="ToggleButton">
-                                        <Setter Property="Background" Value="#FF453A" />
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent.Audio.Primary}" />
                                         <Setter Property="Template">
                                             <ControlTemplate>
                                                 <Border Background="{TemplateBinding Background}"
@@ -190,7 +191,7 @@
                                         <Setter Property="Canvas.Left" Value="22" />
                                     </Style>
                                     <Style Selector="ToggleButton:checked">
-                                        <Setter Property="Background" Value="#0A84FF" />
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent.Video.Primary}" />
                                     </Style>
                                 </ToggleButton.Styles>
                             </ToggleButton>
@@ -200,81 +201,147 @@
                     
                     <!-- Navigation Buttons -->
                     <StackPanel Spacing="4" Margin="20,24,20,0">
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="OFFLOAD (F1)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="OFFLOAD"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="📤" FontSize="18" />
-                                <TextBlock Text="OFFLOAD" FontWeight="Medium" />
+                               CommandParameter="OFFLOAD">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="OFFLOAD">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="OFFLOAD">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconOffload}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="OFFLOAD" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="MEDIA (F2)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="MEDIA"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="🎬" FontSize="18" />
-                                <TextBlock Text="MEDIA" FontWeight="Medium" />
+                               CommandParameter="MEDIA">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="MEDIA">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="MEDIA">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconMedia}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="MEDIA" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="PLAYER (F3)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="PLAYER"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="▶️" FontSize="18" />
-                                <TextBlock Text="PLAYER" FontWeight="Medium" />
+                               CommandParameter="PLAYER">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="PLAYER">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="PLAYER">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconPlayer}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="PLAYER" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="SYNC (F4)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="SYNC"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="🔄" FontSize="18" />
-                                <TextBlock Text="SYNC" FontWeight="Medium" />
+                               CommandParameter="SYNC">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="SYNC">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="SYNC">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconSync}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="SYNC" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="TRANSCODE (F5)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="TRANSCODE"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="⚙️" FontSize="18" />
-                                <TextBlock Text="TRANSCODE" FontWeight="Medium" />
+                               CommandParameter="TRANSCODE">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="TRANSCODE">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="TRANSCODE">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconTranscode}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="TRANSCODE" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         
-                        <Button Classes="Ghost"
+                        <Button Classes="NavigationButton"
                                ToolTip.Tip="REPORTS (F6)"
                                Command="{Binding NavigateToPageCommand}"
-                               CommandParameter="REPORTS"
-                               Height="48"
-                               HorizontalContentAlignment="Left"
-                               Padding="16,0">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="📊" FontSize="18" />
-                                <TextBlock Text="REPORTS" FontWeight="Medium" />
+                               CommandParameter="REPORTS">
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource ActivePageBackgroundConverter}" ConverterParameter="REPORTS">
+                                    <Binding Path="CurrentPage" />
+                                    <Binding Path="ActivePageColor" />
+                                </MultiBinding>
+                            </Button.Background>
+                            <Button.Foreground>
+                                <MultiBinding Converter="{StaticResource ActivePageForegroundConverter}" ConverterParameter="REPORTS">
+                                    <Binding Path="CurrentPage" />
+                                </MultiBinding>
+                            </Button.Foreground>
+                            <StackPanel Orientation="Horizontal" Spacing="15" Margin="15,0">
+                                <Path Data="{StaticResource IconReports}"
+                                      Width="20" Height="20"
+                                      Fill="{Binding $parent[Button].Foreground}"
+                                      Stretch="Uniform" />
+                                <TextBlock Text="REPORTS" FontWeight="Medium" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -287,3 +354,4 @@
         </Grid>
     </Grid>
 </Window>
+

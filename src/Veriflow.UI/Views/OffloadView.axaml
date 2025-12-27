@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
              x:Class="Veriflow.UI.Views.OffloadView"
+             x:CompileBindings="False"
              x:DataType="vm:OffloadViewModel">
     
     <Design.DataContext>
@@ -12,22 +13,13 @@
     </Design.DataContext>
     
     <!-- Professional Color Palette -->
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="AppBackground">#222328</SolidColorBrush>
-        <SolidColorBrush x:Key="SurfaceLight">#2e2d32</SolidColorBrush>
-        <SolidColorBrush x:Key="SurfaceLighter">#252B36</SolidColorBrush>
-        <SolidColorBrush x:Key="AccentColor">#0078D4</SolidColorBrush>
-        <SolidColorBrush x:Key="TextPrimary">#FFFFFF</SolidColorBrush>
-        <SolidColorBrush x:Key="TextSecondary">#9CA3AF</SolidColorBrush>
-        <SolidColorBrush x:Key="BorderColor">#30363D</SolidColorBrush>
-    </UserControl.Resources>
     
     <!-- Professional Styles -->
     <UserControl.Styles>
         <!-- Drop Zone Card Style -->
         <Style Selector="Border.DropZone">
-            <Setter Property="Background" Value="{StaticResource SurfaceLight}" />
-            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="Background" Value="{StaticResource Brush.Surface.Card}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="6" />
             <Setter Property="Padding" Value="20" />
@@ -35,8 +27,8 @@
         
         <!-- Professional Button Styles -->
         <Style Selector="Button.PrimaryAction">
-            <Setter Property="Background" Value="{StaticResource AccentColor}" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Background" Value="{Binding $parent[Window].DataContext.ActivePageColor}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="16,10" />
@@ -45,13 +37,13 @@
         </Style>
         
         <Style Selector="Button.PrimaryAction:pointerover">
-            <Setter Property="Background" Value="#1084E0" />
+            <Setter Property="Background" Value="{StaticResource Brush.Accent.Video.HoverAlt}" />
         </Style>
         
         <Style Selector="Button.SecondaryAction">
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
-            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="12,6" />
@@ -59,17 +51,17 @@
         </Style>
         
         <Style Selector="Button.SecondaryAction:pointerover">
-            <Setter Property="Background" Value="{StaticResource SurfaceLighter}" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Background" Value="{StaticResource Brush.Surface.CardLight}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
         </Style>
         
         <!-- TextBox Professional Style -->
         <Style Selector="TextBox.PathDisplay">
-            <Setter Property="Background" Value="#0D0D0D" />
-            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+            <Setter Property="Background" Value="{StaticResource Brush.Surface.Input}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Padding" Value="10,8" />
         </Style>
@@ -84,37 +76,37 @@
         </Style>
         
         <Style Selector="DataGridColumnHeader">
-            <Setter Property="Background" Value="{StaticResource SurfaceLighter}" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Background" Value="{StaticResource Brush.Surface.CardLight}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Padding" Value="12,10" />
         </Style>
         
         <Style Selector="DataGridRow">
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}" />
         </Style>
         
         <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
-            <Setter Property="Fill" Value="{StaticResource SurfaceLighter}" />
+            <Setter Property="Fill" Value="{StaticResource Brush.Surface.CardLight}" />
         </Style>
     </UserControl.Styles>
     
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{StaticResource AppBackground}">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{StaticResource Brush.Background.Primary}">
         <!-- Header -->
         <StackPanel Grid.Row="0" Spacing="4" Margin="20,20,20,24">
             <TextBlock Text="OFFLOAD - Secure Copy &amp; Verify" 
                       FontSize="24"
                       FontWeight="Bold"
-                      Foreground="{StaticResource TextPrimary}" />
+                      Foreground="{StaticResource Brush.Text.Primary}" />
         </StackPanel>
         
         <!-- Mode Toggle + Actions -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="20,0,20,20">
             <!-- Offload/Verify Toggle -->
             <Border Grid.Column="0"
-                   Background="{StaticResource SurfaceLight}"
-                   BorderBrush="{StaticResource BorderColor}"
+                   Background="{StaticResource Brush.Surface.Card}"
+                   BorderBrush="{StaticResource Brush.Border.Default}"
                    BorderThickness="1"
                    CornerRadius="6"
                    Padding="10,8"
@@ -127,7 +119,7 @@
                               Width="50"
                               FontSize="14"
                               FontWeight="SemiBold"
-                              Foreground="{StaticResource TextPrimary}"
+                              Foreground="{StaticResource Brush.Text.Primary}"
                               Text="{Binding IsOffloadMode, Converter={StaticResource OffloadVerifyTextConverter}}" />
                     
                     <ToggleButton Grid.Column="1"
@@ -136,11 +128,11 @@
                                  Height="22"
                                  Padding="0"
                                  CornerRadius="11"
-                                 Background="{StaticResource AccentColor}"
+                                 Background="{Binding $parent[Window].DataContext.ActivePageColor}"
                                  BorderThickness="0">
                         <ToggleButton.Styles>
                             <Style Selector="ToggleButton">
-                                <Setter Property="Background" Value="{StaticResource AccentColor}" />
+                                <Setter Property="Background" Value="{Binding $parent[Window].DataContext.ActivePageColor}" />
                                 <Setter Property="Template">
                                     <ControlTemplate>
                                         <Border Background="{TemplateBinding Background}"
@@ -166,7 +158,7 @@
                                 <Setter Property="Canvas.Left" Value="0" />
                             </Style>
                             <Style Selector="ToggleButton:checked">
-                                <Setter Property="Background" Value="#00B294" />
+                                <Setter Property="Background" Value="{StaticResource Brush.Accent.Success}" />
                             </Style>
                         </ToggleButton.Styles>
                     </ToggleButton>
@@ -230,7 +222,7 @@
                                   Text="Source"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,16" />
                         
                         <StackPanel Grid.Row="1"
@@ -239,7 +231,7 @@
                                    Spacing="16">
                             <!-- Upload Icon -->
                             <Path Width="72" Height="72"
-                                 Fill="{StaticResource TextSecondary}"
+                                 Fill="{StaticResource Brush.Text.Secondary}"
                                  Opacity="0.5"
                                  Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                  Stretch="Uniform" />
@@ -247,12 +239,12 @@
                             <TextBlock Text="DROP ZONE"
                                       FontSize="16"
                                       FontWeight="SemiBold"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       HorizontalAlignment="Center" />
                             
                             <TextBlock Text="Drop files or folders here"
                                       FontSize="12"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       Opacity="0.7"
                                       HorizontalAlignment="Center" />
                         </StackPanel>
@@ -266,7 +258,7 @@
                                    Command="{Binding ClearSourceCommand}"
                                    IsVisible="{Binding SourceFolder, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                    Background="Transparent"
-                                   Foreground="{StaticResource TextSecondary}"
+                                   Foreground="{StaticResource Brush.Text.Secondary}"
                                    BorderThickness="0"
                                    FontSize="16"
                                    Width="30"
@@ -297,7 +289,7 @@
                                       Text="Destination 1"
                                       FontSize="14"
                                       FontWeight="Bold"
-                                      Foreground="{StaticResource AccentColor}"
+                                      Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                       Margin="0,0,0,16" />
                             
                             <StackPanel Grid.Row="1"
@@ -306,7 +298,7 @@
                                        Spacing="16">
                                 <!-- Upload Icon -->
                                 <Path Width="72" Height="72"
-                                     Fill="{StaticResource TextSecondary}"
+                                     Fill="{StaticResource Brush.Text.Secondary}"
                                      Opacity="0.5"
                                      Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                      Stretch="Uniform" />
@@ -314,12 +306,12 @@
                                 <TextBlock Text="DROP ZONE"
                                           FontSize="16"
                                           FontWeight="SemiBold"
-                                          Foreground="{StaticResource TextSecondary}"
+                                          Foreground="{StaticResource Brush.Text.Secondary}"
                                           HorizontalAlignment="Center" />
                                 
                                 <TextBlock Text="Drop files or folders here"
                                           FontSize="12"
-                                          Foreground="{StaticResource TextSecondary}"
+                                          Foreground="{StaticResource Brush.Text.Secondary}"
                                           Opacity="0.7"
                                           HorizontalAlignment="Center" />
                             </StackPanel>
@@ -333,7 +325,7 @@
                                        Command="{Binding ClearDestinationACommand}"
                                        IsVisible="{Binding DestinationA, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                        Background="Transparent"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{StaticResource Brush.Text.Secondary}"
                                        BorderThickness="0"
                                        FontSize="16"
                                        Width="30"
@@ -364,7 +356,7 @@
                                       Text="Destination 2 (Optional)"
                                       FontSize="14"
                                       FontWeight="Bold"
-                                      Foreground="{StaticResource AccentColor}"
+                                      Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                       Margin="0,0,0,16" />
                             
                             <StackPanel Grid.Row="1"
@@ -373,7 +365,7 @@
                                        Spacing="16">
                                 <!-- Upload Icon -->
                                 <Path Width="72" Height="72"
-                                     Fill="{StaticResource TextSecondary}"
+                                     Fill="{StaticResource Brush.Text.Secondary}"
                                      Opacity="0.5"
                                      Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                      Stretch="Uniform" />
@@ -381,12 +373,12 @@
                                 <TextBlock Text="DROP ZONE"
                                           FontSize="16"
                                           FontWeight="SemiBold"
-                                          Foreground="{StaticResource TextSecondary}"
+                                          Foreground="{StaticResource Brush.Text.Secondary}"
                                           HorizontalAlignment="Center" />
                                 
                                 <TextBlock Text="Drop files or folders here"
                                           FontSize="12"
-                                          Foreground="{StaticResource TextSecondary}"
+                                          Foreground="{StaticResource Brush.Text.Secondary}"
                                           Opacity="0.7"
                                           HorizontalAlignment="Center" />
                             </StackPanel>
@@ -400,7 +392,7 @@
                                        Command="{Binding ClearDestinationBCommand}"
                                        IsVisible="{Binding DestinationB, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                        Background="Transparent"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{StaticResource Brush.Text.Secondary}"
                                        BorderThickness="0"
                                        FontSize="16"
                                        Width="30"
@@ -423,8 +415,8 @@
                 <!-- File Progress Card (Empty for now) -->
                 <Border Grid.Row="1" 
                        Margin="0,20,0,0"
-                       Background="{StaticResource SurfaceLight}"
-                       BorderBrush="{StaticResource BorderColor}"
+                       Background="{StaticResource Brush.Surface.Card}"
+                       BorderBrush="{StaticResource Brush.Border.Default}"
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
@@ -434,7 +426,7 @@
                                   Text="File Progress"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,12" />
                         
                         <DataGrid Grid.Row="1"
@@ -453,13 +445,13 @@
                                                    Binding="{Binding FileName}"
                                                    Width="7*"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
+                                                   Foreground="{StaticResource Brush.Text.Primary}" />
                                 <DataGridTextColumn Header="xxHash64" 
                                                    Binding="{Binding Hash}"
                                                    Width="1.8*"
                                                    FontSize="12"
                                                    FontFamily="JetBrains Mono"
-                                                   Foreground="#A0A0A0" />
+                                                   Foreground="{StaticResource Brush.Text.Secondary}" />
                                 <DataGridTemplateColumn Header="Status" Width="1.2*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -475,20 +467,20 @@
                             </DataGrid.Columns>
                             <DataGrid.Styles>
                                 <Style Selector="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#1A1A1A" />
-                                    <Setter Property="Foreground" Value="#A0A0A0" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Surface.Hover}" />
+                                    <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}" />
                                     <Setter Property="FontSize" Value="12" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                     <Setter Property="Padding" Value="12,8" />
                                     <Setter Property="BorderThickness" Value="0,0,0,1" />
-                                    <Setter Property="BorderBrush" Value="#30363D" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
                                 </Style>
                                 <Style Selector="DataGridRow">
                                     <Setter Property="Height" Value="32" />
-                                    <Setter Property="Background" Value="#222328" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Background.Primary}" />
                                 </Style>
                                 <Style Selector="DataGridRow:nth-child(2n)">
-                                    <Setter Property="Background" Value="#2e2d32" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Surface.Card}" />
                                 </Style>
                                 <Style Selector="DataGridCell">
                                     <Setter Property="Padding" Value="12,6" />
@@ -502,8 +494,8 @@
                 <!-- Log Console Row -->
                 <Border Grid.Row="2"
                        Margin="0,20,0,0"
-                       Background="{StaticResource SurfaceLight}"
-                       BorderBrush="{StaticResource BorderColor}"
+                       Background="{StaticResource Brush.Surface.Card}"
+                       BorderBrush="{StaticResource Brush.Border.Default}"
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
@@ -513,7 +505,7 @@
                                   Text="Log Console"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,12" />
                         
                         <ScrollViewer Grid.Row="1"
@@ -522,11 +514,11 @@
                                      MaxHeight="150">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
-                                    Background="#0D0D0D"
+                                    Background="{StaticResource Brush.Surface.Input}"
                                     BorderThickness="0"
                                     FontFamily="Consolas"
                                     FontSize="12"
-                                    Foreground="{StaticResource TextSecondary}"
+                                    Foreground="{StaticResource Brush.Text.Secondary}"
                                     TextWrapping="Wrap" />
                         </ScrollViewer>
                     </Grid>
@@ -551,7 +543,7 @@
                                   Text="Verify Target #1"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,16" />
                         
                         <StackPanel Grid.Row="1"
@@ -559,7 +551,7 @@
                                    HorizontalAlignment="Center"
                                    Spacing="16">
                             <Path Width="72" Height="72"
-                                 Fill="{StaticResource TextSecondary}"
+                                 Fill="{StaticResource Brush.Text.Secondary}"
                                  Opacity="0.5"
                                  Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                  Stretch="Uniform" />
@@ -567,12 +559,12 @@
                             <TextBlock Text="DROP ZONE"
                                       FontSize="16"
                                       FontWeight="SemiBold"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       HorizontalAlignment="Center" />
                             
                             <TextBlock Text="Drop folder to verify here"
                                       FontSize="12"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       Opacity="0.7"
                                       HorizontalAlignment="Center" />
                         </StackPanel>
@@ -586,7 +578,7 @@
                                    Command="{Binding ClearVerifyTargetACommand}"
                                    IsVisible="{Binding VerifyTargetA, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                    Background="Transparent"
-                                   Foreground="{StaticResource TextSecondary}"
+                                   Foreground="{StaticResource Brush.Text.Secondary}"
                                    BorderThickness="0"
                                    FontSize="16"
                                    Width="30"
@@ -617,7 +609,7 @@
                                   Text="Verify Target #2 (Optional)"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,16" />
                         
                         <StackPanel Grid.Row="1"
@@ -625,7 +617,7 @@
                                    HorizontalAlignment="Center"
                                    Spacing="16">
                             <Path Width="72" Height="72"
-                                 Fill="{StaticResource TextSecondary}"
+                                 Fill="{StaticResource Brush.Text.Secondary}"
                                  Opacity="0.5"
                                  Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
                                  Stretch="Uniform" />
@@ -633,12 +625,12 @@
                             <TextBlock Text="DROP ZONE"
                                       FontSize="16"
                                       FontWeight="SemiBold"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       HorizontalAlignment="Center" />
                             
                             <TextBlock Text="Drop folder to verify here"
                                       FontSize="12"
-                                      Foreground="{StaticResource TextSecondary}"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
                                       Opacity="0.7"
                                       HorizontalAlignment="Center" />
                         </StackPanel>
@@ -652,7 +644,7 @@
                                    Command="{Binding ClearVerifyTargetBCommand}"
                                    IsVisible="{Binding VerifyTargetB, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                    Background="Transparent"
-                                   Foreground="{StaticResource TextSecondary}"
+                                   Foreground="{StaticResource Brush.Text.Secondary}"
                                    BorderThickness="0"
                                    FontSize="16"
                                    Width="30"
@@ -675,8 +667,8 @@
                 <!-- File Progress Card (Empty for now) -->
                 <Border Grid.Row="1" 
                        Margin="0,20,0,0"
-                       Background="{StaticResource SurfaceLight}"
-                       BorderBrush="{StaticResource BorderColor}"
+                       Background="{StaticResource Brush.Surface.Card}"
+                       BorderBrush="{StaticResource Brush.Border.Default}"
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
@@ -686,7 +678,7 @@
                                   Text="File Progress"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,12" />
                         
                         <DataGrid Grid.Row="1"
@@ -705,13 +697,13 @@
                                                    Binding="{Binding FileName}"
                                                    Width="7*"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource TextPrimary}" />
+                                                   Foreground="{StaticResource Brush.Text.Primary}" />
                                 <DataGridTextColumn Header="xxHash64" 
                                                    Binding="{Binding Hash}"
                                                    Width="1.8*"
                                                    FontSize="12"
                                                    FontFamily="JetBrains Mono"
-                                                   Foreground="#A0A0A0" />
+                                                   Foreground="{StaticResource Brush.Text.Secondary}" />
                                 <DataGridTemplateColumn Header="Status" Width="1.2*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -727,20 +719,20 @@
                             </DataGrid.Columns>
                             <DataGrid.Styles>
                                 <Style Selector="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#1A1A1A" />
-                                    <Setter Property="Foreground" Value="#A0A0A0" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Surface.Hover}" />
+                                    <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}" />
                                     <Setter Property="FontSize" Value="12" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                     <Setter Property="Padding" Value="12,8" />
                                     <Setter Property="BorderThickness" Value="0,0,0,1" />
-                                    <Setter Property="BorderBrush" Value="#30363D" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Default}" />
                                 </Style>
                                 <Style Selector="DataGridRow">
                                     <Setter Property="Height" Value="32" />
-                                    <Setter Property="Background" Value="#222328" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Background.Primary}" />
                                 </Style>
                                 <Style Selector="DataGridRow:nth-child(2n)">
-                                    <Setter Property="Background" Value="#2e2d32" />
+                                    <Setter Property="Background" Value="{StaticResource Brush.Surface.Card}" />
                                 </Style>
                                 <Style Selector="DataGridCell">
                                     <Setter Property="Padding" Value="12,6" />
@@ -754,8 +746,8 @@
                 <!-- Log Console Row -->
                 <Border Grid.Row="2"
                        Margin="0,20,0,0"
-                       Background="{StaticResource SurfaceLight}"
-                       BorderBrush="{StaticResource BorderColor}"
+                       Background="{StaticResource Brush.Surface.Card}"
+                       BorderBrush="{StaticResource Brush.Border.Default}"
                        BorderThickness="1"
                        CornerRadius="6"
                        Padding="16"
@@ -765,7 +757,7 @@
                                   Text="Log Console"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{StaticResource AccentColor}"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
                                   Margin="0,0,0,12" />
                         
                         <ScrollViewer Grid.Row="1"
@@ -774,11 +766,11 @@
                                      MaxHeight="150">
                             <TextBox Text="{Binding LogText}"
                                     IsReadOnly="True"
-                                    Background="#0D0D0D"
+                                    Background="{StaticResource Brush.Surface.Input}"
                                     BorderThickness="0"
                                     FontFamily="Consolas"
                                     FontSize="12"
-                                    Foreground="{StaticResource TextSecondary}"
+                                    Foreground="{StaticResource Brush.Text.Secondary}"
                                     TextWrapping="Wrap" />
                         </ScrollViewer>
                     </Grid>
@@ -790,3 +782,6 @@
         </ScrollViewer>
     </Grid> <!-- End Main Grid -->
 </UserControl>
+
+
+

@@ -24,6 +24,9 @@ public partial class MainWindowViewModel : ViewModelBase
     // Computed property for profile toggle UI
     public bool IsVideoMode => CurrentProfile == ProfileMode.Video;
     
+    // Active page color based on profile (Blue for Video, Red for Audio)
+    public string ActivePageColor => IsVideoMode ? "#0A84FF" : "#FF453A";
+    
     [ObservableProperty]
     private string _currentPage = "OFFLOAD";
     
@@ -54,6 +57,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _sessionService.MarkAsModified();
         StatusMessage = $"Switched to {CurrentProfile} mode";
         OnPropertyChanged(nameof(IsVideoMode));
+        OnPropertyChanged(nameof(ActivePageColor));
     }
     
     [RelayCommand]

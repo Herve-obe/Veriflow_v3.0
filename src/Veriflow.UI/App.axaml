@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Styles/Theme.Dark.axaml" />
+                <ResourceInclude Source="/Resources/NavigationIcons.axaml" />
             </ResourceDictionary.MergedDictionaries>
             
             <!-- Converters -->
@@ -21,6 +22,8 @@
             <converters:PeakToWidthConverter x:Key="PeakToWidthConverter" />
             <converters:PeakToHeightConverter x:Key="PeakToHeightConverter" />
             <converters:OffloadVerifyTextConverter x:Key="OffloadVerifyTextConverter" />
+            <converters:ActivePageBackgroundConverter x:Key="ActivePageBackgroundConverter" />
+            <converters:ActivePageForegroundConverter x:Key="ActivePageForegroundConverter" />
         </ResourceDictionary>
     </Application.Resources>
     
