@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
+using Veriflow.UI.Messages;
 
 namespace Veriflow.UI.ViewModels;
 
@@ -35,6 +37,35 @@ public partial class MediaViewModel : ViewModelBase
     
     [ObservableProperty]
     private bool _isGridView = true;
+    
+    [ObservableProperty]
+    private bool _showVideo = true;
+    
+    [ObservableProperty]
+    private bool _showAudio = true;
+    
+    [ObservableProperty]
+    private bool _isDragging = false;
+    
+    [ObservableProperty]
+    private int _viewMode = 0; // 0=Grid, 1=List, 2=Filmstrip
+    
+    // Filtered media files based on Video/Audio toggle
+    public ObservableCollection<MediaFile> FilteredMediaFiles
+    {
+        get
+        {
+            var filtered = new ObservableCollection<MediaFile>();
+            foreach (var file in MediaFiles)
+            {
+                if ((ShowVideo && file.IsVideo) || (ShowAudio && file.IsAudio))
+                {
+                    filtered.Add(file);
+                }
+            }
+            return filtered;
+        }
+    }
     
     public MediaViewModel(IMediaService mediaService, IDialogService dialogService)
     {
@@ -220,5 +251,85 @@ public partial class MediaViewModel : ViewModelBase
             MediaFiles.Add(item);
         
         StatusMessage = $"Found {MediaFiles.Count} matching files";
+    }
+    
+    partial void OnShowVideoChanged(bool value)
+    {
+        OnPropertyChanged(nameof(FilteredMediaFiles));
+    }
+    
+    partial void OnShowAudioChanged(bool value)
+    {
+        OnPropertyChanged(nameof(FilteredMediaFiles));
+    }
+    
+    partial void OnMediaFilesChanged(ObservableCollection<MediaFile> value)
+    {
+        OnPropertyChanged(nameof(FilteredMediaFiles));
+    }
+    
+    /// <summary>
+    /// Handle folder or file drop
+    /// </summary>
+    public async Task HandleDropAsync(string path)
+    {
+        try
+        {
+            IsDragging = false;
+            
+            // If it's a directory
+            if (Directory.Exists(path))
+            {
+                CurrentPath = path;
+                await LoadMediaFilesAsync();
+            }
+            // If it's a file
+            else if (File.Exists(path))
+            {
+                var directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    CurrentPath = directory;
+                    await LoadMediaFilesAsync();
+                    
+                    // Select the dropped file
+                    SelectedMedia = MediaFiles.FirstOrDefault(m => m.FilePath == path);
+                }
+            }
+            
+            // Auto-switch profile based on media type
+            await AutoSwitchProfileAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error handling drop: {ex.Message}";
+        }
+    }
+    
+    /// <summary>
+    /// Automatically switch profile based on loaded media
+    /// </summary>
+    private async Task AutoSwitchProfileAsync()
+    {
+        if (!MediaFiles.Any()) return;
+        
+        var hasVideo = MediaFiles.Any(m => m.IsVideo);
+        var hasAudio = MediaFiles.Any(m => m.IsAudio && !m.IsVideo);
+        
+        // Send message to switch profile if needed
+        if (hasAudio && !hasVideo)
+        {
+            // Request switch to Audio profile
+            WeakReferenceMessenger.Default.Send(new ProfileSwitchMessage(switchToVideo: false));
+            StatusMessage = "Auto-switched to Audio profile";
+        }
+        else if (hasVideo && !hasAudio)
+        {
+            // Request switch to Video profile
+            WeakReferenceMessenger.Default.Send(new ProfileSwitchMessage(switchToVideo: true));
+            StatusMessage = "Auto-switched to Video profile";
+        }
+        
+        await Task.CompletedTask;
     }
 }

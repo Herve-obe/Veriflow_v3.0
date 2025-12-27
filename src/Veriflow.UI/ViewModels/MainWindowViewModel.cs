@@ -3,9 +3,11 @@ using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Veriflow.Core.Interfaces;
 using Veriflow.Core.Models;
+using Veriflow.UI.Messages;
 using Veriflow.UI.Views;
 
 namespace Veriflow.UI.ViewModels;
@@ -45,6 +47,15 @@ public partial class MainWindowViewModel : ViewModelBase
         _serviceProvider = serviceProvider;
         UpdateWindowTitle();
         
+        // Register message handler for profile switching
+        WeakReferenceMessenger.Default.Register<ProfileSwitchMessage>(this, (r, m) =>
+        {
+            if (m.SwitchToVideo)
+                SwitchToVideoProfile();
+            else
+                SwitchToAudioProfile();
+        });
+        
         // Load initial page (OFFLOAD)
         NavigateToPage("OFFLOAD");
     }
@@ -56,6 +67,36 @@ public partial class MainWindowViewModel : ViewModelBase
         _sessionService.CurrentSession.CurrentProfile = CurrentProfile;
         _sessionService.MarkAsModified();
         StatusMessage = $"Switched to {CurrentProfile} mode";
+        OnPropertyChanged(nameof(IsVideoMode));
+        OnPropertyChanged(nameof(ActivePageColor));
+    }
+    
+    /// <summary>
+    /// Switch to Video profile (for auto-detection)
+    /// </summary>
+    public void SwitchToVideoProfile()
+    {
+        if (CurrentProfile == ProfileMode.Video) return;
+        
+        CurrentProfile = ProfileMode.Video;
+        _sessionService.CurrentSession.CurrentProfile = CurrentProfile;
+        _sessionService.MarkAsModified();
+        StatusMessage = "Auto-switched to Video profile";
+        OnPropertyChanged(nameof(IsVideoMode));
+        OnPropertyChanged(nameof(ActivePageColor));
+    }
+    
+    /// <summary>
+    /// Switch to Audio profile (for auto-detection)
+    /// </summary>
+    public void SwitchToAudioProfile()
+    {
+        if (CurrentProfile == ProfileMode.Audio) return;
+        
+        CurrentProfile = ProfileMode.Audio;
+        _sessionService.CurrentSession.CurrentProfile = CurrentProfile;
+        _sessionService.MarkAsModified();
+        StatusMessage = "Auto-switched to Audio profile";
         OnPropertyChanged(nameof(IsVideoMode));
         OnPropertyChanged(nameof(ActivePageColor));
     }

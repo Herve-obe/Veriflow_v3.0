@@ -38,6 +38,10 @@ public class MediaFile
     // Hash (for verification)
     public string? Hash { get; set; }
     public string? HashAlgorithm { get; set; }
+    
+    // Helper properties
+    public bool IsVideo => Type == MediaType.Video;
+    public bool IsAudio => Type == MediaType.Audio;
 }
 
 public enum MediaType
