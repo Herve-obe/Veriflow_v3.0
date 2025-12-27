@@ -255,6 +255,120 @@
                                                    Width="120"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                        
+                        <!-- Filmstrip View -->
+                        <Grid IsVisible="{Binding ViewMode, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=2}"
+                             ColumnDefinitions="300,*">
+                            
+                            <!-- Left: Compact File List -->
+                            <Border Grid.Column="0"
+                                   Background="{DynamicResource Brush.Background.Secondary}"
+                                   BorderBrush="{DynamicResource Brush.Border.Default}"
+                                   BorderThickness="0,0,1,0"
+                                   Padding="8">
+                                <ListBox ItemsSource="{Binding FilteredMediaFiles}"
+                                        SelectedItem="{Binding SelectedMedia}"
+                                        Background="Transparent"
+                                        BorderThickness="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="Auto,*" Margin="4">
+                                                <!-- Icon -->
+                                                <PathIcon Grid.Column="0" 
+                                                         Width="16" Height="16"
+                                                         Margin="0,0,8,0"
+                                                         Foreground="{DynamicResource Brush.Text.Secondary}">
+                                                    <PathIcon.Data>
+                                                        <MultiBinding Converter="{StaticResource MediaTypeToIconConverter}">
+                                                            <Binding Path="Type"/>
+                                                        </MultiBinding>
+                                                    </PathIcon.Data>
+                                                </PathIcon>
+                                                
+                                                <!-- File Name -->
+                                                <TextBlock Grid.Column="1" 
+                                                          Text="{Binding FileName}"
+                                                          FontSize="{StaticResource FontSize.Small}"
+                                                          Foreground="{DynamicResource Brush.Text.Primary}"
+                                                          TextTrimming="CharacterEllipsis"
+                                                          VerticalAlignment="Center" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                            
+                            <!-- Right: Player Area -->
+                            <Grid Grid.Column="1" RowDefinitions="*,Auto,Auto" Padding="16">
+                                
+                                <!-- Player Placeholder -->
+                                <Border Grid.Row="0"
+                                       Background="{DynamicResource Brush.Background.Primary}"
+                                       BorderBrush="{DynamicResource Brush.Border.Default}"
+                                       BorderThickness="1"
+                                       CornerRadius="{StaticResource CornerRadius.Medium}"
+                                       MinHeight="400">
+                                    <StackPanel HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Spacing="12">
+                                        <PathIcon Data="M8 5v14l11-7z"
+                                                 Width="64" Height="64"
+                                                 Foreground="{DynamicResource Brush.Text.Secondary}" />
+                                        <TextBlock Text="Player Area"
+                                                  FontSize="{StaticResource FontSize.H2}"
+                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                  HorizontalAlignment="Center" />
+                                        <TextBlock Text="VLC player will be integrated here"
+                                                  FontSize="{StaticResource FontSize.Small}"
+                                                  Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                                  HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Transport Controls -->
+                                <StackPanel Grid.Row="1" 
+                                           Orientation="Horizontal" 
+                                           HorizontalAlignment="Center"
+                                           Spacing="12"
+                                           Margin="0,16,0,0">
+                                    <Button Classes="Primary" Width="100">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <PathIcon Data="M8 5v14l11-7z" Width="16" Height="16" />
+                                            <TextBlock Text="PLAY" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Classes="Secondary" Width="100">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <PathIcon Data="M6 6h12v12H6z" Width="16" Height="16" />
+                                            <TextBlock Text="STOP" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                                
+                                <!-- Media Info Below Player -->
+                                <StackPanel Grid.Row="2" 
+                                           Spacing="8" 
+                                           Margin="0,16,0,0"
+                                           IsVisible="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="6">
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="File:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.FileName}" TextWrapping="Wrap" FontSize="{StaticResource FontSize.Small}"/>
+                                        
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Duration:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.Duration, StringFormat='{}{0:hh\\:mm\\:ss\\:ff}'}" FontSize="{StaticResource FontSize.Small}"/>
+                                        
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Format:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Container}" FontSize="{StaticResource FontSize.Small}"/>
+                                        
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Size:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.FileSizeBytes, Converter={StaticResource FileSizeConverter}}" FontSize="{StaticResource FontSize.Small}"/>
+                                        
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Date:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedMedia.CreatedDate, StringFormat='{}{0:yyyy-MM-dd}'}" FontSize="{StaticResource FontSize.Small}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Border>
             </Grid>
