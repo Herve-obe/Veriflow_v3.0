@@ -39,33 +39,12 @@ public partial class MediaViewModel : ViewModelBase
     private bool _isGridView = true;
     
     [ObservableProperty]
-    private bool _showVideo = true;
-    
-    [ObservableProperty]
-    private bool _showAudio = true;
-    
-    [ObservableProperty]
     private bool _isDragging = false;
     
     [ObservableProperty]
     private int _viewMode = 0; // 0=Grid, 1=List, 2=Filmstrip
     
-    // Filtered media files based on Video/Audio toggle
-    public ObservableCollection<MediaFile> FilteredMediaFiles
-    {
-        get
-        {
-            var filtered = new ObservableCollection<MediaFile>();
-            foreach (var file in MediaFiles)
-            {
-                if ((ShowVideo && file.IsVideo) || (ShowAudio && file.IsAudio))
-                {
-                    filtered.Add(file);
-                }
-            }
-            return filtered;
-        }
-    }
+
     
     public MediaViewModel(IMediaService mediaService, IDialogService dialogService)
     {
@@ -253,20 +232,7 @@ public partial class MediaViewModel : ViewModelBase
         StatusMessage = $"Found {MediaFiles.Count} matching files";
     }
     
-    partial void OnShowVideoChanged(bool value)
-    {
-        OnPropertyChanged(nameof(FilteredMediaFiles));
-    }
-    
-    partial void OnShowAudioChanged(bool value)
-    {
-        OnPropertyChanged(nameof(FilteredMediaFiles));
-    }
-    
-    partial void OnMediaFilesChanged(ObservableCollection<MediaFile> value)
-    {
-        OnPropertyChanged(nameof(FilteredMediaFiles));
-    }
+
     
     /// <summary>
     /// Handle folder or file drop
