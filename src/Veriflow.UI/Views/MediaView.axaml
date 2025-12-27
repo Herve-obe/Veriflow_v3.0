@@ -125,7 +125,8 @@
                     <Grid>
                         <!-- Drop Overlay -->
                         <Border IsVisible="{Binding IsDragging}"
-                               Background="#AA1A1A1D"
+                               Background="{DynamicResource Brush.Background.Primary}"
+                               Opacity="0.95"
                                CornerRadius="{StaticResource CornerRadius.Medium}"
                                ZIndex="100">
                             <StackPanel HorizontalAlignment="Center"
@@ -190,46 +191,70 @@
                             </ItemsControl>
                         </ScrollViewer>
                         
-                        <!-- List View -->
-                        <ListBox IsVisible="{Binding ViewMode, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}"
-                                ItemsSource="{Binding FilteredMediaFiles}"
-                                SelectedItem="{Binding SelectedMedia}"
-                                Background="Transparent">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="8">
-                                        <!-- Icon -->
-                                        <TextBlock Grid.Column="0" 
-                                                  Text="📄"
-                                                  FontSize="24"
-                                                  Margin="0,0,12,0"
-                                                  VerticalAlignment="Center" />
-                                        
-                                        <!-- File Name -->
-                                        <TextBlock Grid.Column="1" 
-                                                  Text="{Binding FileName}"
-                                                  FontSize="{StaticResource FontSize.Body}"
-                                                  Foreground="{DynamicResource Brush.Text.Primary}"
-                                                  VerticalAlignment="Center" />
-                                        
-                                        <!-- Duration -->
-                                        <TextBlock Grid.Column="2" 
-                                                  Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}"
-                                                  FontSize="{StaticResource FontSize.Small}"
-                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
-                                                  Margin="16,0"
-                                                  VerticalAlignment="Center" />
-                                        
-                                        <!-- File Size -->
-                                        <TextBlock Grid.Column="3" 
-                                                  Text="{Binding FileSizeBytes}"
-                                                  FontSize="{StaticResource FontSize.Small}"
-                                                  Foreground="{DynamicResource Brush.Text.Secondary}"
-                                                  VerticalAlignment="Center" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                        <!-- List View (DataGrid) -->
+                        <DataGrid IsVisible="{Binding ViewMode, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}"
+                                 ItemsSource="{Binding FilteredMediaFiles}"
+                                 SelectedItem="{Binding SelectedMedia}"
+                                 AutoGenerateColumns="False"
+                                 CanUserReorderColumns="True"
+                                 CanUserResizeColumns="True"
+                                 CanUserSortColumns="True"
+                                 GridLinesVisibility="Horizontal"
+                                 HeadersVisibility="Column"
+                                 IsReadOnly="True"
+                                 SelectionMode="Single"
+                                 Background="Transparent"
+                                 BorderThickness="0">
+                            
+                            <DataGrid.Columns>
+                                <!-- Icon Column -->
+                                <DataGridTemplateColumn Header="" Width="40" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <PathIcon Width="20" Height="20"
+                                                     Foreground="{DynamicResource Brush.Text.Secondary}">
+                                                <PathIcon.Data>
+                                                    <MultiBinding Converter="{StaticResource MediaTypeToIconConverter}">
+                                                        <Binding Path="Type"/>
+                                                    </MultiBinding>
+                                                </PathIcon.Data>
+                                            </PathIcon>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                
+                                <!-- File Name Column -->
+                                <DataGridTextColumn Header="File Name" 
+                                                   Binding="{Binding FileName}"
+                                                   Width="*"
+                                                   MinWidth="200"/>
+                                
+                                <!-- Duration Column -->
+                                <DataGridTextColumn Header="Duration" 
+                                                   Binding="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss\\:ff}'}"
+                                                   Width="120"/>
+                                
+                                <!-- Format Column -->
+                                <DataGridTextColumn Header="Format" 
+                                                   Binding="{Binding Container}"
+                                                   Width="80"/>
+                                
+                                <!-- Size Column -->
+                                <DataGridTemplateColumn Header="Size" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FileSizeBytes, Converter={StaticResource FileSizeConverter}}"
+                                                      HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                
+                                <!-- Date Column -->
+                                <DataGridTextColumn Header="Date" 
+                                                   Binding="{Binding CreatedDate, StringFormat='{}{0:yyyy-MM-dd}'}"
+                                                   Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </Border>
             </Grid>

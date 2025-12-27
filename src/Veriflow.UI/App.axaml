@@ -19,6 +19,7 @@
             <!-- Converters -->
             <converters:FileSizeConverter x:Key="FileSizeConverter" />
             <converters:MediaTypeIconConverter x:Key="MediaTypeIconConverter" />
+            <converters:MediaTypeToIconConverter x:Key="MediaTypeToIconConverter" />
             <converters:PeakToWidthConverter x:Key="PeakToWidthConverter" />
             <converters:PeakToHeightConverter x:Key="PeakToHeightConverter" />
             <converters:OffloadVerifyTextConverter x:Key="OffloadVerifyTextConverter" />
