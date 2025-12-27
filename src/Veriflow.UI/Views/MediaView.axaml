@@ -343,8 +343,8 @@
                                 </Grid>
                             </Expander>
                             
-                            <!-- AUDIO & TC -->
-                            <Expander Header="AUDIO & TC">
+                            <!-- AUDIO &amp; TC -->
+                            <Expander Header="AUDIO &amp; TC">
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="6" Margin="12">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Audio Format:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
                                     <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.AudioCodec}" FontSize="{StaticResource FontSize.Small}"/>
