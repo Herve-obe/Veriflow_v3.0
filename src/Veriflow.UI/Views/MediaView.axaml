@@ -78,12 +78,11 @@
                                 Classes="PathDisplay" />
                         <Button Grid.Column="1"
                                Command="{Binding BrowseFolderCommand}"
-                               Classes="Secondary"
+                               Content="Browse"
+                               Classes="SecondaryAction"
                                Margin="8,0,0,0"
-                               ToolTip.Tip="Browse folder">
-                            <PathIcon Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
-                                     Width="16" Height="16" />
-                        </Button>
+                               Height="32"
+                               ToolTip.Tip="Browse folder" />
                     </Grid>
                     
                     <!-- Media Grid/List/Filmstrip Views -->
@@ -268,26 +267,37 @@
             <!-- Column 2: Details Panel -->
             <Border Grid.Column="2" Classes="MediaCard">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="16" IsVisible="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <StackPanel Spacing="16">
                         <TextBlock Text="Details"
-                                  FontSize="{StaticResource FontSize.Small}"
-                                  FontWeight="{StaticResource FontWeight.SemiBold}"
-                                  Foreground="{DynamicResource Brush.Text.Primary}" />
+                                  FontSize="14"
+                                  FontWeight="Bold"
+                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}" />
                         
-                        <!-- Basic Info -->
-                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="6">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Filename:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.FileName}" TextWrapping="Wrap" FontSize="{StaticResource FontSize.Small}"/>
-                            
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Size:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.FileSizeBytes, Converter={StaticResource FileSizeConverter}}" FontSize="{StaticResource FontSize.Small}"/>
-                            
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Duration:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Duration, StringFormat='{}{0:hh\\:mm\\:ss\\:ff}'}" FontSize="{StaticResource FontSize.Small}"/>
-                            
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Date:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.CreatedDate, StringFormat='{}{0:yyyy-MM-dd}'}" FontSize="{StaticResource FontSize.Small}"/>
-                        </Grid>
+                        <!-- Media Info -->
+                        <StackPanel Spacing="12" IsVisible="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Filename:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.FileName}" TextWrapping="Wrap" FontSize="{StaticResource FontSize.Small}"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Size:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.FileSizeBytes, Converter={StaticResource FileSizeConverter}}" FontSize="{StaticResource FontSize.Small}"/>
+                                
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Duration:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Duration, StringFormat='{}{0:hh\\:mm\\:ss\\:ff}'}" FontSize="{StaticResource FontSize.Small}"/>
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Format:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.Container}" FontSize="{StaticResource FontSize.Small}"/>
+                                
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Date:" Foreground="{DynamicResource Brush.Text.Secondary}" FontSize="{StaticResource FontSize.Small}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedMedia.CreatedDate, StringFormat='{}{0:yyyy-MM-dd}'}" FontSize="{StaticResource FontSize.Small}"/>
+                            </Grid>
+                        </StackPanel>
+                        
+                        <!-- No Selection Message -->
+                        <TextBlock Text="Select a media file to view details"
+                                  Foreground="{DynamicResource Brush.Text.Secondary}"
+                                  FontSize="{StaticResource FontSize.Small}"
+                                  IsVisible="{Binding SelectedMedia, Converter={x:Static ObjectConverters.IsNull}}" />
                     </StackPanel>
                 </ScrollViewer>
             </Border>
