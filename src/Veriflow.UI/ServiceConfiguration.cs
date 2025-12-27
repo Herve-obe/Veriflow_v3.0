@@ -29,6 +29,7 @@ public static class ServiceConfiguration
         
         // UI Services
         services.AddSingleton<IDialogService>(sp => new AvaloniaDialogService(mainWindow));
+        services.AddSingleton<IWindowSettingsService, WindowSettingsService>();
         
         // TODO: Add other services as they are implemented
         // services.AddSingleton<IAudioEngine, MiniAudioEngine>();

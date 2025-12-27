@@ -123,30 +123,12 @@
                 <Grid ColumnDefinitions="Auto,Auto" Width="100">
                     <TextBlock Grid.Column="0"
                               VerticalAlignment="Center"
-                              Margin="8,0,12,0"
+                              Margin="4,0,8,0"
+                              Width="50"
                               FontSize="14"
                               FontWeight="SemiBold"
                               Foreground="{StaticResource TextPrimary}"
-                              IsVisible="{Binding !IsOffloadMode}">
-                        <TextBlock.Styles>
-                            <Style Selector="TextBlock">
-                                <Setter Property="Text" Value="Verify" />
-                            </Style>
-                        </TextBlock.Styles>
-                    </TextBlock>
-                    <TextBlock Grid.Column="0"
-                              VerticalAlignment="Center"
-                              Margin="8,0,12,0"
-                              FontSize="14"
-                              FontWeight="SemiBold"
-                              Foreground="{StaticResource TextPrimary}"
-                              IsVisible="{Binding IsOffloadMode}">
-                        <TextBlock.Styles>
-                            <Style Selector="TextBlock">
-                                <Setter Property="Text" Value="Offload" />
-                            </Style>
-                        </TextBlock.Styles>
-                    </TextBlock>
+                              Text="{Binding IsOffloadMode, Converter={StaticResource OffloadVerifyTextConverter}}" />
                     
                     <ToggleButton Grid.Column="1"
                                  IsChecked="{Binding IsOffloadMode, Mode=TwoWay}"
@@ -232,7 +214,7 @@
                      HorizontalScrollBarVisibility="Disabled">
             <Grid Margin="20,0">
                 <!-- OFFLOAD MODE: Source + Destinations -->
-                <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="Auto,Auto,Auto">
+                <Grid IsVisible="{Binding IsOffloadMode}" RowDefinitions="*,Auto,Auto">
                 
                 <!-- Cards Row -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,16,*,16,*">
@@ -469,16 +451,16 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="File" 
                                                    Binding="{Binding FileName}"
-                                                   Width="*"
+                                                   Width="7*"
                                                    FontSize="12"
                                                    Foreground="{StaticResource TextPrimary}" />
                                 <DataGridTextColumn Header="xxHash64" 
                                                    Binding="{Binding Hash}"
-                                                   Width="280"
+                                                   Width="1.8*"
                                                    FontSize="12"
                                                    FontFamily="JetBrains Mono"
                                                    Foreground="#A0A0A0" />
-                                <DataGridTemplateColumn Header="Status" Width="80">
+                                <DataGridTemplateColumn Header="Status" Width="1.2*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Path Data="{Binding StatusIconData}"
@@ -553,10 +535,10 @@
             </Grid> <!-- End OFFLOAD MODE -->
             
             <!-- VERIFY MODE: Two Targets -->
-            <Grid IsVisible="{Binding !IsOffloadMode}" RowDefinitions="Auto,*,Auto">
+            <Grid IsVisible="{Binding !IsOffloadMode}" RowDefinitions="*,Auto,Auto">
                 
                 <!-- Cards Row -->
-                <Grid Grid.Row="0" ColumnDefinitions="*,16,*">
+                <Grid Grid.Row="0" ColumnDefinitions="*,24,*">
                     <!-- Verify Target #1 -->
                     <Border Name="VerifyTargetADropZone"
                            Grid.Column="0"
@@ -721,16 +703,16 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="File" 
                                                    Binding="{Binding FileName}"
-                                                   Width="*"
+                                                   Width="7*"
                                                    FontSize="12"
                                                    Foreground="{StaticResource TextPrimary}" />
                                 <DataGridTextColumn Header="xxHash64" 
                                                    Binding="{Binding Hash}"
-                                                   Width="280"
+                                                   Width="1.8*"
                                                    FontSize="12"
                                                    FontFamily="JetBrains Mono"
                                                    Foreground="#A0A0A0" />
-                                <DataGridTemplateColumn Header="Status" Width="80">
+                                <DataGridTemplateColumn Header="Status" Width="1.2*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Path Data="{Binding StatusIconData}"

@@ -37,16 +37,26 @@ public partial class App : Application
             e.SetObserved();
         };
         
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindow = new MainWindow();
+            // Create a temporary window for initial service configuration
+            var tempWindow = new Avalonia.Controls.Window();
             
-            // Configure Dependency Injection with MainWindow reference
-            _serviceProvider = ServiceConfiguration.ConfigureServices(mainWindow);
+            // Configure services
+            _serviceProvider = ServiceConfiguration.ConfigureServices(tempWindow);
             
+            // Get the window settings service
+            var windowSettingsService = _serviceProvider.GetRequiredService<Services.IWindowSettingsService>();
+            
+            // Create the actual main window with dependencies
+            var mainWindow = new MainWindow(windowSettingsService);
+            
+            // Get MainWindowViewModel and set as DataContext
             var mainViewModel = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_serviceProvider, _serviceProvider);
             mainWindow.DataContext = mainViewModel;
             
+            // Set the main window
             desktop.MainWindow = mainWindow;
             
             // Shutdown handler

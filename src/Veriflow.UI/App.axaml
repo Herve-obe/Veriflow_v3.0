@@ -20,6 +20,7 @@
             <converters:MediaTypeIconConverter x:Key="MediaTypeIconConverter" />
             <converters:PeakToWidthConverter x:Key="PeakToWidthConverter" />
             <converters:PeakToHeightConverter x:Key="PeakToHeightConverter" />
+            <converters:OffloadVerifyTextConverter x:Key="OffloadVerifyTextConverter" />
         </ResourceDictionary>
     </Application.Resources>
     
