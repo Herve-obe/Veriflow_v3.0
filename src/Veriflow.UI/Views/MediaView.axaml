@@ -16,7 +16,7 @@
     <!-- Professional Styles (aligned with OFFLOAD) -->
     <UserControl.Styles>
         <Style Selector="Border.MediaCard">
-            <Setter Property="Background" Value="{DynamicResource Brush.Background.Secondary}" />
+            <Setter Property="Background" Value="{StaticResource Brush.Surface.Card}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Default}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="6" />
@@ -233,21 +233,32 @@
                     
                     <!-- Drag & Drop Overlay -->
                     <Border Grid.Row="0" Grid.RowSpan="2"
-                           Background="{DynamicResource Brush.Background.Secondary}"
-                           BorderBrush="{DynamicResource Brush.Accent.Video.Default}"
+                           Background="{StaticResource Brush.Surface.Card}"
+                           BorderBrush="{Binding $parent[Window].DataContext.ActivePageColor}"
                            BorderThickness="2"
                            CornerRadius="6"
                            IsVisible="{Binding IsDragging}"
                            Opacity="0.95">
                         <StackPanel HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Spacing="12">
-                            <PathIcon Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                                     Width="64" Height="64"
-                                     Foreground="{DynamicResource Brush.Accent.Video.Default}" />
+                                   Spacing="16">
+                            <!-- Upload Icon -->
+                            <Path Width="72" Height="72"
+                                 Fill="{StaticResource Brush.Text.Secondary}"
+                                 Opacity="0.5"
+                                 Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                                 Stretch="Uniform" />
+                            
+                            <TextBlock Text="DROP ZONE"
+                                      FontSize="16"
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
+                                      HorizontalAlignment="Center" />
+                            
                             <TextBlock Text="Drop media folder or file here"
-                                      FontSize="{StaticResource FontSize.H2}"
-                                      Foreground="{DynamicResource Brush.Text.Primary}"
+                                      FontSize="12"
+                                      Foreground="{StaticResource Brush.Text.Secondary}"
+                                      Opacity="0.7"
                                       HorizontalAlignment="Center" />
                         </StackPanel>
                     </Border>
@@ -285,17 +296,21 @@
         
         <!-- Log Console (Footer) -->
         <Border Grid.Row="2" 
-               Classes="MediaCard"
                Margin="20,16,20,20"
+               Background="{StaticResource Brush.Surface.Card}"
+               BorderBrush="{StaticResource Brush.Border.Default}"
+               BorderThickness="1"
+               CornerRadius="6"
+               Padding="20"
                MinHeight="80"
                MaxHeight="100">
             <Grid RowDefinitions="Auto,*">
                 <TextBlock Grid.Row="0" 
                           Text="Log Console"
-                          FontSize="{StaticResource FontSize.Small}"
-                          FontWeight="{StaticResource FontWeight.SemiBold}"
-                          Foreground="{DynamicResource Brush.Text.Primary}"
-                          Margin="0,0,0,8" />
+                          FontSize="14"
+                          FontWeight="Bold"
+                          Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
+                          Margin="0,0,0,12" />
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <TextBlock Text="Ready"
                               FontFamily="Consolas"
