@@ -357,25 +357,31 @@
         <!-- Row 2: Log Console -->
         <Border Grid.Row="2" 
                Margin="20,16,20,20"
-               Background="{StaticResource Brush.Surface.Input}"
+               Background="{StaticResource Brush.Surface.Card}"
                BorderBrush="{StaticResource Brush.Border.Default}"
                BorderThickness="1"
                CornerRadius="6"
-               Padding="20"
-               MinHeight="80"
-               MaxHeight="100">
+               Padding="16"
+               MinHeight="150">
             <Grid RowDefinitions="Auto,*">
                 <TextBlock Grid.Row="0" 
                           Text="Log Console"
                           FontSize="14"
                           FontWeight="Bold"
-                          Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
+                          Foreground="{StaticResource Brush.Accent.Video.Primary}"
                           Margin="0,0,0,12" />
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <TextBlock Text="Ready"
-                              FontFamily="Consolas"
-                              FontSize="12"
-                              Foreground="{StaticResource Brush.Text.Secondary}" />
+                <ScrollViewer Grid.Row="1" 
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             MaxHeight="150">
+                    <TextBox Text="Ready"
+                            IsReadOnly="True"
+                            Background="{StaticResource Brush.Surface.Input}"
+                            BorderThickness="0"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            Foreground="{StaticResource Brush.Text.Secondary}"
+                            TextWrapping="Wrap" />
                 </ScrollViewer>
             </Grid>
         </Border>
