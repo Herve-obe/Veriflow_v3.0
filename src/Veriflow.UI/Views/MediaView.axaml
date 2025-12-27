@@ -42,7 +42,7 @@
                               Text="Files"
                               FontSize="14"
                               FontWeight="Bold"
-                              Foreground="{Binding $parent[Window].DataContext.ActivePageColor}"
+                              Foreground="{StaticResource Brush.Accent.Video.Primary}"
                               Margin="0,0,0,12" />
                     
                     <!-- TreeView -->
@@ -272,7 +272,7 @@
                         <TextBlock Text="Details"
                                   FontSize="14"
                                   FontWeight="Bold"
-                                  Foreground="{Binding $parent[Window].DataContext.ActivePageColor}" />
+                                  Foreground="{StaticResource Brush.Accent.Video.Primary}" />
                         
                         <!-- FILE INFO Section -->
                         <StackPanel Spacing="12">
