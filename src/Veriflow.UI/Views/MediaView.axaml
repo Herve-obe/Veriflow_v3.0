@@ -5,7 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1520" d:DesignHeight="820"
              x:Class="Veriflow.UI.Views.MediaView"
-             x:DataType="vm:MediaViewModel">
+             x:DataType="vm:MediaViewModel"
+             x:CompileBindings="False"
+             DragDrop.AllowDrop="True">
     
     <Design.DataContext>
         <vm:MediaViewModel />
@@ -28,7 +30,7 @@
             <!-- Left: File Browser -->
             <Grid Grid.Column="0" RowDefinitions="Auto,*" Margin="0,0,16,0">
                 <!-- Toolbar -->
-                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,16">
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto" Margin="0,0,0,16">
                     <!-- Browse Button -->
                     <Button Grid.Column="0" 
                            Content="Browse Folder..."
@@ -36,8 +38,31 @@
                            Command="{Binding BrowseFolderCommand}"
                            ToolTip.Tip="Select media folder" />
                     
+                    <!-- Video/Audio Filters -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="16,0,0,0">
+                        <ToggleButton IsChecked="{Binding ShowVideo}"
+                                     ToolTip.Tip="Show Video files"
+                                     MinWidth="80">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"
+                                         Width="16" Height="16" />
+                                <TextBlock Text="Video" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        
+                        <ToggleButton IsChecked="{Binding ShowAudio}"
+                                     ToolTip.Tip="Show Audio files"
+                                     MinWidth="80">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"
+                                         Width="16" Height="16" />
+                                <TextBlock Text="Audio" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
+                    </StackPanel>
+                    
                     <!-- Search Box -->
-                    <TextBox Grid.Column="1" 
+                    <TextBox Grid.Column="3" 
                             Text="{Binding SearchQuery}"
                             Watermark="Search files..."
                             Margin="16,0,16,0">
@@ -51,21 +76,40 @@
                         </TextBox.InnerRightContent>
                     </TextBox>
                     
-                    <!-- View Toggle -->
-                    <ToggleButton Grid.Column="2" 
-                                 IsChecked="{Binding IsGridView}"
-                                 Command="{Binding ToggleViewCommand}"
-                                 ToolTip.Tip="Toggle Grid/List View"
-                                 Margin="0,0,8,0">
-                        <PathIcon Data="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"
-                                 Width="20" Height="20" />
-                    </ToggleButton>
+                    <!-- View Mode Selector -->
+                    <ComboBox Grid.Column="4"
+                             SelectedIndex="{Binding ViewMode}"
+                             MinWidth="120"
+                             ToolTip.Tip="View Mode">
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"
+                                         Width="16" Height="16" />
+                                <TextBlock Text="Grid"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+                                         Width="16" Height="16" />
+                                <TextBlock Text="List"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"
+                                         Width="16" Height="16" />
+                                <TextBlock Text="Filmstrip"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                    </ComboBox>
                     
                     <!-- Refresh Button -->
-                    <Button Grid.Column="3" 
+                    <Button Grid.Column="6" 
                            Classes="Secondary"
                            Command="{Binding LoadMediaFilesCommand}"
-                           ToolTip.Tip="Refresh">
+                           ToolTip.Tip="Refresh"
+                           Margin="8,0,0,0">
                         <PathIcon Data="M17.65 6.35a7.95 7.95 0 0 0-6.48-2.31c-3.67.37-6.69 3.35-7.1 7.02C3.52 15.91 7.27 20 12 20a7.98 7.98 0 0 0 7.21-4.56c.32-.67-.16-1.44-.9-1.44-.37 0-.72.2-.88.53a5.994 5.994 0 0 1-6.8 3.31c-2.22-.49-4.01-2.3-4.48-4.52A6.002 6.002 0 0 1 12 6c1.66 0 3.14.69 4.22 1.78l-1.51 1.51c-.63.63-.19 1.71.7 1.71H19c.55 0 1-.45 1-1V6.41c0-.89-1.08-1.34-1.71-.71l-.64.65z"
                                  Width="20" Height="20" />
                     </Button>
@@ -79,10 +123,33 @@
                        CornerRadius="{StaticResource CornerRadius.Medium}">
                     
                     <Grid>
+                        <!-- Drop Overlay -->
+                        <Border IsVisible="{Binding IsDragging}"
+                               Background="#AA1A1A1D"
+                               CornerRadius="{StaticResource CornerRadius.Medium}"
+                               ZIndex="100">
+                            <StackPanel HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Spacing="16">
+                                <PathIcon Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"
+                                         Width="64" Height="64"
+                                         Foreground="{DynamicResource Brush.Text.Primary}" />
+                                <TextBlock Text="Drop folder or media file here"
+                                          FontSize="{StaticResource FontSize.H2}"
+                                          FontWeight="{StaticResource FontWeight.SemiBold}"
+                                          Foreground="{DynamicResource Brush.Text.Primary}"
+                                          HorizontalAlignment="Center" />
+                                <TextBlock Text="Supported formats: MOV, MP4, MXF, AVI, MKV, WAV, MP3, AIFF, FLAC"
+                                          FontSize="{StaticResource FontSize.Body}"
+                                          Foreground="{DynamicResource Brush.Text.Secondary}"
+                                          HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        
                         <!-- Grid View -->
-                        <ScrollViewer IsVisible="{Binding IsGridView}"
+                        <ScrollViewer IsVisible="{Binding ViewMode, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"
                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding MediaFiles}">
+                            <ItemsControl ItemsSource="{Binding FilteredMediaFiles}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal" />
@@ -124,8 +191,8 @@
                         </ScrollViewer>
                         
                         <!-- List View -->
-                        <ListBox IsVisible="{Binding !IsGridView}"
-                                ItemsSource="{Binding MediaFiles}"
+                        <ListBox IsVisible="{Binding ViewMode, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}"
+                                ItemsSource="{Binding FilteredMediaFiles}"
                                 SelectedItem="{Binding SelectedMedia}"
                                 Background="Transparent">
                             <ListBox.ItemTemplate>
